@@ -1,29 +1,21 @@
-/* ======================== blank-style.css (전체 교체) ======================== */
-/* 1) 전체 폰트/기본 스타일 */
-body {
-  font-size: 1.0em;         /* 페이지 전체 크기 기준 1.0em */
-  line-height: 1.6;         /* 적절한 줄 높이 */
-  font-family: sans-serif;  /* 기본 폰트 설정 */
-}
-
-/* 2) 보기 모드(empty blank) */
+/* ===================================
+   빈칸 보기 모드(연두색 박스) 스타일
+   =================================== */
 .blank {
   display: inline-block !important;
   background-color: #e0f2d8 !important;   /* 연두색 배경 */
   border: 1px solid #aacb8e !important;   /* 짙은 연두 테두리 */
   border-radius: 3px !important;          /* 모서리 둥글게 */
-  padding: 0.15em 0.3em !important;        /* 내부 여백 약간 축소 */
+  padding: 0.15em 0.3em !important;        /* 안쪽 여백 약간 */
   margin: 0 3px !important;               /* 좌우 간격 */
   vertical-align: middle !important;      /* 텍스트 중간 정렬 */
-  cursor: default !important;             /* 마우스 커서 기본 모양 */
-  font-weight: normal !important;         /* 볼드가 아닌 일반 글씨 */
-  font-size: 1.0em !important;            /* 본문과 동일 크기 */
-  color: transparent !important;          /* 기본적으로 글자 숨김 */
-  position: relative !important;          /* 툴팁 위치 조정용 */
+  font-size: 1.0em !important;            /* 본문과 동일한 크기 */
+  color: transparent !important;          /* 글자 숨김 (오직 호버 시 보여줄 예정) */
+  position: relative !important;          /* ::before/::after 위치 조정용 */
 }
 .blank::before {
   content: attr(data-answer) !important;
-  visibility: hidden !important;          /* 너비 확보용 텍스트(보이지 않음) */
+  visibility: hidden !important;          /* 너비 확보용 텍스트(눈에 안 보임) */
   display: inline-block !important;
   white-space: nowrap !important;         /* 줄바꿈 방지 */
 }
@@ -33,26 +25,28 @@ body {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  color: transparent !important;          /* 초기엔 투명 */
+  color: transparent !important;          /* 기본에는 투명 */
   white-space: nowrap !important;         /* 줄바꿈 방지 */
   transition: color 0.2s ease-in-out !important;
-  pointer-events: none !important;        /* 툴팁이 마우스 이벤트를 막지 않음 */
+  pointer-events: none !important;        /* 툴팁이 마우스 이벤트를 막지 않도록 */
   font-size: 1.0em !important;
   font-weight: normal !important;
+  z-index: 10 !important;
 }
 .blank:hover::after {
   color: #333 !important;                 /* 호버 시 진한 회색으로 답 표시 */
 }
 
-/* 3) 채우기 모드(input blank) */
+/* ===================================
+   빈칸 채우기 모드(하얀 입력 박스) 스타일
+   =================================== */
 .blank-input {
-  display: none !important;               /* 기본적으로 숨김 상태 */
-  box-sizing: border-box !important;      /* width/height에 패딩+테두리 포함 */
-  padding: 0.15em 0.3em !important;        /* 보기 모드 빈칸과 동일 패딩 */
+  display: none !important;               /* 기본 상태에서는 숨김(토글 시 JS로 드러남) */
+  box-sizing: border-box !important;      /* width/height에 padding+border 포함 */
+  padding: 0.15em 0.3em !important;        /* 보기 모드 빈칸(.blank)과 동일한 패딩 */
   background-color: #ffffff !important;   /* 흰색 배경 */
   border: 1px solid #cccccc !important;   /* 연한 회색 테두리 */
   border-radius: 3px !important;          /* 모서리 둥글게 */
-  font-weight: normal !important;         /* 일반 글씨 */
   font-size: 1.0em !important;            /* 본문과 동일 크기 */
   color: #333 !important;                 /* 검은색 글씨 */
   vertical-align: middle !important;      /* 텍스트 중간 정렬 */
@@ -67,11 +61,13 @@ body {
   background-color: #f9f9f9 !important;   /* 포커스 시 연한 회색 배경 */
 }
 
-/* 4) 채점 후 정답 표시 */
+/* ===================================
+   채점 후 정답/오답 텍스트 스타일
+   =================================== */
 .answered {
   display: inline-block !important;
-  font-weight: normal !important;
   font-size: 1.0em !important;
+  font-weight: normal !important;
   margin: 0 3px !important;
   vertical-align: middle !important;
   position: relative !important;          /* 툴팁 위치 조정용 */
@@ -83,9 +79,9 @@ body {
   color: #dc3545 !important;              /* 빨간색 글씨 */
 }
 .answered.wrong::after {
-  content: attr(data-wrong) !important;    /* 입력한 오답을 툴팁으로 표시 */
+  content: attr(data-wrong) !important;    /* 오답 툴팁으로 입력값 표시 */
   position: absolute !important;
-  top: 110% !important;                   /* 정답 텍스트 바로 아래 */
+  top: 110% !important;                   /* 텍스트 바로 아래 */
   left: 50% !important;
   transform: translateX(-50%) !important;
   background-color: rgba(0, 0, 0, 0.75) !important;
@@ -106,7 +102,9 @@ body {
   opacity: 1 !important;
 }
 
-/* 5) 표 셀 공통 스타일 */
+/* ===================================
+   표(th, td) 공통 스타일
+   =================================== */
 th, td {
   border: 1px solid #666 !important;
   padding: 6px 8px !important;
@@ -122,4 +120,3 @@ th {
 td {
   line-height: 1.4 !important;
 }
-/* =========================================================================== */
