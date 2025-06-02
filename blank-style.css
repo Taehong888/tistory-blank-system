@@ -1,11 +1,11 @@
 /* ===========================================
-   blank-style.css (줄 간격을 더 넓힌 전체 버전)
+   blank-style.css (줄 간격 1.8 유지, 박스 크기 1.6로 고정 전체 버전)
    =========================================== */
 
 /* 1) 전체 폰트/기본 스타일 */
 body {
   font-size: 1.0em;         /* 페이지 전체 크기 기준 1.0em */
-  line-height: 2.0;         /* 줄 간격을 더 넓게 2.0으로 설정 */
+  line-height: 1.8;         /* 전체 줄 간격을 1.8로 넓힘 */
   font-family: sans-serif;  /* 기본 폰트 설정 */
 }
 
@@ -15,52 +15,55 @@ body {
 /* A) 버튼 기본 스타일 */
 #fill-toggle,
 #wrong-note {
-  display: inline-block !important;          
-  background-color: #557a3b !important;      
-  color: #ffffff !important;                 
-  border: none !important;                   
-  border-radius: 4px !important;             
-  padding: 0.5em 1em !important;              
-  font-size: 1.0em !important;                
-  font-weight: normal !important;            
-  cursor: pointer !important;                 
-  text-align: center !important;              
-  margin: 0 0.25em !important;                
+  display: inline-block !important;
+  background-color: #557a3b !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 0.5em 1em !important;
+  font-size: 1.0em !important;
+  font-weight: normal !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  margin: 0 0.25em !important;
   transition: background-color 0.2s ease !important;
 }
 /* B) 버튼 호버 시 살짝 밝아지는 효과 */
 #fill-toggle:hover,
 #wrong-note:hover {
-  background-color: #6b8c4a !important;       
+  background-color: #6b8c4a !important;
 }
-/* C) 버튼 비활성화 상태(필요할 때 사용) */
+/* C) 버튼 비활성화 상태 */
 #fill-toggle:disabled,
 #wrong-note:disabled {
-  background-color: #cccccc !important;       
-  color: #666666 !important;                  
-  cursor: not-allowed !important;             
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
 }
 
 /* ===========================================
    3) 보기 모드(empty blank) 스타일
    =========================================== */
+/* .blank 자체는 글자가 보이지 않는 상태이지만 line-height를 1.6으로 지정하여
+   hover 시 툴팁 텍스트도 정확하게 세로 중앙 정렬되도록 합니다. */
 .blank {
   display: inline-block !important;
-  background-color: #e0f2d8 !important;   /* 연두색 배경 */
-  border: 1px solid #aacb8e !important;   /* 짙은 연두 테두리 */
-  border-radius: 3px !important;          
-  padding: 0.15em 0.3em !important;        
-  margin: 0 3px !important;               
-  vertical-align: middle !important;      
-  font-size: 1.0em !important;            
-  color: transparent !important;          
-  position: relative !important;          
+  background-color: #e0f2d8 !important;
+  border: 1px solid #aacb8e !important;
+  border-radius: 3px !important;
+  padding: 0.15em 0.3em !important;
+  margin: 0 3px !important;
+  vertical-align: middle !important;
+  font-size: 1.0em !important;
+  line-height: 1.6 !important;       /* 박스 크기를 이전과 동일하게 유지 */
+  color: transparent !important;
+  position: relative !important;
 }
 .blank::before {
   content: attr(data-answer) !important;
-  visibility: hidden !important;          
+  visibility: hidden !important;
   display: inline-block !important;
-  white-space: nowrap !important;         
+  white-space: nowrap !important;
 }
 .blank::after {
   content: attr(data-answer) !important;
@@ -68,40 +71,44 @@ body {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  color: transparent !important;          
-  white-space: nowrap !important;         
+  color: transparent !important;
+  white-space: nowrap !important;
   transition: color 0.2s ease-in-out !important;
-  pointer-events: none !important;        
+  pointer-events: none !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
+  line-height: 1.6 !important;       /* 툴팁 텍스트도 동일 높이 유지 */
   z-index: 10 !important;
 }
 .blank:hover::after {
-  color: #333 !important;                 
+  color: #333 !important;
 }
 
 /* ===========================================
    4) 채우기 모드(input blank) 스타일
    =========================================== */
+/* .blank-input 요소는 기본적으로 숨겨져 있다가 fill-mode 시 visible 되며,
+   이 줄 높이를 1.6으로 고정하여 박스 높이가 그대로 유지되도록 합니다. */
 .blank-input {
-  display: none !important;               
-  box-sizing: border-box !important;      
-  padding: 0.15em 0.3em !important;        
-  background-color: #ffffff !important;   
-  border: 1px solid #cccccc !important;   
-  border-radius: 3px !important;          
-  font-size: 1.0em !important;            
-  color: #333 !important;                 
-  vertical-align: middle !important;      
-  margin: 0 3px !important;               
-  outline: none !important;               
+  display: none !important;
+  box-sizing: border-box !important;
+  padding: 0.15em 0.3em !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cccccc !important;
+  border-radius: 3px !important;
+  font-size: 1.0em !important;
+  color: #333 !important;
+  vertical-align: middle !important;
+  margin: 0 3px !important;
+  outline: none !important;
   transition:
     border-color 0.2s ease-in-out,
     background-color 0.2s ease-in-out !important;
+  line-height: 1.6 !important;       /* 박스 크기를 이전과 동일하게 유지 */
 }
 .blank-input:focus {
-  border-color: #557a3b !important;       
-  background-color: #f9f9f9 !important;   
+  border-color: #557a3b !important;
+  background-color: #f9f9f9 !important;
 }
 
 /* ===========================================
@@ -112,20 +119,21 @@ body {
   font-size: 1.0em !important;
   font-weight: normal !important;
   margin: 0 3px !important;
-  vertical-align: baseline !important;    
-  line-height: inherit !important;        
-  position: relative !important;          
+  vertical-align: baseline !important;
+  /* 부모(td)의 line-height(1.8)를 따르는 대신, td 안 텍스트 정렬이 자연스럽게 보이도록 유지 */
+  line-height: 1.8 !important;
+  position: relative !important;
 }
 .answered.correct {
-  color: #155724 !important;              
+  color: #155724 !important;
 }
 .answered.wrong {
-  color: #dc3545 !important;              
+  color: #dc3545 !important;
 }
 .answered.wrong::after {
-  content: attr(data-wrong) !important;    
+  content: attr(data-wrong) !important;
   position: absolute !important;
-  top: 110% !important;                   
+  top: 110% !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   background-color: rgba(0, 0, 0, 0.75) !important;
@@ -139,6 +147,7 @@ body {
   pointer-events: none !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
+  line-height: 1.8 !important;       /* 툴팁 텍스트도 td 줄 높이 유지 */
   z-index: 10 !important;
 }
 .answered.wrong:hover::after {
@@ -151,19 +160,19 @@ body {
    =========================================== */
 th, td {
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;           
+  padding: 8px 10px !important;           /* 내부 여백을 살짝 넓힘 */
   text-align: left !important;
   vertical-align: top !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
-  line-height: 2.0 !important;             /* 표 내부 줄 간격도 2.0으로 */
+  line-height: 1.8 !important;             /* 표 내부 줄 간격을 1.8로 유지 */
 }
 th {
   background-color: #f2f2f2 !important;
 }
 td {
-  /* line-height는 위에서 설정한 2.0을 그대로 사용 */
+  /* line-height: 1.8 유지 */
 }
 
 /* ===========================================
