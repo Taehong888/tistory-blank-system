@@ -1,5 +1,5 @@
 /* ===========================================
-   blank-style.css (전체 교체된 최종 버전)
+   blank-style.css (수정된 전체 버전)
    =========================================== */
 
 /* 1) 전체 폰트/기본 스타일 */
@@ -162,4 +162,22 @@ th {
 }
 td {
   line-height: 1.4 !important;
+}
+
+/* ===========================================
+   7) “빈칸 채우기 모드” 관련 추가 CSS
+   =========================================== */
+/* “빈칸 채우기 모드” 상태에서 .blank(연두색) 숨기기 */
+body.fill-mode .blank {
+  display: none !important;
+}
+
+/* “빈칸 채우기 모드” 상태에서 .blank-input(입력칸) 보이기 */
+body.fill-mode .blank-input {
+  display: inline-block !important;
+}
+
+/* “보기 모드” 상태에서 .blank-input 다시 숨기기 */
+body:not(.fill-mode) .blank-input {
+  display: none !important;
 }
