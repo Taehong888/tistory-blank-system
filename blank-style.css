@@ -1,5 +1,5 @@
 /* ===========================================
-   blank-style.css (박스 크기 고정하여 줄 간격 변화 방지)
+   blank-style.css (정답 텍스트 색을 #00BD00으로 변경한 전체 버전)
    =========================================== */
 
 /* 1) 전체 폰트/기본 스타일 */
@@ -50,7 +50,7 @@ body {
   display: inline-block !important;
   background-color: #e0f2d8 !important;   /* 연두색 배경 */
   border: 1px solid #aacb8e !important;   /* 짙은 연두 테두리 */
-  border-radius: 3px !important;          /* 모서리 둥글게 */
+  border-radius: 3px !important;
   padding: 0.15em 0.3em !important;        /* 상하 0.15em, 좌우 0.3em */
   margin: 0 3px !important;               /* 좌우 간격 */
   vertical-align: middle !important;      /* 인라인 기준선 중간 정렬 */
@@ -128,7 +128,7 @@ body {
   position: relative !important;          /* 툴팁 위치 조정용 */
 }
 .answered.correct {
-  color: #155724 !important;              /* 초록색 정답 글씨 */
+  color: #00BD00 !important;              /* 정답 글씨 색을 #00BD00으로 변경 */
 }
 .answered.wrong {
   color: #dc3545 !important;              /* 빨간색 정답 글씨 */
