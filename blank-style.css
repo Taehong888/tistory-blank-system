@@ -1,11 +1,11 @@
 /* ===========================================
-   blank-style.css (줄 간격 1.8 유지, 박스 크기 1.6로 고정 전체 버전)
+   blank-style.css (박스 크기 고정하여 줄 간격 변화 방지)
    =========================================== */
 
 /* 1) 전체 폰트/기본 스타일 */
 body {
-  font-size: 1.0em;         /* 페이지 전체 크기 기준 1.0em */
-  line-height: 1.8;         /* 전체 줄 간격을 1.8로 넓힘 */
+  font-size: 1.0em;         /* 전체 텍스트 크기 기준 1.0em */
+  line-height: 1.8;         /* 전체 줄 간격을 1.8로 넉넉히 설정 */
   font-family: sans-serif;  /* 기본 폰트 설정 */
 }
 
@@ -28,7 +28,7 @@ body {
   margin: 0 0.25em !important;
   transition: background-color 0.2s ease !important;
 }
-/* B) 버튼 호버 시 살짝 밝아지는 효과 */
+/* B) 버튼 호버 시 연한 초록으로 변화 */
 #fill-toggle:hover,
 #wrong-note:hover {
   background-color: #6b8c4a !important;
@@ -44,27 +44,30 @@ body {
 /* ===========================================
    3) 보기 모드(empty blank) 스타일
    =========================================== */
-/* .blank 자체는 글자가 보이지 않는 상태이지만 line-height를 1.6으로 지정하여
-   hover 시 툴팁 텍스트도 정확하게 세로 중앙 정렬되도록 합니다. */
+/* .blank 요소는 데이터 정답(투명)만 보이지 않는 상태로,
+   높이는 line-height(1.6) + padding(0.15*2) = 1.6em + 0.3em = 1.9em 고정 */
 .blank {
   display: inline-block !important;
-  background-color: #e0f2d8 !important;
-  border: 1px solid #aacb8e !important;
-  border-radius: 3px !important;
-  padding: 0.15em 0.3em !important;
-  margin: 0 3px !important;
-  vertical-align: middle !important;
-  font-size: 1.0em !important;
-  line-height: 1.6 !important;       /* 박스 크기를 이전과 동일하게 유지 */
-  color: transparent !important;
-  position: relative !important;
+  background-color: #e0f2d8 !important;   /* 연두색 배경 */
+  border: 1px solid #aacb8e !important;   /* 짙은 연두 테두리 */
+  border-radius: 3px !important;          /* 모서리 둥글게 */
+  padding: 0.15em 0.3em !important;        /* 상하 0.15em, 좌우 0.3em */
+  margin: 0 3px !important;               /* 좌우 간격 */
+  vertical-align: middle !important;      /* 인라인 기준선 중간 정렬 */
+  font-size: 1.0em !important;            /* 본문과 동일 크기 */
+  line-height: 1.6 !important;            /* 텍스트 줄 높이를 1.6으로 */
+  color: transparent !important;          /* 내용은 보이지 않음 */
+  position: relative !important;          /* ::after 툴팁 위치 조정용 */
+  height: 1.9em !important;               /* 전체 박스 높이 고정(1.6 + 0.3) */
 }
+/* 너비 확보용 보이지 않는 텍스트 */
 .blank::before {
   content: attr(data-answer) !important;
   visibility: hidden !important;
   display: inline-block !important;
   white-space: nowrap !important;
 }
+/* 호버 시 툴팁으로 답 텍스트 표시 */
 .blank::after {
   content: attr(data-answer) !important;
   position: absolute !important;
@@ -77,38 +80,39 @@ body {
   pointer-events: none !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
-  line-height: 1.6 !important;       /* 툴팁 텍스트도 동일 높이 유지 */
+  line-height: 1.6 !important;            /* 툴팁 텍스트도 1.6 줄 높이 */
   z-index: 10 !important;
 }
 .blank:hover::after {
-  color: #333 !important;
+  color: #333 !important;                 /* 호버 시 보여주는 텍스트 색상 */
 }
 
 /* ===========================================
    4) 채우기 모드(input blank) 스타일
    =========================================== */
-/* .blank-input 요소는 기본적으로 숨겨져 있다가 fill-mode 시 visible 되며,
-   이 줄 높이를 1.6으로 고정하여 박스 높이가 그대로 유지되도록 합니다. */
+/* .blank-input 요소는 기본적으로 숨겨졌다가 토글 시 노출되는데,
+   높이와 line-height를 .blank와 동일하게 맞춰서 줄 간격이 바뀌지 않도록 함 */
 .blank-input {
-  display: none !important;
-  box-sizing: border-box !important;
-  padding: 0.15em 0.3em !important;
-  background-color: #ffffff !important;
-  border: 1px solid #cccccc !important;
-  border-radius: 3px !important;
-  font-size: 1.0em !important;
-  color: #333 !important;
-  vertical-align: middle !important;
-  margin: 0 3px !important;
-  outline: none !important;
+  display: none !important;               /* 토글 전에는 숨김 */
+  box-sizing: border-box !important;      /* width/height에 패딩과 테두리 포함 */
+  padding: 0 0.3em !important;             /* 상하 패딩 제거, 좌우 0.3em 고정 */
+  background-color: #ffffff !important;   /* 흰색 배경 */
+  border: 1px solid #cccccc !important;   /* 연한 회색 테두리 */
+  border-radius: 3px !important;          /* 모서리 둥글게 */
+  font-size: 1.0em !important;            /* 본문과 동일 크기 */
+  color: #333 !important;                 /* 검은색 글씨 */
+  vertical-align: middle !important;      /* 인라인 기준선 중간 정렬 */
+  margin: 0 3px !important;               /* 좌우 간격 */
+  outline: none !important;               /* 포커스 시 외곽선 제거 */
   transition:
     border-color 0.2s ease-in-out,
     background-color 0.2s ease-in-out !important;
-  line-height: 1.6 !important;       /* 박스 크기를 이전과 동일하게 유지 */
+  line-height: 1.6 !important;            /* 텍스트 줄 높이를 1.6으로 */
+  height: 1.9em !important;               /* 전체 입력 박스 높이 고정 */
 }
 .blank-input:focus {
-  border-color: #557a3b !important;
-  background-color: #f9f9f9 !important;
+  border-color: #557a3b !important;       /* 포커스 시 짙은 초록 테두리 */
+  background-color: #f9f9f9 !important;   /* 포커스 시 연한 회색 배경 */
 }
 
 /* ===========================================
@@ -119,21 +123,21 @@ body {
   font-size: 1.0em !important;
   font-weight: normal !important;
   margin: 0 3px !important;
-  vertical-align: baseline !important;
-  /* 부모(td)의 line-height(1.8)를 따르는 대신, td 안 텍스트 정렬이 자연스럽게 보이도록 유지 */
-  line-height: 1.8 !important;
-  position: relative !important;
+  vertical-align: baseline !important;    /* 주변 텍스트 기준선 맞춤 */
+  line-height: 1.8 !important;            /* 부모(td)의 줄 높이를 따름 */
+  position: relative !important;          /* 툴팁 위치 조정용 */
 }
 .answered.correct {
-  color: #155724 !important;
+  color: #155724 !important;              /* 초록색 정답 글씨 */
 }
 .answered.wrong {
-  color: #dc3545 !important;
+  color: #dc3545 !important;              /* 빨간색 정답 글씨 */
 }
+/* 오답 툴팁 */
 .answered.wrong::after {
   content: attr(data-wrong) !important;
   position: absolute !important;
-  top: 110% !important;
+  top: 110% !important;                   /* 부모 텍스트 바로 아래 */
   left: 50% !important;
   transform: translateX(-50%) !important;
   background-color: rgba(0, 0, 0, 0.75) !important;
@@ -147,7 +151,7 @@ body {
   pointer-events: none !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
-  line-height: 1.8 !important;       /* 툴팁 텍스트도 td 줄 높이 유지 */
+  line-height: 1.8 !important;            /* 툴팁 텍스트도 줄 높이 1.8 */
   z-index: 10 !important;
 }
 .answered.wrong:hover::after {
@@ -160,44 +164,40 @@ body {
    =========================================== */
 th, td {
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;           /* 내부 여백을 살짝 넓힘 */
+  padding: 8px 10px !important;           /* 셀 내부 여백 */
   text-align: left !important;
   vertical-align: top !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
-  line-height: 1.8 !important;             /* 표 내부 줄 간격을 1.8로 유지 */
+  line-height: 1.8 !important;             /* 표 내부 줄 간격 1.8 */
 }
 th {
   background-color: #f2f2f2 !important;
 }
 td {
-  /* line-height: 1.8 유지 */
+  /* 줄 높이 1.8 유지 */
 }
 
 /* ===========================================
    7) “빈칸 채우기 모드” 관련 추가 CSS
    =========================================== */
-/* (a) 보기 모드에서는 ‘오답노트’ 버튼을 숨김 */
+/* (a) 보기 모드에서는 ‘오답노트’ 버튼 숨김 */
 body:not(.fill-mode) #wrong-note {
   display: none !important;
 }
-
-/* (b) 빈칸 채우기 모드에서 .blank(연두색) 숨기기 */
+/* (b) 빈칸 채우기 모드에서 .blank 숨김 */
 body.fill-mode .blank {
   display: none !important;
 }
-
-/* (c) 빈칸 채우기 모드에서 .blank-input(입력칸) 보이기 */
+/* (c) 빈칸 채우기 모드에서 .blank-input 보이기 */
 body.fill-mode .blank-input {
   display: inline-block !important;
 }
-
-/* (d) 빈칸 채우기 모드에서 ‘오답노트’ 버튼 색을 피치 색(#FFB689)으로 변경 */
+/* (d) 빈칸 채우기 모드에서 ‘오답노트’ 버튼을 피치 색으로 */
 body.fill-mode #wrong-note {
   background-color: #FFB689 !important;
 }
-
 /* (e) 보기 모드에서 .blank-input 다시 숨기기 */
 body:not(.fill-mode) .blank-input {
   display: none !important;
