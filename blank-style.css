@@ -109,7 +109,7 @@ body {
     border-color 0.2s ease-in-out,
     background-color 0.2s ease-in-out !important;
   line-height: 1.6 !important;            /* 텍스트 줄 높이를 1.6으로 고정 */
-  height: 1.9em !important;               /* 박스 전체 높이 고정 (1.6em + 0.3em) */
+  height: 1.5em !important;               /* 박스 전체 높이 고정 (1.6em + 0.3em) */
 }
 .blank-input:focus {
   border-color: #557a3b !important;       /* 포커스 시 짙은 초록 테두리 */
