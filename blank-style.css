@@ -1,11 +1,11 @@
 /* ===========================================
-   blank-style.css (글자 수평 정렬을 위해 .answered 수정한 전체 버전)
+   blank-style.css (줄 간격을 더 넓힌 전체 버전)
    =========================================== */
 
 /* 1) 전체 폰트/기본 스타일 */
 body {
   font-size: 1.0em;         /* 페이지 전체 크기 기준 1.0em */
-  line-height: 1.6;         /* 적절한 줄 높이 */
+  line-height: 1.8;         /* 줄 간격을 기본보다 넓게 1.8로 설정 */
   font-family: sans-serif;  /* 기본 폰트 설정 */
 }
 
@@ -22,7 +22,7 @@ body {
   border-radius: 4px !important;             /* 모서리 살짝 둥글게 */
   padding: 0.5em 1em !important;              /* 위아래 0.5em, 좌우 1em 여백 */
   font-size: 1.0em !important;                /* 본문과 같은 크기 */
-  font-weight: normal !important;            /* 일반 글씨 */
+  font-weight: normal !important;             /* 일반 글씨 */
   cursor: pointer !important;                 /* 손가락 모양 커서 */
   text-align: center !important;              /* 텍스트 중앙 정렬 */
   margin: 0 0.25em !important;                /* 버튼 간 간격 */
@@ -113,7 +113,7 @@ body {
   font-weight: normal !important;
   margin: 0 3px !important;
   vertical-align: baseline !important;    /* 주변 인라인 텍스트와 수평 맞춤 */
-  line-height: inherit !important;        /* 부모(td)의 line-height를 따르도록 조정 */
+  line-height: inherit !important;        /* 부모(td)의 줄 높이를 따르도록 */
   position: relative !important;          /* 툴팁 위치 조정용 */
 }
 .answered.correct {
@@ -151,19 +151,19 @@ body {
    =========================================== */
 th, td {
   border: 1px solid #666 !important;
-  padding: 6px 8px !important;
+  padding: 8px 10px !important;           /* 내부 여백을 살짝 늘려 시원하게 */
   text-align: left !important;
   vertical-align: top !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
-  line-height: 1.4 !important;            /* 테이블 셀 내부 줄 높이 */
+  line-height: 1.8 !important;            /* 줄 간격을 넓게 1.8로 설정 */
 }
 th {
   background-color: #f2f2f2 !important;
 }
 td {
-  /* line-height는 위에서 설정한 1.4를 사용 */
+  /* line-height는 위에서 설정한 1.8을 사용 */
 }
 
 /* ===========================================
