@@ -1,5 +1,5 @@
 /* ===========================================
-   blank-style.css (수정된 전체 버전)
+   blank-style.css (글자 수평 정렬을 위해 .answered 수정한 전체 버전)
    =========================================== */
 
 /* 1) 전체 폰트/기본 스타일 */
@@ -22,7 +22,7 @@ body {
   border-radius: 4px !important;             /* 모서리 살짝 둥글게 */
   padding: 0.5em 1em !important;              /* 위아래 0.5em, 좌우 1em 여백 */
   font-size: 1.0em !important;                /* 본문과 같은 크기 */
-  font-weight: normal !important;             /* 일반 글씨 */
+  font-weight: normal !important;            /* 일반 글씨 */
   cursor: pointer !important;                 /* 손가락 모양 커서 */
   text-align: center !important;              /* 텍스트 중앙 정렬 */
   margin: 0 0.25em !important;                /* 버튼 간 간격 */
@@ -113,7 +113,7 @@ body {
   font-weight: normal !important;
   margin: 0 3px !important;
   vertical-align: baseline !important;    /* 주변 인라인 텍스트와 수평 맞춤 */
-  line-height: 1.6 !important;            /* 본문과 동일한 줄 높이 */
+  line-height: inherit !important;        /* 부모(td)의 line-height를 따르도록 조정 */
   position: relative !important;          /* 툴팁 위치 조정용 */
 }
 .answered.correct {
@@ -157,12 +157,13 @@ th, td {
   font-size: 1.0em !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
+  line-height: 1.4 !important;            /* 테이블 셀 내부 줄 높이 */
 }
 th {
   background-color: #f2f2f2 !important;
 }
 td {
-  line-height: 1.4 !important;
+  /* line-height는 위에서 설정한 1.4를 사용 */
 }
 
 /* ===========================================
