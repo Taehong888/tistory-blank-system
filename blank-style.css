@@ -22,7 +22,7 @@ body {
   border-radius: 4px !important;             /* 모서리 살짝 둥글게 */
   padding: 0.5em 1em !important;              /* 위아래 0.5em, 좌우 1em 여백 */
   font-size: 1.0em !important;                /* 본문과 같은 크기 */
-  font-weight: normal !important;            /* 일반 글씨 */
+  font-weight: normal !important;             /* 일반 글씨 */
   cursor: pointer !important;                 /* 손가락 모양 커서 */
   text-align: center !important;              /* 텍스트 중앙 정렬 */
   margin: 0 0.25em !important;                /* 버튼 간 간격 */
@@ -112,7 +112,8 @@ body {
   font-size: 1.0em !important;
   font-weight: normal !important;
   margin: 0 3px !important;
-  vertical-align: middle !important;
+  vertical-align: baseline !important;    /* 주변 인라인 텍스트와 수평 맞춤 */
+  line-height: 1.6 !important;            /* 본문과 동일한 줄 높이 */
   position: relative !important;          /* 툴팁 위치 조정용 */
 }
 .answered.correct {
@@ -185,8 +186,6 @@ body.fill-mode .blank-input {
 /* (d) 빈칸 채우기 모드에서 ‘오답노트’ 버튼 색을 피치 색(#FFB689)으로 변경 */
 body.fill-mode #wrong-note {
   background-color: #FFB689 !important;
-  /* 필요하다면 호버 색 변경:
-     #wrong-note:hover { background-color: 조금 더 진한/연한 색; } */
 }
 
 /* (e) 보기 모드에서 .blank-input 다시 숨기기 */
