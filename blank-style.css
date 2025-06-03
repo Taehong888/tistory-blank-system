@@ -1,11 +1,11 @@
-/* 기본 폰트 및 스타일 */
+/* 기본 스타일 */
 body {
   font-size: 1.0em;
   line-height: 1.8;
   font-family: sans-serif;
 }
 
-/* 공통 버튼 기본 스타일 - 애니메이션 제거, 항상 보이도록 display 고정 */
+/* 버튼 공통 스타일 */
 #fill-toggle,
 #wrong-note,
 #show-all-btn {
@@ -18,56 +18,36 @@ body {
   cursor: pointer !important;
   text-align: center !important;
   margin: 0 0.25em !important;
-  pointer-events: auto !important;
-  opacity: 1 !important;
-  height: auto !important;
-  overflow: visible !important;
-  transition: background-color 0.2s ease !important; /* hover 시 배경색만 부드럽게 */
+  transition: background-color 0.2s ease !important;
+  color: #fff !important;
 }
 
-/* 채우기 모드 버튼 (#fill-toggle) - 초록색 계열 */
+/* 버튼 색상 */
 #fill-toggle {
   background-color: #557a3b !important;
-  color: #ffffff !important;
 }
 #fill-toggle:hover {
   background-color: #6b8c4a !important;
 }
-#fill-toggle:disabled {
-  background-color: #cccccc !important;
-  color: #666666 !important;
-  cursor: not-allowed !important;
-}
-
-/* 오답노트 버튼 (#wrong-note) - 피치 계열 */
 #wrong-note {
   background-color: #FFB689 !important;
-  color: #ffffff !important;
 }
 #wrong-note:hover {
   background-color: #ffca9e !important;
 }
-#wrong-note:disabled {
-  background-color: #cccccc !important;
-  color: #666666 !important;
-  cursor: not-allowed !important;
-}
-
-/* 전체보기 버튼 (#show-all-btn) - 파란색 계열 */
 #show-all-btn {
-  background-color: #1E90FF !important; /* DodgerBlue */
-  color: #ffffff !important;
+  background-color: #1E90FF !important;
 }
 #show-all-btn:hover {
   background-color: #3EA0FF !important;
 }
-#show-all-btn:disabled {
-  background-color: #cccccc !important;
-  color: #666666 !important;
-  cursor: not-allowed !important;
-}
 
 /* 보기 모드에서만 전체보기 버튼 보임 */
+body:not(.fill-mode) #show-all-btn {
+  display: inline-block !important;
+}
+
+/* 채우기 모드에서는 전체보기 버튼 숨김 */
 body.fill-mode #show-all-btn {
   display: none !important;
 }
@@ -77,7 +57,7 @@ body:not(.fill-mode) #wrong-note {
   display: none !important;
 }
 
-/* 빈칸 스타일 */
+/* 빈칸 기본 스타일 */
 .blank {
   display: inline-block !important;
   background-color: #e0f2d8 !important;
@@ -117,7 +97,7 @@ body:not(.fill-mode) #wrong-note {
   color: #333 !important;
 }
 
-/* 채우기 모드 input */
+/* 채우기 모드 input 스타일 */
 .blank-input {
   display: none !important;
   box-sizing: border-box !important;
@@ -135,8 +115,6 @@ body:not(.fill-mode) #wrong-note {
     background-color 0.2s ease-in-out !important;
   line-height: 1.6 !important;
   height: 1.6em !important;
-  min-width: 50px !important;  /* 최소 너비 */
-  min-height: 20px !important; /* 최소 높이 */
 }
 .blank-input:focus {
   border-color: #557a3b !important;
@@ -184,38 +162,18 @@ body:not(.fill-mode) #wrong-note {
   opacity: 1 !important;
 }
 
-/* 전체 보기 정답 텍스트 (박스 없이 초록색) */
-.answered.correct.full-show {
+/* 전체보기 모드에서 답 텍스트 스타일 */
+.full-answer {
   color: #00BD00 !important;
   font-weight: normal !important;
-  font-size: 1.0em !important;
-  vertical-align: baseline !important;
-  margin: 0 3px !important;
-  border: none !important;
-  background: none !important;
-  padding: 0 !important;
+  font-size: 1em !important;
+  margin: 0 3px;
+  padding: 0;
+  border: none;
+  background: none;
+  user-select: text;
   display: inline !important;
+  vertical-align: baseline !important;
   position: static !important;
   line-height: 1.8 !important;
-  user-select: text !important;
-}
-
-/* 표 스타일 */
-th,
-td {
-  border: 1px solid #666 !important;
-  padding: 8px 10px !important;
-  text-align: left !important;
-  vertical-align: middle !important;
-  font-size: 1.0em !important;
-  font-weight: normal !important;
-  font-family: sans-serif !important;
-  line-height: 1.8 !important;
-}
-th {
-  background-color: #f2f2f2 !important;
-  vertical-align: center !important;
-}
-td {
-  /* 줄 높이 1.8 유지 */
 }
