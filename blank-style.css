@@ -5,11 +5,10 @@ body {
   font-family: sans-serif;
 }
 
-/* 버튼 공통 스타일 */
+/* 버튼 공통 스타일 - display 속성 제거 */
 #fill-toggle,
 #wrong-note,
 #show-all-btn {
-  display: inline-block !important;
   border: none !important;
   border-radius: 4px !important;
   padding: 0.5em 1em !important;
@@ -25,7 +24,7 @@ body {
   pointer-events: none;
 }
 
-/* visible 클래스가 붙으면 보임 */
+/* visible 클래스 붙으면 보임 */
 #fill-toggle.visible,
 #wrong-note.visible,
 #show-all-btn.visible {
