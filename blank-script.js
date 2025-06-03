@@ -6,30 +6,28 @@ document.addEventListener('DOMContentLoaded', function() {
   const bodyEl     = document.body;
 
   let showAllOn = false;
-  let answerSpans = []; // 전체 보기용 정답 텍스트 요소 저장
+  let answerSpans = [];
 
   // 전체 보기 버튼 클릭 이벤트
   showAllBtn.addEventListener('click', () => {
     if (!showAllOn) {
-      // 전체 보기 ON
       blanks.forEach(blank => {
-        blank.style.display = 'none'; // 박스 숨김
+        // !important 옵션으로 숨김 처리
+        blank.style.setProperty('display', 'none', 'important');
 
-        // 정답 텍스트 표시 span 생성
         const ansSpan = document.createElement('span');
         ansSpan.textContent = blank.getAttribute('data-answer');
         ansSpan.className = 'answered correct full-show';
         ansSpan.style.margin = '0 3px';
-
         blank.parentNode.insertBefore(ansSpan, blank.nextSibling);
         answerSpans.push(ansSpan);
       });
       showAllBtn.textContent = '전체 숨기기';
       showAllOn = true;
     } else {
-      // 전체 보기 OFF
       blanks.forEach(blank => {
-        blank.style.display = ''; // 박스 복원
+        // !important 옵션으로 다시 보이게 처리
+        blank.style.setProperty('display', 'inline-block', 'important');
       });
       answerSpans.forEach(span => {
         span.remove();
@@ -40,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // .blank 요소별 input, 정답 span 생성
+  // .blank마다 input, 정답 표시 span 생성
   const inputs   = [];
   const answers  = [];
 
@@ -90,9 +88,9 @@ document.addEventListener('DOMContentLoaded', function() {
         span.removeAttribute('data-wrong');
       });
 
-      // 전체 보기 상태 초기화
+      // 전체 보기 상태 초기화 (박스 복원, 정답 텍스트 삭제)
       blanks.forEach(blank => {
-        blank.style.display = '';
+        blank.style.setProperty('display', 'inline-block', 'important');
       });
       answerSpans.forEach(span => {
         span.remove();
@@ -122,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       blanks.forEach(blank => {
-        blank.style.display = 'none';
+        blank.style.setProperty('display', 'none', 'important');
       });
 
       // 전체 보기 상태 초기화
@@ -155,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // 입력란 엔터 이벤트 (채점 + 다음 입력란 포커스)
+  // 입력란 엔터 이벤트
   inputs.forEach(function(input) {
     input.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
