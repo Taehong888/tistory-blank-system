@@ -129,7 +129,7 @@ body {
   position: relative !important;          /* 툴팁 위치 조정용 */
 }
 .answered.correct {
-  color: #74CF76 !important;              /* 정답 글씨 색 (RGB 0,189,0) */
+  color: #5DCB5F !important;              /* 정답 글씨 색 (RGB 0,189,0) */
 }
 .answered.wrong {
   color: #DD0031 !important;              /* 오답 글씨 색 (빨강) */
