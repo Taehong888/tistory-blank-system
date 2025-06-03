@@ -5,13 +5,11 @@ body {
   font-family: sans-serif;
 }
 
-/* 채우기 모드 버튼 (#fill-toggle) - 항상 보이도록 고정 */
-#fill-toggle {
-  opacity: 1 !important;
-  height: 2.5em !important;
-  pointer-events: auto !important;
-  background-color: #557a3b !important;
-  color: #ffffff !important;
+/* 공통 버튼 기본 스타일 - 애니메이션 제거, 항상 보이도록 display 고정 */
+#fill-toggle,
+#wrong-note,
+#show-all-btn {
+  display: inline-block !important;
   border: none !important;
   border-radius: 4px !important;
   padding: 0.5em 1em !important;
@@ -20,7 +18,17 @@ body {
   cursor: pointer !important;
   text-align: center !important;
   margin: 0 0.25em !important;
-  transition: background-color 0.2s ease !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+  transition: background-color 0.2s ease !important; /* hover 시 배경색만 부드럽게 */
+}
+
+/* 채우기 모드 버튼 (#fill-toggle) - 초록색 계열 */
+#fill-toggle {
+  background-color: #557a3b !important;
+  color: #ffffff !important;
 }
 #fill-toggle:hover {
   background-color: #6b8c4a !important;
@@ -31,33 +39,7 @@ body {
   cursor: not-allowed !important;
 }
 
-/* 오답노트, 전체보기 버튼 애니메이션용 기본 숨김 스타일 */
-#wrong-note,
-#show-all-btn {
-  border: none !important;
-  border-radius: 4px !important;
-  padding: 0.5em 1em !important;
-  font-size: 1.0em !important;
-  font-weight: normal !important;
-  cursor: pointer !important;
-  text-align: center !important;
-  margin: 0 0.25em !important;
-  overflow: hidden !important;
-  opacity: 0;
-  height: 0;
-  pointer-events: none;
-  transition: background-color 0.2s ease, opacity 0.4s ease, height 0.4s ease !important;
-}
-
-/* visible 클래스 붙으면 보임 */
-#wrong-note.visible,
-#show-all-btn.visible {
-  opacity: 1;
-  height: 2.5em;
-  pointer-events: auto;
-}
-
-/* 오답노트 버튼 (피치 계열) */
+/* 오답노트 버튼 (#wrong-note) - 피치 계열 */
 #wrong-note {
   background-color: #FFB689 !important;
   color: #ffffff !important;
@@ -71,7 +53,7 @@ body {
   cursor: not-allowed !important;
 }
 
-/* 전체보기 버튼 (파란색 계열) */
+/* 전체보기 버튼 (#show-all-btn) - 파란색 계열 */
 #show-all-btn {
   background-color: #1E90FF !important; /* DodgerBlue */
   color: #ffffff !important;
