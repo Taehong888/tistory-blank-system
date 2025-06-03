@@ -5,8 +5,33 @@ body {
   font-family: sans-serif;
 }
 
-/* 버튼 공통 스타일 - display 속성 제거 */
-#fill-toggle,
+/* 채우기 모드 버튼 (#fill-toggle) - 항상 보이도록 고정 */
+#fill-toggle {
+  opacity: 1 !important;
+  height: 2.5em !important;
+  pointer-events: auto !important;
+  background-color: #557a3b !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 0.5em 1em !important;
+  font-size: 1.0em !important;
+  font-weight: normal !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  margin: 0 0.25em !important;
+  transition: background-color 0.2s ease !important;
+}
+#fill-toggle:hover {
+  background-color: #6b8c4a !important;
+}
+#fill-toggle:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
+}
+
+/* 오답노트, 전체보기 버튼 애니메이션용 기본 숨김 스타일 */
 #wrong-note,
 #show-all-btn {
   border: none !important;
@@ -17,34 +42,19 @@ body {
   cursor: pointer !important;
   text-align: center !important;
   margin: 0 0.25em !important;
-  transition: background-color 0.2s ease, opacity 0.4s ease, height 0.4s ease !important;
   overflow: hidden !important;
   opacity: 0;
   height: 0;
   pointer-events: none;
+  transition: background-color 0.2s ease, opacity 0.4s ease, height 0.4s ease !important;
 }
 
 /* visible 클래스 붙으면 보임 */
-#fill-toggle.visible,
 #wrong-note.visible,
 #show-all-btn.visible {
   opacity: 1;
-  height: 2.5em; /* 버튼 높이에 맞게 조절 */
+  height: 2.5em;
   pointer-events: auto;
-}
-
-/* fill-toggle 버튼 (초록색 계열) */
-#fill-toggle {
-  background-color: #557a3b !important;
-  color: #ffffff !important;
-}
-#fill-toggle:hover {
-  background-color: #6b8c4a !important;
-}
-#fill-toggle:disabled {
-  background-color: #cccccc !important;
-  color: #666666 !important;
-  cursor: not-allowed !important;
 }
 
 /* 오답노트 버튼 (피치 계열) */
