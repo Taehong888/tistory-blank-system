@@ -1,42 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const blanks   = document.querySelectorAll('.blank');
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
   const showAllBtn = document.getElementById('show-all-btn');
   const bodyEl     = document.body;
 
-  let showAllOn = false;
-  let answerSpans = [];
-
-  showAllBtn.addEventListener('click', () => {
-    if (!showAllOn) {
-      blanks.forEach(blank => {
-        blank.style.setProperty('display', 'none', 'important');
-
-        const ansSpan = document.createElement('span');
-        ansSpan.textContent = blank.getAttribute('data-answer');
-        ansSpan.className = 'answered correct full-show';
-        ansSpan.style.margin = '0 3px';
-        blank.parentNode.insertBefore(ansSpan, blank.nextSibling);
-        answerSpans.push(ansSpan);
-      });
-      showAllBtn.textContent = '전체 숨기기';
-      showAllOn = true;
-    } else {
-      blanks.forEach(blank => {
-        blank.style.setProperty('display', 'inline-block', 'important');
-      });
-      answerSpans.forEach(span => {
-        span.remove();
-      });
-      answerSpans = [];
-      showAllBtn.textContent = '전체 보기';
-      showAllOn = false;
-    }
-  });
-
+  const blanks   = document.querySelectorAll('.blank');
   const inputs   = [];
   const answers  = [];
+
+  let fullShown = false;
 
   blanks.forEach(function(blank) {
     const inputEl = document.createElement('input');
@@ -57,95 +29,87 @@ document.addEventListener('DOMContentLoaded', function() {
     answers.push(spanEl);
   });
 
-  // 페이지 로드 시 한 번 input 크기 설정
-  inputs.forEach(function(input, idx) {
-    const blankEl = blanks[idx];
-    if (blankEl) {
-      const bw = blankEl.offsetWidth || 50;
-      const bh = blankEl.offsetHeight || 20;
-      input.style.width = bw + 'px';
-      input.style.height = bh + 'px';
+  function resetInputSizes() {
+    inputs.forEach(function(input, idx) {
+      const blankEl = blanks[idx];
+      if (blankEl) {
+        let bw = blankEl.offsetWidth;
+        let bh = blankEl.offsetHeight;
+        if (bw === 0) bw = 50;
+        if (bh === 0) bh = 20;
+        input.style.width  = bw + 'px';
+        input.style.height = bh + 'px';
+      }
+    });
+  }
+  resetInputSizes();
+
+  showAllBtn.addEventListener('click', function() {
+    if (!fullShown) {
+      blanks.forEach(function(blank, idx) {
+        blank.style.setProperty('display', 'none', 'important');
+        answers[idx].textContent = blank.getAttribute('data-answer');
+        answers[idx].classList.add('full-answer');
+        answers[idx].style.setProperty('display', 'inline-block', 'important');
+      });
+      inputs.forEach(input => input.style.setProperty('display', 'none', 'important'));
+      showAllBtn.textContent = '전체 숨기기';
+      fullShown = true;
+    } else {
+      blanks.forEach(function(blank, idx) {
+        blank.style.setProperty('display', 'inline-block', 'important');
+        answers[idx].textContent = '';
+        answers[idx].classList.remove('full-answer');
+        answers[idx].style.setProperty('display', 'none', 'important');
+      });
+      showAllBtn.textContent = '전체 보기';
+      fullShown = false;
     }
   });
 
   toggleBtn.addEventListener('click', function() {
     if (bodyEl.classList.contains('fill-mode')) {
-      // 채우기 모드 → 보기 모드 전환
+      // 채우기 모드 → 보기 모드
       bodyEl.classList.remove('fill-mode');
       toggleBtn.textContent = '빈칸 채우기 모드';
 
-      inputs.forEach(input => {
+      inputs.forEach(function(input) {
         input.value = '';
         input.style.setProperty('display', 'none', 'important');
       });
-
-      answers.forEach(span => {
+      answers.forEach(function(span) {
         span.textContent = '';
         span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('correct', 'wrong');
+        span.classList.remove('correct', 'wrong', 'full-answer');
         span.removeAttribute('data-wrong');
       });
+      blanks.forEach(blank => blank.style.setProperty('display', 'inline-block', 'important'));
 
-      blanks.forEach(blank => {
-        blank.style.setProperty('display', 'inline-block', 'important');
-      });
-      answerSpans.forEach(span => {
-        span.remove();
-      });
-      answerSpans = [];
+      fullShown = false;
       showAllBtn.textContent = '전체 보기';
-      showAllOn = false;
-
-      // 버튼 표시 상태 업데이트
-      showAllBtn.classList.add('visible');
-      wrongBtn.classList.remove('visible');
 
     } else {
-      // 보기 모드 → 채우기 모드 전환
+      // 보기 모드 → 채우기 모드
       bodyEl.classList.add('fill-mode');
       toggleBtn.textContent = '보기 모드';
 
-      answers.forEach(span => {
+      answers.forEach(function(span) {
         span.textContent = '';
         span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('correct', 'wrong');
+        span.classList.remove('correct', 'wrong', 'full-answer');
         span.removeAttribute('data-wrong');
       });
-
-      inputs.forEach(input => {
+      inputs.forEach(function(input) {
         input.style.removeProperty('display');
       });
-
-      // 채우기 모드 진입 시 입력란 크기 재설정 (추가된 부분)
-      inputs.forEach(function(input, idx) {
-        const blankEl = blanks[idx];
-        if (blankEl) {
-          const bw = blankEl.offsetWidth || 50;
-          const bh = blankEl.offsetHeight || 20;
-          input.style.width = bw + 'px';
-          input.style.height = bh + 'px';
-        }
-      });
-
       if (inputs.length > 0) {
         inputs[0].style.setProperty('display', 'inline-block', 'important');
         inputs[0].focus();
       }
+      blanks.forEach(blank => blank.style.setProperty('display', 'none', 'important'));
 
-      blanks.forEach(blank => {
-        blank.style.setProperty('display', 'none', 'important');
-      });
-
-      answerSpans.forEach(span => {
-        span.remove();
-      });
-      answerSpans = [];
+      fullShown = false;
       showAllBtn.textContent = '전체 보기';
-      showAllOn = false;
-
-      // 버튼 표시 상태 업데이트
-      showAllBtn.classList.remove('visible');
-      wrongBtn.classList.add('visible');
     }
   });
 
@@ -212,12 +176,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // 초기 버튼 상태
+  // 초기 버튼 상태 세팅
   if (!bodyEl.classList.contains('fill-mode')) {
-    showAllBtn.classList.add('visible');
-    wrongBtn.classList.remove('visible');
+    showAllBtn.style.display = 'inline-block';
+    wrongBtn.style.display = 'none';
   } else {
-    showAllBtn.classList.remove('visible');
-    wrongBtn.classList.add('visible');
+    showAllBtn.style.display = 'none';
+    wrongBtn.style.display = 'inline-block';
   }
 });
