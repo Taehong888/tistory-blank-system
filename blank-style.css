@@ -196,3 +196,23 @@ body:not(.fill-mode) .blank-input {
   line-height: 1.8 !important;
   user-select: text !important;
 }
+/* 빈칸 채우기 모드에서 전체 보기 버튼 숨김 */
+body.fill-mode #show-all-btn {
+  display: none !important;
+}
+
+/* 전체 보기 시 박스 없이 초록 정답 텍스트 스타일 */
+.answered.correct.full-show {
+  color: #00BD00 !important;
+  font-weight: normal !important;
+  font-size: 1.0em !important;
+  vertical-align: baseline !important;
+  margin: 0 3px !important;
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+  display: inline !important;
+  position: static !important;
+  line-height: 1.8 !important;
+  user-select: text !important;
+}
