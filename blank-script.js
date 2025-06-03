@@ -3,6 +3,42 @@ document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
   const bodyEl     = document.body;
+  const showAllBtn = document.getElementById('show-all-btn');
+let showAllOn = false;
+
+showAllBtn.addEventListener('click', () => {
+  if (!showAllOn) {
+    // 전체 정답 보여주기
+    blanks.forEach(blank => {
+      blank.textContent = blank.getAttribute('data-answer');
+      blank.style.color = '#333';  // 텍스트 보이게
+    });
+    showAllBtn.textContent = '전체 숨기기';
+    showAllOn = true;
+  } else {
+    // 전체 정답 숨기기
+    blanks.forEach(blank => {
+      blank.textContent = '';
+      blank.style.color = 'transparent';
+    });
+    showAllBtn.textContent = '전체 보기';
+    showAllOn = false;
+  }
+});
+
+// ‘빈칸 채우기 모드’ 토글 시 전체 보기 상태 초기화
+toggleBtn.addEventListener('click', () => {
+  if (bodyEl.classList.contains('fill-mode')) {
+    // 채우기 모드 진입 시
+    blanks.forEach(blank => {
+      blank.textContent = '';
+      blank.style.color = 'transparent';
+    });
+    showAllBtn.textContent = '전체 보기';
+    showAllOn = false;
+  }
+});
+
 
   // .blank 요소들을 찾아서 inputs 배열과 answers 배열에 대응 요소 생성
   const blanks   = document.querySelectorAll('.blank');
