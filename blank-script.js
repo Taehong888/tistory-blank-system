@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let showAllOn = false;
   let answerSpans = [];
 
+  // 전체 보기 버튼 클릭 이벤트 (클래스 토글 대신 display 스타일로 애니메이션과 호환)
   showAllBtn.addEventListener('click', () => {
     if (!showAllOn) {
       blanks.forEach(blank => {
@@ -92,8 +93,9 @@ document.addEventListener('DOMContentLoaded', function() {
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
 
-      // 전체 보기 버튼 보이기 (중요)
-      showAllBtn.style.setProperty('display', 'inline-block', 'important');
+      // 전체보기 버튼 보이기 (애니메이션 적용)
+      showAllBtn.classList.add('visible');
+      wrongBtn.classList.remove('visible');
 
     } else {
       bodyEl.classList.add('fill-mode');
@@ -126,8 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
 
-      // 전체 보기 버튼 숨기기 (중요)
-      showAllBtn.style.setProperty('display', 'none', 'important');
+      // 전체보기 버튼 숨기기 (애니메이션 적용)
+      showAllBtn.classList.remove('visible');
+      wrongBtn.classList.add('visible');
     }
   });
 
@@ -193,4 +196,13 @@ document.addEventListener('DOMContentLoaded', function() {
       answerSpan.removeAttribute('data-wrong');
     });
   });
+
+  // 초기 버튼 상태 (보기 모드에서 전체보기 버튼 보이게)
+  if (!bodyEl.classList.contains('fill-mode')) {
+    showAllBtn.classList.add('visible');
+    wrongBtn.classList.remove('visible');
+  } else {
+    showAllBtn.classList.remove('visible');
+    wrongBtn.classList.add('visible');
+  }
 });
