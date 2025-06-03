@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
   let showAllOn = false;
   let answerSpans = [];
 
-  // 전체 보기 버튼 클릭 이벤트
   showAllBtn.addEventListener('click', () => {
     if (!showAllOn) {
       blanks.forEach(blank => {
@@ -58,16 +57,20 @@ document.addEventListener('DOMContentLoaded', function() {
     answers.push(spanEl);
   });
 
+  // 페이지 로드 시 한 번 input 크기 설정
   inputs.forEach(function(input, idx) {
     const blankEl = blanks[idx];
     if (blankEl) {
-      input.style.width  = blankEl.offsetWidth + 'px';
-      input.style.height = blankEl.offsetHeight + 'px';
+      const bw = blankEl.offsetWidth || 50;
+      const bh = blankEl.offsetHeight || 20;
+      input.style.width = bw + 'px';
+      input.style.height = bh + 'px';
     }
   });
 
   toggleBtn.addEventListener('click', function() {
     if (bodyEl.classList.contains('fill-mode')) {
+      // 채우기 모드 → 보기 모드 전환
       bodyEl.classList.remove('fill-mode');
       toggleBtn.textContent = '빈칸 채우기 모드';
 
@@ -93,11 +96,12 @@ document.addEventListener('DOMContentLoaded', function() {
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
 
-      // 전체보기 버튼 보이기
+      // 버튼 표시 상태 업데이트
       showAllBtn.classList.add('visible');
       wrongBtn.classList.remove('visible');
 
     } else {
+      // 보기 모드 → 채우기 모드 전환
       bodyEl.classList.add('fill-mode');
       toggleBtn.textContent = '보기 모드';
 
@@ -110,6 +114,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
       inputs.forEach(input => {
         input.style.removeProperty('display');
+      });
+
+      // 채우기 모드 진입 시 입력란 크기 재설정 (추가된 부분)
+      inputs.forEach(function(input, idx) {
+        const blankEl = blanks[idx];
+        if (blankEl) {
+          const bw = blankEl.offsetWidth || 50;
+          const bh = blankEl.offsetHeight || 20;
+          input.style.width = bw + 'px';
+          input.style.height = bh + 'px';
+        }
       });
 
       if (inputs.length > 0) {
@@ -128,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
 
-      // 전체보기 버튼 숨기기
+      // 버튼 표시 상태 업데이트
       showAllBtn.classList.remove('visible');
       wrongBtn.classList.add('visible');
     }
