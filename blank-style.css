@@ -1,21 +1,15 @@
-/* ===========================================
-   blank-style.css (보기 모드의 .blank 높이를 채우기 모드와 동일하게 고정)
-   =========================================== */
-
-/* 1) 전체 폰트/기본 스타일 */
+/* 기본 폰트 및 스타일 */
 body {
-  font-size: 1.0em;         
-  line-height: 1.8;         
-  font-family: sans-serif;  
+  font-size: 1.0em;
+  line-height: 1.8;
+  font-family: sans-serif;
 }
 
-/* 2) 빈칸 채우기 모드 버튼 스타일 */
+/* 버튼 공통 스타일 */
 #fill-toggle,
 #wrong-note,
 #show-all-btn {
   display: inline-block !important;
-  background-color: #557a3b !important;
-  color: #ffffff !important;
   border: none !important;
   border-radius: 4px !important;
   padding: 0.5em 1em !important;
@@ -24,22 +18,75 @@ body {
   cursor: pointer !important;
   text-align: center !important;
   margin: 0 0.25em !important;
-  transition: background-color 0.2s ease !important;
+  transition: background-color 0.2s ease, opacity 0.4s ease, height 0.4s ease !important;
+  overflow: hidden !important;
+  opacity: 0;
+  height: 0;
+  pointer-events: none;
 }
-#fill-toggle:hover,
-#wrong-note:hover,
-#show-all-btn:hover {
+
+/* visible 클래스가 붙으면 보임 */
+#fill-toggle.visible,
+#wrong-note.visible,
+#show-all-btn.visible {
+  opacity: 1;
+  height: 2.5em; /* 버튼 높이에 맞게 조절 */
+  pointer-events: auto;
+}
+
+/* fill-toggle 버튼 (초록색 계열) */
+#fill-toggle {
+  background-color: #557a3b !important;
+  color: #ffffff !important;
+}
+#fill-toggle:hover {
   background-color: #6b8c4a !important;
 }
-#fill-toggle:disabled,
-#wrong-note:disabled,
+#fill-toggle:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
+}
+
+/* 오답노트 버튼 (피치 계열) */
+#wrong-note {
+  background-color: #FFB689 !important;
+  color: #ffffff !important;
+}
+#wrong-note:hover {
+  background-color: #ffca9e !important;
+}
+#wrong-note:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
+}
+
+/* 전체보기 버튼 (파란색 계열) */
+#show-all-btn {
+  background-color: #1E90FF !important; /* DodgerBlue */
+  color: #ffffff !important;
+}
+#show-all-btn:hover {
+  background-color: #3EA0FF !important;
+}
 #show-all-btn:disabled {
   background-color: #cccccc !important;
   color: #666666 !important;
   cursor: not-allowed !important;
 }
 
-/* 3) 보기 모드(empty blank) 스타일 */
+/* 보기 모드에서만 전체보기 버튼 보임 */
+body.fill-mode #show-all-btn {
+  display: none !important;
+}
+
+/* 보기 모드에서만 오답노트 버튼 보임 */
+body:not(.fill-mode) #wrong-note {
+  display: none !important;
+}
+
+/* 빈칸 스타일 */
 .blank {
   display: inline-block !important;
   background-color: #e0f2d8 !important;
@@ -79,7 +126,7 @@ body {
   color: #333 !important;
 }
 
-/* 4) 채우기 모드(input blank) 스타일 */
+/* 채우기 모드 input */
 .blank-input {
   display: none !important;
   box-sizing: border-box !important;
@@ -103,7 +150,7 @@ body {
   background-color: #f9f9f9 !important;
 }
 
-/* 5) 채점 후 정답/오답 텍스트 스타일 */
+/* 채점 후 정답/오답 텍스트 */
 .answered {
   display: inline-block !important;
   font-size: 1.0em !important;
@@ -114,7 +161,7 @@ body {
   position: relative !important;
 }
 .answered.correct {
-  color: #00BD00 !important; /* 초록색 */
+  color: #00BD00 !important;
 }
 .answered.wrong {
   color: #dc3545 !important;
@@ -144,7 +191,23 @@ body {
   opacity: 1 !important;
 }
 
-/* 6) 표(th, td) 공통 스타일 */
+/* 전체 보기 정답 텍스트 (박스 없이 초록색) */
+.answered.correct.full-show {
+  color: #00BD00 !important;
+  font-weight: normal !important;
+  font-size: 1.0em !important;
+  vertical-align: baseline !important;
+  margin: 0 3px !important;
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+  display: inline !important;
+  position: static !important;
+  line-height: 1.8 !important;
+  user-select: text !important;
+}
+
+/* 표 스타일 */
 th,
 td {
   border: 1px solid #666 !important;
@@ -162,57 +225,4 @@ th {
 }
 td {
   /* 줄 높이 1.8 유지 */
-}
-
-/* 7) 빈칸 채우기 모드 관련 추가 CSS */
-body:not(.fill-mode) #wrong-note {
-  display: none !important;
-}
-body.fill-mode .blank {
-  display: none !important;
-}
-body.fill-mode .blank-input {
-  display: inline-block !important;
-}
-body.fill-mode #wrong-note {
-  background-color: #FFB689 !important;
-}
-body:not(.fill-mode) .blank-input {
-  display: none !important;
-}
-
-/* 8) 전체 보기용 정답 텍스트 스타일 (박스 없이 깔끔하게) */
-.answered.correct.full-show {
-  color: #00BD00 !important;
-  font-weight: normal !important;
-  font-size: 1.0em !important;
-  vertical-align: baseline !important;
-  margin: 0 3px !important;
-  border: none !important;
-  background: none !important;
-  padding: 0 !important;
-  display: inline !important;
-  position: static !important;
-  line-height: 1.8 !important;
-  user-select: text !important;
-}
-/* 빈칸 채우기 모드에서 전체 보기 버튼 숨김 */
-body.fill-mode #show-all-btn {
-  display: none !important;
-}
-
-/* 전체 보기 시 박스 없이 초록 정답 텍스트 스타일 */
-.answered.correct.full-show {
-  color: #00BD00 !important;
-  font-weight: normal !important;
-  font-size: 1.0em !important;
-  vertical-align: baseline !important;
-  margin: 0 3px !important;
-  border: none !important;
-  background: none !important;
-  padding: 0 !important;
-  display: inline !important;
-  position: static !important;
-  line-height: 1.8 !important;
-  user-select: text !important;
 }
