@@ -8,11 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let showAllOn = false;
   let answerSpans = [];
 
-  // 전체 보기 버튼 클릭 이벤트
   showAllBtn.addEventListener('click', () => {
     if (!showAllOn) {
       blanks.forEach(blank => {
-        // !important 옵션으로 숨김 처리
         blank.style.setProperty('display', 'none', 'important');
 
         const ansSpan = document.createElement('span');
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
       showAllOn = true;
     } else {
       blanks.forEach(blank => {
-        // !important 옵션으로 다시 보이게 처리
         blank.style.setProperty('display', 'inline-block', 'important');
       });
       answerSpans.forEach(span => {
@@ -38,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // .blank마다 input, 정답 표시 span 생성
   const inputs   = [];
   const answers  = [];
 
@@ -61,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
     answers.push(spanEl);
   });
 
-  // 입력창 크기 맞춤
   inputs.forEach(function(input, idx) {
     const blankEl = blanks[idx];
     if (blankEl) {
@@ -70,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // 빈칸 채우기 모드 버튼 토글
   toggleBtn.addEventListener('click', function() {
     if (bodyEl.classList.contains('fill-mode')) {
       bodyEl.classList.remove('fill-mode');
@@ -88,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
         span.removeAttribute('data-wrong');
       });
 
-      // 전체 보기 상태 초기화 (박스 복원, 정답 텍스트 삭제)
       blanks.forEach(blank => {
         blank.style.setProperty('display', 'inline-block', 'important');
       });
@@ -98,6 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
       answerSpans = [];
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
+
+      // 전체 보기 버튼 보이기 (중요)
+      showAllBtn.style.setProperty('display', 'inline-block', 'important');
 
     } else {
       bodyEl.classList.add('fill-mode');
@@ -123,17 +119,18 @@ document.addEventListener('DOMContentLoaded', function() {
         blank.style.setProperty('display', 'none', 'important');
       });
 
-      // 전체 보기 상태 초기화
       answerSpans.forEach(span => {
         span.remove();
       });
       answerSpans = [];
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
+
+      // 전체 보기 버튼 숨기기 (중요)
+      showAllBtn.style.setProperty('display', 'none', 'important');
     }
   });
 
-  // 오답노트 버튼 클릭
   wrongBtn.addEventListener('click', function() {
     if (!bodyEl.classList.contains('fill-mode')) {
       bodyEl.classList.add('fill-mode');
@@ -153,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // 입력란 엔터 이벤트
   inputs.forEach(function(input) {
     input.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
