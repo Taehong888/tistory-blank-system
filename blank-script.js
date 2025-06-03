@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
 
-      // 버튼 가시성 업데이트
+      // 전체보기 버튼 보이기
       showAllBtn.classList.add('visible');
       wrongBtn.classList.remove('visible');
 
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
       showAllBtn.textContent = '전체 보기';
       showAllOn = false;
 
-      // 버튼 가시성 업데이트
+      // 전체보기 버튼 숨기기
       showAllBtn.classList.remove('visible');
       wrongBtn.classList.add('visible');
     }
