@@ -135,6 +135,8 @@ body:not(.fill-mode) #wrong-note {
     background-color 0.2s ease-in-out !important;
   line-height: 1.6 !important;
   height: 1.6em !important;
+  min-width: 50px !important;  /* 최소 너비 */
+  min-height: 20px !important; /* 최소 높이 */
 }
 .blank-input:focus {
   border-color: #557a3b !important;
