@@ -4,7 +4,7 @@
 
 /* 1) 전체 폰트/기본 스타일 */
 body {
-  font-size: 0.9em;         /* 전체 텍스트 크기 기준 1.0em */
+  font-size: 0.5em;         /* 전체 텍스트 크기 기준 1.0em */
   line-height: 1.8;         /* 전체 줄 간격을 1.8로 넉넉히 설정 */
   font-family: sans-serif;  /* 기본 폰트 설정 */
 }
