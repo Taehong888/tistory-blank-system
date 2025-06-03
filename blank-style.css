@@ -167,7 +167,7 @@ td {
   border: 1px solid #666 !important;
   padding: 8px 10px !important;           /* 셀 내부 여백 */
   text-align: left !important;
-  vertical-align: middle !important;
+  vertical-align: center !important;
   font-size: 1.0em !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
@@ -175,7 +175,7 @@ td {
 }
 th {
   background-color: #f2f2f2 !important;
-  vertical-align: middle !important;
+  vertical-align: center !important;
 }
 td {
   /* 줄 높이 1.8 유지 */
