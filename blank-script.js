@@ -142,7 +142,7 @@ function createLabelAndCheckbox() {
   const toggleDiv = document.createElement('div');
   toggleDiv.id = 'blank-toggle-box';
   toggleDiv.style.display = 'inline-block';
-  toggleDiv.style.backgroundColor = '#557a3b';
+  toggleDiv.style.backgroundColor = '#6DEF4D';
   toggleDiv.style.color = '#ffffff';
   toggleDiv.style.fontWeight = 'bold';
   toggleDiv.style.padding = '10px 20px';
@@ -156,21 +156,22 @@ function createLabelAndCheckbox() {
   const clearDiv = document.createElement('div');
   clearDiv.id = 'blank-clear-box';
   clearDiv.style.display = 'none';       // 최초엔 숨김
-  clearDiv.style.backgroundColor = '#f0f0f0';
-  clearDiv.style.color = '#333333';
-  clearDiv.style.padding = '8px 16px';
-  clearDiv.style.borderRadius = '4px';
-  clearDiv.style.cursor = 'pointer';
-  clearDiv.style.userSelect = 'none';
-  clearDiv.style.marginBottom = '10px';
+  toggleDiv.style.backgroundColor = '#4D8EEF';
+  toggleDiv.style.color = '#ffffff';
+  toggleDiv.style.fontWeight = 'bold';
+  toggleDiv.style.padding = '10px 20px';
+  toggleDiv.style.borderRadius = '6px';
+  toggleDiv.style.cursor = 'pointer';
+  toggleDiv.style.userSelect = 'none';
+  toggleDiv.style.marginBottom = '10px';
   clearDiv.textContent = '빈칸 초기화';
   clearDiv.addEventListener('click', clearBlank);
 
-  // 3) “정답 보기 박스” (초기 숨김)
+  // 3) “정답 보기 박스” 
   const answerDiv = document.createElement('div');
   answerDiv.id = 'blank-answer-box';
-  answerDiv.style.display = 'none';      // 최초엔 숨김
-  answerDiv.style.backgroundColor = '#f0f0f0';
+  answerDiv.style.display = 'inline-block';      // 
+  answerDiv.style.backgroundColor = '#4D8EEF';
   answerDiv.style.color = '#333333';
   answerDiv.style.padding = '8px 16px';
   answerDiv.style.borderRadius = '4px';
