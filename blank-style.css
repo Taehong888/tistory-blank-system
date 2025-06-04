@@ -16,7 +16,7 @@ body {
 #fill-toggle,
 #wrong-note {
   display: inline-block !important;
-  background-color: #557a3b !important;
+  background-color: #557a3b !important; /* 기본 색상 */
   color: #ffffff !important;
   border: none !important;
   border-radius: 4px !important;
@@ -27,6 +27,18 @@ body {
   text-align: center !important;
   margin: 0 0.25em !important;
   transition: background-color 0.2s ease !important;
+}
+
+/* 오답노트 버튼 호버 시 색상 변화 */
+#wrong-note:hover {
+  background-color: #6b8c4a !important; /* 호버 시 색상 */
+}
+
+/* 오답노트 버튼 비활성화 상태 */
+#wrong-note:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
 }
 /* B) 버튼 호버 시 연한 초록으로 변화 */
 #fill-toggle:hover,
