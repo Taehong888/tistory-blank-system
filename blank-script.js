@@ -31,8 +31,8 @@ function enableScript(blanks) {
     input.dataset.originalAnswer = blank.textContent;
     input.size = answer.length * 1.2;
 
-    // 본문 입력란 폰트 크기 0.9em으로 고정
-    input.style.fontSize = '0.9em';
+    // 본문 입력란 폰트 크기 본문과 동일 (상속)
+    input.style.fontSize = 'inherit';
 
     if (isPlaceholder) {
       input.placeholder = placeholder;
@@ -49,13 +49,13 @@ function enableScript(blanks) {
         const userAnswer = normalizeText(input.value.trim());
         const span = document.createElement('span');
 
-        // 정답/오답 텍스트 폰트 크기 0.9em으로 고정
-        span.style.fontSize = '0.9em';
+        // 정답/오답 텍스트 폰트 크기 본문과 동일
+        span.style.fontSize = 'inherit';
 
         if (userAnswer === input.dataset.answer) {
           span.classList.add('fillNode', 'correct');
           // 빈칸 채우기 모드의 정답 색과 동일
-          span.style.color = '#5DCB5F'; 
+          span.style.color = '#5DCB5F';
           span.textContent = input.dataset.originalAnswer;
           span.dataset.originalAnswer = input.dataset.originalAnswer;
         } else {
@@ -111,7 +111,7 @@ function findAnswer() {
   document.querySelectorAll('.blank').forEach(blankEl => {
     const answerText = blankEl.getAttribute('data-answer');
     const span = document.createElement('span');
-    span.style.fontSize = '0.9em';
+    span.style.fontSize = 'inherit';
     span.classList.add('fillNode', 'correct');
     // 빈칸 채우기 모드의 정답 색과 동일
     span.style.color = '#5DCB5F';
@@ -121,7 +121,7 @@ function findAnswer() {
 
   document.querySelectorAll('input.fillNode').forEach(input => {
     const span = document.createElement('span');
-    span.style.fontSize = '0.9em';
+    span.style.fontSize = 'inherit';
     span.classList.add('fillNode', 'correct');
     span.style.color = '#5DCB5F';
     span.textContent = input.dataset.originalAnswer;
@@ -130,16 +130,17 @@ function findAnswer() {
 }
 
 function disableScript() {
-  const inputs = document.querySelectorAll('.fillNode');
-
-  inputs.forEach(input => {
-    const span = document.createElement('span');
-    span.style.fontSize = '0.9em';
-    span.classList.remove('correct');
-    span.classList.remove('incorrect');
-    span.classList.add('blank', 'fillNode');
-    span.textContent = input.dataset.originalAnswer;
-    input.replaceWith(span);
+  // “보기 모드”로 돌아갈 때, 빈칸 채우기 모드로 변형된 모든 요소(input/span) → 원래 blank 형태로 복원
+  const fillNodes = document.querySelectorAll('.fillNode');
+  fillNodes.forEach(node => {
+    const original = node.dataset.originalAnswer;
+    const blankSpan = document.createElement('span');
+    blankSpan.classList.add('blank');
+    blankSpan.setAttribute('data-answer', original);
+    // 폰트 크기 본문과 동일, 초기 텍스트는 숨김(데이터만 보관)
+    blankSpan.style.fontSize = 'inherit';
+    blankSpan.textContent = ''; // 실제 보이는 글씨는 CSS hover로 처리
+    node.replaceWith(blankSpan);
   });
 }
 
@@ -163,7 +164,7 @@ function createLabelAndCheckbox() {
   toggleBtn.style.backgroundColor = '#557a3b';   // 짙은 초록
   toggleBtn.style.color = '#ffffff';
   toggleBtn.style.fontWeight = 'bold';
-  toggleBtn.style.fontSize = '0.9em';
+  toggleBtn.style.fontSize = 'inherit';          // 본문과 동일
   toggleBtn.style.padding = '10px 20px';
   toggleBtn.style.borderRadius = '6px';
   toggleBtn.style.cursor = 'pointer';
@@ -178,7 +179,7 @@ function createLabelAndCheckbox() {
   answerBtn.style.backgroundColor = '#d35400';    // 주황색
   answerBtn.style.color = '#ffffff';
   answerBtn.style.fontWeight = 'bold';
-  answerBtn.style.fontSize = '0.9em';
+  answerBtn.style.fontSize = 'inherit';          // 본문과 동일
   answerBtn.style.padding = '10px 20px';
   answerBtn.style.borderRadius = '6px';
   answerBtn.style.cursor = 'pointer';
@@ -194,7 +195,7 @@ function createLabelAndCheckbox() {
   clearBtn.style.backgroundColor = '#4a90e2';     // 파란색
   clearBtn.style.color = '#ffffff';
   clearBtn.style.fontWeight = 'bold';
-  clearBtn.style.fontSize = '0.9em';
+  clearBtn.style.fontSize = 'inherit';           // 본문과 동일
   clearBtn.style.padding = '10px 20px';
   clearBtn.style.borderRadius = '6px';
   clearBtn.style.cursor = 'pointer';
