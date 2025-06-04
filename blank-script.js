@@ -31,7 +31,7 @@ function enableScript(blanks) {
     input.dataset.originalAnswer = blank.textContent;
     input.size = answer.length * 1.2;
 
-    // 본문 입력란 폰트 크기 본문과 동일 (상속)
+    // 본문 입력란 폰트 크기 본문과 동일 (inherit)
     input.style.fontSize = 'inherit';
 
     if (isPlaceholder) {
@@ -107,7 +107,7 @@ function enableScript(blanks) {
 }
 
 function findAnswer() {
-  // “보기 모드” 또는 “빈칸 채우기 모드” 상관없이 모든 .blank(스팬)과 입력란을 정답으로 교체
+  // 모든 .blank(스팬)과 input.fillNode을 정답으로 교체
   document.querySelectorAll('.blank').forEach(blankEl => {
     const answerText = blankEl.getAttribute('data-answer');
     const span = document.createElement('span');
@@ -130,16 +130,15 @@ function findAnswer() {
 }
 
 function disableScript() {
-  // “보기 모드”로 돌아갈 때, 빈칸 채우기 모드로 변형된 모든 요소(input/span) → 원래 blank 형태로 복원
+  // “보기 모드”로 돌아갈 때, 모든 fillNode → .blank 형태로 복원
   const fillNodes = document.querySelectorAll('.fillNode');
   fillNodes.forEach(node => {
     const original = node.dataset.originalAnswer;
     const blankSpan = document.createElement('span');
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
-    // 폰트 크기 본문과 동일, 초기 텍스트는 숨김(데이터만 보관)
     blankSpan.style.fontSize = 'inherit';
-    blankSpan.textContent = ''; // 실제 보이는 글씨는 CSS hover로 처리
+    blankSpan.textContent = ''; // 실제 텍스트는 CSS hover로 처리
     node.replaceWith(blankSpan);
   });
 }
@@ -155,9 +154,10 @@ function clearBlank() {
 // ====================================================================
 function createLabelAndCheckbox() {
   const entryContent = document.getElementsByClassName("entry-content")[0];
-  let boxChecked = false;  // “채우기 모드 활성화 여부” 상태 저장
+  let fillMode = false;      // “빈칸 채우기 모드” 상태
+  let answerMode = false;    // “정답 보기” 상태
 
-  // 1) “토글 버튼” (초기: 빈칸 채우기 모드 상태)
+  // 1) “토글 버튼” (초기: 빈칸 채우기 모드 진입용)
   const toggleBtn = document.createElement('div');
   toggleBtn.id = 'blank-toggle-btn';
   toggleBtn.style.display = 'inline-block';
@@ -186,7 +186,6 @@ function createLabelAndCheckbox() {
   answerBtn.style.userSelect = 'none';
   answerBtn.style.marginRight = '10px';
   answerBtn.textContent = '정답 보기';
-  answerBtn.addEventListener('click', findAnswer);
 
   // 3) “빈칸 초기화 버튼” (초기: 숨김, 버튼 스타일)
   const clearBtn = document.createElement('div');
@@ -202,7 +201,6 @@ function createLabelAndCheckbox() {
   clearBtn.style.userSelect = 'none';
   clearBtn.style.marginRight = '10px';
   clearBtn.textContent = '빈칸 초기화';
-  clearBtn.addEventListener('click', clearBlank);
 
   // 4) 버튼들을 담을 컨테이너 (한 줄에 나란히)
   const buttonContainer = document.createElement('div');
@@ -214,23 +212,52 @@ function createLabelAndCheckbox() {
   // 5) 포스트 맨 위에 container 추가
   entryContent.prepend(buttonContainer);
 
-  // 6) 토글 버튼 클릭 이벤트: “보기 모드 ↔ 빈칸 채우기 모드” 전환
+  // 6) “토글 버튼” 클릭: fillMode ↔ viewMode 전환
   toggleBtn.addEventListener('click', function () {
-    if (!boxChecked) {
-      // → “채우기 모드” 활성화
-      boxChecked = true;
+    if (!fillMode) {
+      // → “빈칸 채우기 모드” 진입
+      fillMode = true;
+      answerMode = false;
       toggleBtn.textContent = '보기 모드';
       answerBtn.style.display = 'none';
       clearBtn.style.display = 'inline-block';
+      disableScript(); // 혹시 남아있던 채우기 흔적 제거
       const blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
-      // → “보기 모드” (채우기 모드 비활성화)
-      boxChecked = false;
+      // → “보기 모드”로 복귀
+      fillMode = false;
+      answerMode = false;
       toggleBtn.textContent = '빈칸 채우기 모드';
       answerBtn.style.display = 'inline-block';
       clearBtn.style.display = 'none';
       disableScript();
+    }
+  });
+
+  // 7) “정답 보기 버튼” 클릭: answerMode ↔ viewMode 전환
+  answerBtn.addEventListener('click', function () {
+    if (!answerMode && !fillMode) {
+      // → “정답 보기” (view 모드 상태에서 동작)
+      answerMode = true;
+      toggleBtn.style.display = 'none';    // “정답 보기” 상태에서는 fill모드 진입 버튼 숨김
+      clearBtn.style.display = 'none';     // 초기화 버튼 숨김
+      findAnswer();
+      answerBtn.textContent = '보기 모드';
+    } else if (answerMode && !fillMode) {
+      // → “보기 모드”로 돌아가기 (정답 감추기)
+      answerMode = false;
+      toggleBtn.style.display = 'inline-block';
+      answerBtn.textContent = '정답 보기';
+      disableScript(); // blank span으로 복원
+    }
+  });
+
+  // 8) “빈칸 초기화 버튼” 클릭 (fillMode 상태)
+  clearBtn.addEventListener('click', function () {
+    if (fillMode) {
+      clearBlank();
+      // fillMode는 계속 true로 유지
     }
   });
 }
