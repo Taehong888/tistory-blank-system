@@ -53,13 +53,15 @@ function enableScript(blanks) {
         span.style.fontSize = '0.9em';
 
         if (userAnswer === input.dataset.answer) {
-          span.classList.add('fillNode');
-          span.classList.add('correct');
+          span.classList.add('fillNode', 'correct');
+          // 빈칸 채우기 모드의 정답 색과 동일
+          span.style.color = '#5DCB5F'; 
           span.textContent = input.dataset.originalAnswer;
           span.dataset.originalAnswer = input.dataset.originalAnswer;
         } else {
-          span.classList.add('fillNode');
-          span.classList.add('incorrect');
+          span.classList.add('fillNode', 'incorrect');
+          // 오답 색은 빨간(#DD0031)으로 고정
+          span.style.color = '#DD0031';
           span.textContent = input.dataset.originalAnswer;
           span.dataset.originalAnswer = input.dataset.originalAnswer;
         }
@@ -105,17 +107,23 @@ function enableScript(blanks) {
 }
 
 function findAnswer() {
-  const inputs = document.querySelectorAll('.fillNode');
-  inputs.forEach(input => {
+  // “보기 모드” 또는 “빈칸 채우기 모드” 상관없이 모든 .blank(스팬)과 입력란을 정답으로 교체
+  document.querySelectorAll('.blank').forEach(blankEl => {
+    const answerText = blankEl.getAttribute('data-answer');
     const span = document.createElement('span');
-
-    // 정답 보기 텍스트 폰트 크기 0.9em으로 고정
     span.style.fontSize = '0.9em';
+    span.classList.add('fillNode', 'correct');
+    // 빈칸 채우기 모드의 정답 색과 동일
+    span.style.color = '#5DCB5F';
+    span.textContent = answerText;
+    blankEl.replaceWith(span);
+  });
 
-    span.classList.remove('incorrect');
-    span.classList.add('correct');
-    span.classList.add('fillNode');
-    span.dataset.originalAnswer = input.dataset.originalAnswer;
+  document.querySelectorAll('input.fillNode').forEach(input => {
+    const span = document.createElement('span');
+    span.style.fontSize = '0.9em';
+    span.classList.add('fillNode', 'correct');
+    span.style.color = '#5DCB5F';
     span.textContent = input.dataset.originalAnswer;
     input.replaceWith(span);
   });
@@ -126,14 +134,10 @@ function disableScript() {
 
   inputs.forEach(input => {
     const span = document.createElement('span');
-
-    // 보기 모드 텍스트 폰트 크기 0.9em으로 고정
     span.style.fontSize = '0.9em';
-
     span.classList.remove('correct');
     span.classList.remove('incorrect');
-    span.classList.add('blank');
-    span.classList.add('fillNode');
+    span.classList.add('blank', 'fillNode');
     span.textContent = input.dataset.originalAnswer;
     input.replaceWith(span);
   });
@@ -152,7 +156,7 @@ function createLabelAndCheckbox() {
   const entryContent = document.getElementsByClassName("entry-content")[0];
   let boxChecked = false;  // “채우기 모드 활성화 여부” 상태 저장
 
-  // 1) “토글 박스” (초기: 빈칸 채우기 모드 상태)
+  // 1) “토글 버튼” (초기: 빈칸 채우기 모드 상태)
   const toggleBtn = document.createElement('div');
   toggleBtn.id = 'blank-toggle-btn';
   toggleBtn.style.display = 'inline-block';
@@ -199,7 +203,7 @@ function createLabelAndCheckbox() {
   clearBtn.textContent = '빈칸 초기화';
   clearBtn.addEventListener('click', clearBlank);
 
-  // 4) 토글 버튼 및 부가 버튼들을 담을 컨테이너 (한 줄에 나란히)
+  // 4) 버튼들을 담을 컨테이너 (한 줄에 나란히)
   const buttonContainer = document.createElement('div');
   buttonContainer.style.marginBottom = '20px';
   buttonContainer.appendChild(toggleBtn);
