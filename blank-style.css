@@ -201,27 +201,22 @@ td {
 /* ===========================================
    7) “빈칸 채우기 모드” 관련 추가 CSS
    =========================================== */
-/* (a) 보기 모드에서는 ‘오답노트’ 버튼 숨김 */
 body:not(.fill-mode) #wrong-note {
   display: none !important;
 }
 
-/* (b) 빈칸 채우기 모드에서 .blank 숨김 */
 body.fill-mode .blank {
   display: none !important;
 }
 
-/* (c) 빈칸 채우기 모드에서 .blank-input 보이기 */
 body.fill-mode .blank-input {
   display: inline-block !important;
 }
 
-/* (d) 빈칸 채우기 모드에서 ‘오답노트’ 버튼을 피치 색으로 */
 body.fill-mode #wrong-note {
   background-color: #F38D4D !important;
 }
 
-/* (e) 보기 모드에서 .blank-input 다시 숨기기 */
 body:not(.fill-mode) .blank-input {
   display: none !important;
 }
