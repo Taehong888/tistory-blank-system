@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // "빈칸 채우기 모드" 버튼 클릭 시 모드 전환
   toggleBtn.addEventListener('click', function() {
     if (bodyEl.classList.contains('fill-mode')) {
       bodyEl.classList.remove('fill-mode');
@@ -62,13 +63,15 @@ document.addEventListener('DOMContentLoaded', function() {
         input.style.removeProperty('display');
       });
 
+      // 첫 번째 빈칸에 포커스 설정
       if (inputs.length > 0) {
         inputs[0].style.setProperty('display', 'inline-block', 'important');
-        inputs[0].focus();  // 첫 번째 입력란에 포커스 설정
+        inputs[0].focus();
       }
     }
   });
 
+  // "오답노트" 버튼 클릭 시 틀린 항목만 재입력 모드
   wrongBtn.addEventListener('click', function() {
     if (!bodyEl.classList.contains('fill-mode')) {
       bodyEl.classList.add('fill-mode');
@@ -87,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // 각 입력란에 대해 Enter 키 이벤트 처리
   inputs.forEach(function(input) {
     input.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
