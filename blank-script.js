@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
-  const bodyEl     = document.body; 
+  const bodyEl     = document.body;
   const blanks     = document.querySelectorAll('.blank');
   const inputs     = [];
   const answers    = [];
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (event.key === 'Enter') {
         event.preventDefault();
 
-        // ↓ Enter 직전에 blur()를 호출하여 IME 조합 상태를 확실히 종료
+        // ↓ Enter 직전에 blur()를 호출하여 iPad IME 조합 상태 종료
         input.blur();
 
         const userRaw     = input.value.trim();
@@ -150,11 +150,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // (5-2) 입력란 숨김
         input.style.setProperty('display', 'none', 'important');
 
-        // (5-3) 다음 입력란 보이기 + 포커스
+        // (5-3) 다음 입력란 보이기 + 포커스 (약간 지연시켜 IME 조합이 남지 않도록)
         const nextInput = inputs[idx + 1];
         if (nextInput) {
-          nextInput.style.setProperty('display', 'inline-block', 'important');
-          nextInput.focus();
+          setTimeout(function() {
+            nextInput.style.setProperty('display', 'inline-block', 'important');
+            nextInput.focus();
+          }, 0);
         }
       }
     });
