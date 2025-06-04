@@ -1,4 +1,4 @@
-// ======================== blank-script.js (최소 수정 버전) ========================
+// ======================== blank-script.js (모든 빈칸 동시 표시 + 다음 칸 초기화 로직) ========================
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     answers.push(spanEl);
   });
 
-  // (2-1) 페이지 로드 후, 각 input 크기를 기존 .blank와 동일하게 설정
+  // (2-1) 페이지 로드 후, 각 input 크기를 기존 .blank와 동일하게 설정 및 숨김
   inputs.forEach(function(input, idx) {
     const blankEl = blanks[idx];
     if (blankEl) {
@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
       input.style.width  = bw + 'px';
       input.style.height = bh + 'px';
     }
-    // 초기에는 숨김
     input.style.setProperty('display', 'none', 'important');
   });
 
@@ -54,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         input.value = '';
         input.style.setProperty('display', 'none', 'important');
       });
+
       // (3-2) 모든 정답 span 초기화 및 숨김
       answers.forEach(function(span) {
         span.textContent = '';
@@ -66,27 +66,23 @@ document.addEventListener('DOMContentLoaded', function() {
       bodyEl.classList.add('fill-mode');
       toggleBtn.textContent = '보기 모드';
 
-      // (3-3) 기존 정답 span 초기화 및 숨김
+      // (3-3) 모든 정답 span 초기화 및 숨김
       answers.forEach(function(span) {
         span.textContent = '';
         span.style.setProperty('display', 'none', 'important');
         span.classList.remove('correct', 'wrong');
         span.removeAttribute('data-wrong');
       });
-      // (3-4) 각 input 에서 display:none!important 제거 (값은 이미 비워져 있음)
+
+      // (3-4) 모든 입력란 보이게 & 값 초기화
       inputs.forEach(function(input) {
-        input.style.removeProperty('display');
+        input.value = '';
+        input.style.setProperty('display', 'inline-block', 'important');
       });
-      // (3-5) 첫 번째 입력란만 보이게 → 포커스
+
+      // (3-5) 첫 번째 입력란에만 포커스
       if (inputs.length > 0) {
-        inputs.forEach((inp, i) => {
-          if (i === 0) {
-            inp.style.setProperty('display', 'inline-block', 'important');
-            inp.focus();
-          } else {
-            inp.style.setProperty('display', 'none', 'important');
-          }
-        });
+        inputs[0].focus();
       }
     }
   });
@@ -96,9 +92,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!bodyEl.classList.contains('fill-mode')) {
       bodyEl.classList.add('fill-mode');
       toggleBtn.textContent = '보기 모드';
+      // (4-1) 모든 입력란 보이게 & 값 초기화
+      inputs.forEach(function(input) {
+        input.value = '';
+        input.style.setProperty('display', 'inline-block', 'important');
+      });
     }
     answers.forEach(function(span, idx) {
       if (span.classList.contains('wrong')) {
+        // 오답 표시 숨김
         span.style.setProperty('display', 'none', 'important');
         span.classList.remove('wrong');
         span.removeAttribute('data-wrong');
@@ -107,6 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
         input.value = '';
         input.style.setProperty('display', 'inline-block', 'important');
         input.focus();
+      } else {
+        // 맞은 칸은 숨김
+        inputs[idx].style.setProperty('display', 'none', 'important');
       }
     });
   });
@@ -141,13 +146,13 @@ document.addEventListener('DOMContentLoaded', function() {
           answerSpan.style.setProperty('display', 'inline-block', 'important');
         }
 
-        // (5-2) 현재 입력란 숨김
+        // (5-2) 현재 입력란은 숨김 (정답/오답 표시 후)
         input.style.setProperty('display', 'none', 'important');
 
         // (5-3) 다음 입력란 보이기 + 포커스 & 값 초기화
         const nextInput = inputs[idx + 1];
         if (nextInput) {
-          nextInput.value = '';  // ▶ 다음 칸 초기화 (추가된 한 줄)
+          nextInput.value = '';  // ▶ 다음 칸 초기화
           nextInput.style.setProperty('display', 'inline-block', 'important');
           nextInput.focus();
         }
