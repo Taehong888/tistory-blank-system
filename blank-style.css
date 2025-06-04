@@ -1,5 +1,13 @@
+/* 기본 스타일 */
 body {
   font-family: Arial, sans-serif;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 5px;
 }
 
 .blank {
@@ -31,4 +39,21 @@ body {
 
 .blank.incorrect {
   color: red;
+}
+
+/* 오답노트 모드에서 빈칸 스타일 */
+#wrong-note:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 빈칸 채우기 모드 버튼 스타일 */
+button:focus {
+  outline: none;
+  border: 2px solid #4CAF50;
+}
+
+/* 보기 모드에서 오답노트 버튼 숨기기 */
+.view-mode #wrong-note {
+  display: none;
 }
