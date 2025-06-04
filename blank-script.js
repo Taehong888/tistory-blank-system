@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
-  const bodyEl     = document.body; // .blank 요소들을 찾아서 inputs 배열과 answers 배열에 대응 요소 생성
+  const bodyEl     = document.body; 
   const blanks     = document.querySelectorAll('.blank');
   const inputs     = [];
   const answers    = [];
@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // ↓ 여기에 추가된 속성들 ↓
     inputEl.setAttribute('autocomplete', 'off');    // 자동완성 꺼짐
     inputEl.setAttribute('autocorrect', 'off');     // iOS 자동 수정 꺼짐
-    inputEl.setAttribute('autocapitalize', 'off');  // 자동 대문자화 꺼짐
+    inputEl.setAttribute('autocapitalize', 'none'); // 자동 대문자화 꺼짐 (iOS에서는 "none"이 올바른 값)
     inputEl.setAttribute('spellcheck', 'false');    // 맞춤법 검사 꺼짐
-    inputEl.style.webkitTextAutocorrect = 'off';    // iOS WebKit 자동 수정 꺼짐
+    inputEl.style.webkitTextAutocorrect = 'off';    // iOS WebKit 자동 수정 끄기
     inputEl.style.webkitTextTransform  = 'none';    // iOS WebKit 텍스트 변환 없음
 
     // (2) 정답 표시용 span 생성
@@ -119,6 +119,10 @@ document.addEventListener('DOMContentLoaded', function() {
     input.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
         event.preventDefault();
+
+        // ↓ Enter 직전에 blur()를 호출하여 IME 조합 상태를 확실히 종료
+        input.blur();
+
         const userRaw     = input.value.trim();
         const userNorm    = userRaw.replace(/\s+/g, '');
         const correctRaw  = input.dataset.answer.trim();
