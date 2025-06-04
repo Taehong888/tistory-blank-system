@@ -1,4 +1,4 @@
-// ======================== blank-script.js (원래 코드 + 다음 칸 값 초기화 로직 추가) ========================
+// ======================== blank-script.js (최소 수정 버전) ========================
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // (2) 정답 표시용 span 생성
     const spanEl = document.createElement('span');
     spanEl.className     = 'answered';
-    spanEl.style.display = 'none'; // 초기에는 숨김
+    spanEl.style.display = 'none';  // 초기에는 숨김
 
     // (3) 빈칸 요소 바로 뒤에 삽입 (순서: span → input)
     blank.insertAdjacentElement('afterend', spanEl);
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
       input.style.width  = bw + 'px';
       input.style.height = bh + 'px';
     }
-    // 초기에는 숨겨두기
+    // 초기에는 숨김
     input.style.setProperty('display', 'none', 'important');
   });
 
@@ -66,17 +66,15 @@ document.addEventListener('DOMContentLoaded', function() {
       bodyEl.classList.add('fill-mode');
       toggleBtn.textContent = '보기 모드';
 
-      // (3-3) 모든 정답 span 초기화 및 숨김
+      // (3-3) 기존 정답 span 초기화 및 숨김
       answers.forEach(function(span) {
         span.textContent = '';
         span.style.setProperty('display', 'none', 'important');
         span.classList.remove('correct', 'wrong');
         span.removeAttribute('data-wrong');
       });
-
-      // (3-4) 각 input 표시(값은 비워둔 채로)
+      // (3-4) 각 input 에서 display:none!important 제거 (값은 이미 비워져 있음)
       inputs.forEach(function(input) {
-        input.value = ''; // 토글 시에도 혹시 남아 있을 수 있는 값을 초기화
         input.style.removeProperty('display');
       });
       // (3-5) 첫 번째 입력란만 보이게 → 포커스
@@ -149,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // (5-3) 다음 입력란 보이기 + 포커스 & 값 초기화
         const nextInput = inputs[idx + 1];
         if (nextInput) {
-          nextInput.value = ''; // 이 줄을 추가하여, 이전에 남아 있을 수 있는 텍스트를 비웁니다.
+          nextInput.value = '';  // ▶ 다음 칸 초기화 (추가된 한 줄)
           nextInput.style.setProperty('display', 'inline-block', 'important');
           nextInput.focus();
         }
@@ -165,4 +163,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
-// ================================================================================
+// ================================================================================  
