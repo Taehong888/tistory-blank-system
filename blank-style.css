@@ -210,7 +210,7 @@ body.fill-mode .blank-input {
 }
 /* (d) 빈칸 채우기 모드에서 ‘오답노트’ 버튼을 피치 색으로 */
 body.fill-mode #wrong-note {
-  background-color: #FFB689 !important;
+  background-color: #F38D4D !important;
 }
 /* (e) 보기 모드에서 .blank-input 다시 숨기기 */
 body:not(.fill-mode) .blank-input {
