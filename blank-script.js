@@ -30,6 +30,10 @@ function enableScript(blanks) {
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.textContent;
     input.size = answer.length * 1.2;
+
+    // 본문 입력란 폰트 크기 0.9em으로 고정
+    input.style.fontSize = '0.9em';
+
     if (isPlaceholder) {
       input.placeholder = placeholder;
       input.size = blank.textContent.length * 1.35;
@@ -44,6 +48,9 @@ function enableScript(blanks) {
       if (e.key === 'Enter') {
         const userAnswer = normalizeText(input.value.trim());
         const span = document.createElement('span');
+
+        // 정답/오답 텍스트 폰트 크기 0.9em으로 고정
+        span.style.fontSize = '0.9em';
 
         if (userAnswer === input.dataset.answer) {
           span.classList.add('fillNode');
@@ -101,6 +108,10 @@ function findAnswer() {
   const inputs = document.querySelectorAll('.fillNode');
   inputs.forEach(input => {
     const span = document.createElement('span');
+
+    // 정답 보기 텍스트 폰트 크기 0.9em으로 고정
+    span.style.fontSize = '0.9em';
+
     span.classList.remove('incorrect');
     span.classList.add('correct');
     span.classList.add('fillNode');
@@ -115,6 +126,10 @@ function disableScript() {
 
   inputs.forEach(input => {
     const span = document.createElement('span');
+
+    // 보기 모드 텍스트 폰트 크기 0.9em으로 고정
+    span.style.fontSize = '0.9em';
+
     span.classList.remove('correct');
     span.classList.remove('incorrect');
     span.classList.add('blank');
@@ -130,9 +145,8 @@ function clearBlank() {
   enableScript(blanks);
 }
 
-
 // ====================================================================
-// ◀ createLabelAndCheckbox 함수 수정된 버전 (전체 클릭 토글 + 보기모드/채우기모드 텍스트 교체)
+// ◀ 수정된 createLabelAndCheckbox() ▶
 // ====================================================================
 function createLabelAndCheckbox() {
   const entryContent = document.getElementsByClassName("entry-content")[0];
@@ -142,9 +156,10 @@ function createLabelAndCheckbox() {
   const toggleDiv = document.createElement('div');
   toggleDiv.id = 'blank-toggle-box';
   toggleDiv.style.display = 'inline-block';
-  toggleDiv.style.backgroundColor = '#6DEF4D';
+  toggleDiv.style.backgroundColor = '#557a3b';   // 짙은 초록
   toggleDiv.style.color = '#ffffff';
   toggleDiv.style.fontWeight = 'bold';
+  toggleDiv.style.fontSize = '0.9em';
   toggleDiv.style.padding = '10px 20px';
   toggleDiv.style.borderRadius = '6px';
   toggleDiv.style.cursor = 'pointer';
@@ -152,29 +167,30 @@ function createLabelAndCheckbox() {
   toggleDiv.style.marginBottom = '10px';
   toggleDiv.textContent = '빈칸 채우기 모드';
 
-  // 2) “빈칸 초기화 박스” (초기 숨김)
+  // 2) “빈칸 초기화 박스” (초기 숨김, 버튼 스타일)
   const clearDiv = document.createElement('div');
   clearDiv.id = 'blank-clear-box';
-  clearDiv.style.display = 'none';       // 최초엔 숨김
-  toggleDiv.style.backgroundColor = '#4D8EEF';
-  toggleDiv.style.color = '#ffffff';
-  toggleDiv.style.fontWeight = 'bold';
-  toggleDiv.style.padding = '10px 20px';
-  toggleDiv.style.borderRadius = '6px';
-  toggleDiv.style.cursor = 'pointer';
-  toggleDiv.style.userSelect = 'none';
-  toggleDiv.style.marginBottom = '10px';
+  clearDiv.style.display = 'none';               // 초기에는 숨김
+  clearDiv.style.backgroundColor = '#4a90e2';     // 파란색
+  clearDiv.style.color = '#ffffff';
+  clearDiv.style.fontSize = '0.9em';
+  clearDiv.style.padding = '10px 16px';
+  clearDiv.style.borderRadius = '6px';
+  clearDiv.style.cursor = 'pointer';
+  clearDiv.style.userSelect = 'none';
+  clearDiv.style.marginBottom = '10px';
   clearDiv.textContent = '빈칸 초기화';
   clearDiv.addEventListener('click', clearBlank);
 
-  // 3) “정답 보기 박스” 
+  // 3) “정답 보기 박스” (초기: 보이도록, 버튼 스타일)
   const answerDiv = document.createElement('div');
   answerDiv.id = 'blank-answer-box';
-  answerDiv.style.display = 'inline-block';      // 
-  answerDiv.style.backgroundColor = '#4D8EEF';
-  answerDiv.style.color = '#333333';
-  answerDiv.style.padding = '8px 16px';
-  answerDiv.style.borderRadius = '4px';
+  answerDiv.style.display = 'block';              // 처음부터 보이기
+  answerDiv.style.backgroundColor = '#d35400';    // 주황색
+  answerDiv.style.color = '#ffffff';
+  answerDiv.style.fontSize = '0.9em';
+  answerDiv.style.padding = '10px 16px';
+  answerDiv.style.borderRadius = '6px';
   answerDiv.style.cursor = 'pointer';
   answerDiv.style.userSelect = 'none';
   answerDiv.style.marginBottom = '20px';
@@ -191,17 +207,17 @@ function createLabelAndCheckbox() {
     if (!boxChecked) {
       // → “채우기 모드” 활성화
       boxChecked = true;
-      toggleDiv.textContent = '보기 모드';      // 버튼 텍스트 변경
-      clearDiv.style.display = 'block';         // 초기화 박스 보이기
-      answerDiv.style.display = 'block';        // 정답 박스 보이기
+      toggleDiv.textContent = '보기 모드';
+      clearDiv.style.display = 'block';
+      answerDiv.style.display = 'block';
       const blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
       // → “보기 모드” (채우기 모드 비활성화)
       boxChecked = false;
-      toggleDiv.textContent = '빈칸 채우기 모드'; // 버튼 텍스트 복원
-      clearDiv.style.display = 'none';           // 초기화 박스 숨기기
-      answerDiv.style.display = 'none';          // 정답 박스 숨기기
+      toggleDiv.textContent = '빈칸 채우기 모드';
+      clearDiv.style.display = 'none';
+      answerDiv.style.display = 'none';
       disableScript();
     }
   });
