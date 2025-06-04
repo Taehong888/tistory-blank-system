@@ -1,139 +1,69 @@
-// ======================== blank-script.js (전체 교체) ========================
-document.addEventListener('DOMContentLoaded', function() {
-  const toggleBtn  = document.getElementById('fill-toggle');
-  const wrongBtn   = document.getElementById('wrong-note');
-  const bodyEl     = document.body;
-  const blanks     = document.querySelectorAll('.blank');
-  const inputs     = Array.from(document.querySelectorAll('.blank-input'));
-  const answers    = Array.from(document.querySelectorAll('.answered'));
+document.addEventListener('DOMContentLoaded', () => {
+  const fillToggleButton = document.getElementById('fill-toggle');
+  const wrongNoteButton = document.getElementById('wrong-note');
+  const blanks = document.querySelectorAll('.blank');
 
-  blanks.forEach(function(blank, idx) {
-    const inputEl = document.createElement('input');
-    inputEl.type = 'text';
-    inputEl.className = 'blank-input';
-    inputEl.setAttribute('data-answer', blank.getAttribute('data-answer'));
-    inputEl.placeholder = '';
-    inputEl.autocomplete = 'off';
+  let isFillMode = false;
+  let isWrongNoteMode = false;
 
-    const spanEl = document.createElement('span');
-    spanEl.className = 'answered';
-    spanEl.style.display = 'none';  // 초기에는 숨김
+  // 빈칸에 마우스를 올리면 답 보이기
+  blanks.forEach(blank => {
+    blank.addEventListener('mouseover', () => {
+      if (!isFillMode && !isWrongNoteMode) {
+        blank.textContent = blank.dataset.answer;  // 답 보이기
+      }
+    });
 
-    blank.insertAdjacentElement('afterend', spanEl);
-    spanEl.insertAdjacentElement('afterend', inputEl);
+    blank.addEventListener('mouseout', () => {
+      if (!isFillMode && !isWrongNoteMode) {
+        blank.textContent = '_____';  // 빈칸으로 되돌리기
+      }
+    });
   });
 
-  inputs.forEach(function(input, idx) {
-    const blankEl = blanks[idx];
-    if (blankEl) {
-      const bw = blankEl.offsetWidth;
-      const bh = blankEl.offsetHeight;
-      input.style.width  = bw + 'px';
-      input.style.height = bh + 'px';
+  // 빈칸 채우기 모드 전환
+  fillToggleButton.addEventListener('click', () => {
+    isFillMode = !isFillMode;
+    if (isFillMode) {
+      document.body.classList.remove('view-mode');
+      fillToggleButton.textContent = '보기 모드';
+      blanks.forEach(blank => blank.classList.add('active')); // 빈칸 활성화
+    } else {
+      document.body.classList.add('view-mode');
+      fillToggleButton.textContent = '빈칸 채우기 모드';
+      blanks.forEach(blank => blank.classList.remove('active')); // 빈칸 비활성화
     }
   });
 
-  // "빈칸 채우기 모드" 버튼 클릭 시 모드 전환
-  toggleBtn.addEventListener('click', function() {
-    if (bodyEl.classList.contains('fill-mode')) {
-      bodyEl.classList.remove('fill-mode');
-      toggleBtn.textContent = '빈칸 채우기 모드';
-      inputs.forEach(function(input) {
-        input.value = '';  // 모든 입력값 초기화
-        input.style.setProperty('display', 'none', 'important');
-      });
-
-      answers.forEach(function(span) {
-        span.textContent = '';
-        span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('correct', 'wrong');
-        span.removeAttribute('data-wrong');
+  // 오답 노트 모드 전환
+  wrongNoteButton.addEventListener('click', () => {
+    isWrongNoteMode = !isWrongNoteMode;
+    if (isWrongNoteMode) {
+      wrongNoteButton.disabled = true;
+      blanks.forEach(blank => {
+        if (blank.classList.contains('incorrect')) {
+          blank.classList.add('active');
+        }
       });
     } else {
-      bodyEl.classList.add('fill-mode');
-      toggleBtn.textContent = '보기 모드';
-      answers.forEach(function(span) {
-        span.textContent = '';
-        span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('correct', 'wrong');
-        span.removeAttribute('data-wrong');
+      wrongNoteButton.disabled = false;
+      blanks.forEach(blank => {
+        blank.classList.remove('active');
       });
-
-      inputs.forEach(function(input) {
-        input.style.removeProperty('display');
-      });
-
-      // 첫 번째 빈칸에 포커스 설정
-      if (inputs.length > 0) {
-        inputs[0].style.setProperty('display', 'inline-block', 'important');
-        inputs[0].focus();
-      }
     }
   });
 
-  // "오답노트" 버튼 클릭 시 틀린 항목만 재입력 모드
-  wrongBtn.addEventListener('click', function() {
-    if (!bodyEl.classList.contains('fill-mode')) {
-      bodyEl.classList.add('fill-mode');
-      toggleBtn.textContent = '보기 모드';
-    }
-    answers.forEach(function(span, idx) {
-      if (span.classList.contains('wrong')) {
-        span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('wrong');
-        span.removeAttribute('data-wrong');
-        const input = inputs[idx];
-        input.value = '';  // 오답일 경우 값 초기화
-        input.style.setProperty('display', 'inline-block', 'important');
-        input.focus();  // 해당 입력란에 포커스 설정
+  // 빈칸에 답 입력 후 정답/오답 확인
+  blanks.forEach(blank => {
+    blank.addEventListener('input', () => {
+      const answer = blank.dataset.answer.trim();
+      if (blank.textContent.trim() === answer) {
+        blank.classList.add('correct');
+        blank.classList.remove('incorrect');
+      } else {
+        blank.classList.add('incorrect');
+        blank.classList.remove('correct');
       }
-    });
-  });
-
-  // 각 입력란에 대해 Enter 키 이벤트 처리
-  inputs.forEach(function(input) {
-    input.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        const userRaw = input.value.trim();
-        const userNorm = userRaw.replace(/\s+/g, '');
-        const correctRaw = input.dataset.answer.trim();
-        const correctNorm = correctRaw.replace(/\s+/g, '');
-        const idx = inputs.indexOf(input);
-        const answerSpan = answers[idx];
-
-        answerSpan.classList.remove('correct', 'wrong');
-        answerSpan.removeAttribute('data-wrong');
-
-        if (userNorm === correctNorm) {
-          answerSpan.textContent = correctRaw;
-          answerSpan.classList.add('correct');
-          answerSpan.style.setProperty('display', 'inline-block', 'important');
-        } else {
-          answerSpan.textContent = correctRaw;
-          answerSpan.classList.add('wrong');
-          answerSpan.setAttribute('data-wrong', userRaw);
-          answerSpan.style.setProperty('display', 'inline-block', 'important');
-        }
-
-        input.value = '';  // 입력란 값 초기화
-        input.style.setProperty('display', 'none', 'important');  // 입력란 숨기기
-
-        // 다음 입력란에 포커스를 이동
-        const nextInput = inputs[idx + 1];
-        if (nextInput) {
-          nextInput.style.setProperty('display', 'inline-block', 'important');
-          nextInput.focus();
-        }
-      }
-    });
-
-    input.addEventListener('input', function() {
-      const idx = inputs.indexOf(input);
-      const answerSpan = answers[idx];
-      answerSpan.classList.remove('correct', 'wrong');
-      answerSpan.removeAttribute('data-wrong');
     });
   });
 });
-// ================================================================================
