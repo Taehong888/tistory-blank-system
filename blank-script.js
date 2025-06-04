@@ -1,4 +1,4 @@
-// ======================== blank-script.js (모든 빈칸 동시 표시 + 다음 칸 초기화 로직) ========================
+// ======================== blank-script.js (모든 빈칸 한꺼번에 표시 + 다음 칸 초기화) ========================
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
@@ -74,13 +74,13 @@ document.addEventListener('DOMContentLoaded', function() {
         span.removeAttribute('data-wrong');
       });
 
-      // (3-4) 모든 입력란 보이게 & 값 초기화
+      // (3-4) 모든 입력란 보이기 (값은 비워진 상태 유지)
       inputs.forEach(function(input) {
         input.value = '';
         input.style.setProperty('display', 'inline-block', 'important');
       });
 
-      // (3-5) 첫 번째 입력란에만 포커스
+      // (3-5) 첫 번째 입력란에 포커스
       if (inputs.length > 0) {
         inputs[0].focus();
       }
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!bodyEl.classList.contains('fill-mode')) {
       bodyEl.classList.add('fill-mode');
       toggleBtn.textContent = '보기 모드';
-      // (4-1) 모든 입력란 보이게 & 값 초기화
+      // (4-1) 모든 입력란 보이기 & 값 초기화
       inputs.forEach(function(input) {
         input.value = '';
         input.style.setProperty('display', 'inline-block', 'important');
@@ -100,11 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     answers.forEach(function(span, idx) {
       if (span.classList.contains('wrong')) {
-        // 오답 표시 숨김
+        // 틀린 칸만 보이게
         span.style.setProperty('display', 'none', 'important');
         span.classList.remove('wrong');
         span.removeAttribute('data-wrong');
-        // 해당 인덱스 input 보이게 & 값 초기화 후 포커스
         const input = inputs[idx];
         input.value = '';
         input.style.setProperty('display', 'inline-block', 'important');
@@ -146,20 +145,20 @@ document.addEventListener('DOMContentLoaded', function() {
           answerSpan.style.setProperty('display', 'inline-block', 'important');
         }
 
-        // (5-2) 현재 입력란은 숨김 (정답/오답 표시 후)
+        // (5-2) 현재 입력란 숨김
         input.style.setProperty('display', 'none', 'important');
 
-        // (5-3) 다음 입력란 보이기 + 포커스 & 값 초기화
+        // (5-3) 다음 입력란 보이기 + 포커스 & 다음 칸 값 초기화
         const nextInput = inputs[idx + 1];
         if (nextInput) {
-          nextInput.value = '';  // ▶ 다음 칸 초기화
+          nextInput.value = ''; // ▶ 여기에 한 줄 추가해서 “다음 칸”을 항상 빈 상태로 만듭니다.
           nextInput.style.setProperty('display', 'inline-block', 'important');
           nextInput.focus();
         }
       }
     });
 
-    // (5-4) 입력 중 이전 채점 상태 초기화
+    // (5-4) 입력 도중 이전 채점 상태 초기화
     input.addEventListener('input', function() {
       const idx        = Array.from(inputs).indexOf(input);
       const answerSpan = answers[idx];
