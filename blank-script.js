@@ -1,4 +1,4 @@
-// ======================== blank-script.js (전체 교체) ========================
+// ======================== blank-script.js (전체 교체) 수정본 ========================
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         input.value = '';
         input.style.setProperty('display', 'none', 'important');
       });
-      // (3-2) 모든 정답 span 초기화 및 숨김
+      // (3-2) 모든 정답 span 초기화 후 숨김
       answers.forEach(function(span) {
         span.textContent = '';
         span.style.setProperty('display', 'none', 'important');
@@ -113,39 +113,42 @@ document.addEventListener('DOMContentLoaded', function() {
       if (event.key === 'Enter') {
         event.preventDefault();
 
-        const userRaw    = input.value.trim();
-        const userNorm   = userRaw.replace(/\s+/g, '');
-        const correctRaw = input.dataset.answer.trim();
-        const correctNorm= correctRaw.replace(/\s+/g, '');
-        const idx        = Array.from(inputs).indexOf(input);
-        const answerSpan = answers[idx];
+        // 문제 해결: setTimeout으로 지연
+        setTimeout(function() {
+          const userRaw    = input.value.trim();
+          const userNorm   = userRaw.replace(/\s+/g, '');
+          const correctRaw = input.dataset.answer.trim();
+          const correctNorm= correctRaw.replace(/\s+/g, '');
+          const idx        = Array.from(inputs).indexOf(input);
+          const answerSpan = answers[idx];
 
-        // (5-1) 이전 채점 상태 초기화
-        answerSpan.classList.remove('correct', 'wrong');
-        answerSpan.removeAttribute('data-wrong');
+          // (5-1) 이전 채점 상태 초기화
+          answerSpan.classList.remove('correct', 'wrong');
+          answerSpan.removeAttribute('data-wrong');
 
-        if (userNorm === correctNorm) {
-          // 정답 처리
-          answerSpan.textContent   = correctRaw;
-          answerSpan.classList.add('correct');
-          answerSpan.style.setProperty('display', 'inline-block', 'important');
-        } else {
-          // 오답 처리
-          answerSpan.textContent   = correctRaw;
-          answerSpan.classList.add('wrong');
-          answerSpan.setAttribute('data-wrong', userRaw);
-          answerSpan.style.setProperty('display', 'inline-block', 'important');
-        }
+          if (userNorm === correctNorm) {
+            // 정답 처리
+            answerSpan.textContent   = correctRaw;
+            answerSpan.classList.add('correct');
+            answerSpan.style.setProperty('display', 'inline-block', 'important');
+          } else {
+            // 오답 처리
+            answerSpan.textContent   = correctRaw;
+            answerSpan.classList.add('wrong');
+            answerSpan.setAttribute('data-wrong', userRaw);
+            answerSpan.style.setProperty('display', 'inline-block', 'important');
+          }
 
-        // (5-2) 입력란 숨김
-        input.style.setProperty('display', 'none', 'important');
+          // (5-2) 입력란 숨김
+          input.style.setProperty('display', 'none', 'important');
 
-        // (5-3) 다음 입력란 보이기 + 포커스
-        const nextInput = inputs[idx + 1];
-        if (nextInput) {
-          nextInput.style.setProperty('display', 'inline-block', 'important');
-          nextInput.focus();
-        }
+          // (5-3) 다음 입력란 보이기 + 포커스
+          const nextInput = inputs[idx + 1];
+          if (nextInput) {
+            nextInput.style.setProperty('display', 'inline-block', 'important');
+            nextInput.focus();
+          }
+        }, 50); // 50ms 지연 또는 적절한 시간
       }
     });
 
