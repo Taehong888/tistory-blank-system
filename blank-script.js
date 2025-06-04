@@ -20,7 +20,6 @@ function enableScript(blanks) {
 
   blanks.forEach(blank => {
     const placeholder = blank.textContent;
-
     const answer = normalizeText(blank.textContent);
     const normalizedAnswer = normalizeText(answer);
     const input = document.createElement('input');
@@ -29,13 +28,11 @@ function enableScript(blanks) {
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.textContent;
-    input.size = answer.length * 1.2; // Input 크기를 정답의 길이에 맞춤
-
+    input.size = answer.length * 1.2;
     if (isPlaceholder) {
       input.placeholder = placeholder;
       input.size = blank.textContent.length * 1.35;
     }
-
     input.classList.add('quizQuestion');
 
     input.addEventListener('click', function (e) {
@@ -132,45 +129,95 @@ function clearBlank() {
   enableScript(blanks);
 }
 
+
+// ======================================
+// ▶ createLabelAndCheckbox 함수만 수정됨
+// ======================================
 function createLabelAndCheckbox() {
-  const label = document.createElement('label');
-  label.innerHTML =
-    "<span style='font-weight: 800; color: #0c3b18;'> 빈칸 채우기 모드</span>" +
-    "<p style='font-size: 0.875em; color: #07611f;'>* 마스킹한 내용이 빈칸 문제로 변환되며, 정답을 입력하고 enter키를 누르시면 정오를 확인하실 수 있습니다. PC에서만 적용됩니다.</p>";
-
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.id = 'toggleScript';
-
-  const resultDiv = document.createElement('div');
-  resultDiv.append(label);
-  resultDiv.prepend(label);
-  resultDiv.style.backgroundColor = '#b8fcb8';
-  resultDiv.style.padding = '10px';
-  resultDiv.style.borderRadius = '5px';
-  resultDiv.style.marginBottom = '20px';
-  resultDiv.prepend(checkbox);
-
-  boxChecked = false;
   const entryContent = document.getElementsByClassName("entry-content")[0];
-  entryContent.prepend(resultDiv);
+  let boxChecked = false;
 
-  checkbox.addEventListener('change', function () {
+  // 1) “빈칸 채우기 모드” 토글용 박스
+  const toggleDiv = document.createElement('div');
+  toggleDiv.style.backgroundColor = '#b8fcb8';
+  toggleDiv.style.padding = '10px';
+  toggleDiv.style.borderRadius = '5px';
+  toggleDiv.style.marginBottom = '10px';
+  toggleDiv.style.display = 'flex';
+  toggleDiv.style.alignItems = 'center';
+
+  const toggleCheckbox = document.createElement('input');
+  toggleCheckbox.type = 'checkbox';
+  toggleCheckbox.id = 'toggleScript';
+  const toggleLabel = document.createElement('span');
+  toggleLabel.style.marginLeft = '8px';
+  toggleLabel.style.fontWeight = '800';
+  toggleLabel.style.color = '#0c3b18';
+  toggleLabel.textContent = '빈칸 채우기 모드';
+
+  toggleDiv.append(toggleCheckbox);
+  toggleDiv.append(toggleLabel);
+
+
+  // 2) “빈칸 초기화” 전용 박스 (기본 숨김)
+  const clearDiv = document.createElement('div');
+  clearDiv.style.backgroundColor = '#f0f0f0';
+  clearDiv.style.padding = '10px';
+  clearDiv.style.borderRadius = '5px';
+  clearDiv.style.marginBottom = '10px';
+  clearDiv.style.display = 'none';       // 처음엔 숨김 처리
+  clearDiv.style.cursor = 'pointer';
+
+  const clearButton = document.createElement('span');
+  clearButton.classList.add('blackButton');
+  clearButton.textContent = '빈칸 초기화';
+  clearButton.addEventListener('click', clearBlank);
+
+  clearDiv.append(clearButton);
+
+
+  // 3) “정답 보기” 전용 박스 (기본 숨김)
+  const answerDiv = document.createElement('div');
+  answerDiv.style.backgroundColor = '#f0f0f0';
+  answerDiv.style.padding = '10px';
+  answerDiv.style.borderRadius = '5px';
+  answerDiv.style.marginBottom = '20px';
+  answerDiv.style.display = 'none';      // 처음엔 숨김 처리
+  answerDiv.style.cursor = 'pointer';
+
+  const answerButton = document.createElement('span');
+  answerButton.classList.add('blackButton');
+  answerButton.textContent = '정답 보기';
+  answerButton.addEventListener('click', findAnswer);
+
+  answerDiv.append(answerButton);
+
+
+  // 4) entry-content 맨 위에 “토글 박스 → 초기화 박스 → 정답보기 박스” 순으로 추가
+  entryContent.prepend(answerDiv);
+  entryContent.prepend(clearDiv);
+  entryContent.prepend(toggleDiv);
+
+
+  // 5) 토글 체크박스 change 이벤트
+  toggleCheckbox.addEventListener('change', function () {
     if (this.checked) {
-      if (boxChecked == false) {
+      // 최초 체크 시에만 화면에 “초기화/정답보기” 박스를 나타내기
+      if (!boxChecked) {
         boxChecked = true;
-        label.innerHTML +=
-          "<p style='font-size: 0.875em; line-height: 0.8em; color: #07611f;'>" +
-          "* <span class='blackButton' onclick='clearBlank();'>빈칸 초기화</span>:  빈칸을 모두 제거하고 다시 모두 빈칸으로 만듭니다." +
-          "</p>" +
-          "<p style='font-size: 0.875em; line-height: 0.8em; color: #07611f;'>" +
-          "* <span class='blackButton' onclick='findAnswer();'>정답 보기</span>:  빈칸의 정답을 모두 보여줍니다." +
-          "</p>";
+        clearDiv.style.display = 'block';
+        answerDiv.style.display = 'block';
       }
-      blanks = document.querySelectorAll('.blank');
+      const blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
+      // 체크 해제 시에 “초기화/정답보기” 박스 숨기고, 채우기 모드 비활성화
+      clearDiv.style.display = 'none';
+      answerDiv.style.display = 'none';
       disableScript();
     }
   });
 }
+// ======================================
+// createLabelAndCheckbox 끝
+// ======================================
