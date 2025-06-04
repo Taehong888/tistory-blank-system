@@ -1,67 +1,25 @@
-// ======================== blank-script.js (iPad + 블루투스 키보드 IME 문제 해결 버전) ========================
+// ======================== blank-script.js (원래 코드 + 다음 칸 값 초기화 로직 추가) ========================
 document.addEventListener('DOMContentLoaded', function() {
-  const toggleBtn = document.getElementById('fill-toggle');
-  const wrongBtn = document.getElementById('wrong-note');
-  const bodyEl = document.body;
-  const blanks = document.querySelectorAll('.blank');
-  const inputs = [];
-  const answers = [];
+  const toggleBtn  = document.getElementById('fill-toggle');
+  const wrongBtn   = document.getElementById('wrong-note');
+  const bodyEl     = document.body;
+  const blanks     = document.querySelectorAll('.blank');
+  const inputs     = [];
+  const answers    = [];
 
-  // IME 조합 상태를 추적하는 WeakMap
-  const composingMap = new WeakMap();
-
-  // ▶ IME 조합 버퍼를 강제로 해제하는 헬퍼 함수
-  function forceIMECommit() {
-    const tempInput = document.createElement('input');
-    tempInput.style.position = 'absolute';
-    tempInput.style.opacity = '0';
-    tempInput.setAttribute('autocomplete', 'off');
-    tempInput.setAttribute('autocorrect', 'off');
-    tempInput.setAttribute('autocapitalize', 'none');
-    tempInput.setAttribute('spellcheck', 'false');
-    bodyEl.appendChild(tempInput);
-    tempInput.focus();
-    tempInput.blur();
-    bodyEl.removeChild(tempInput);
-  }
-
-  blanks.forEach(function(blank, idx) {
+  blanks.forEach(function(blank) {
     // (1) 입력란(input) 생성
     const inputEl = document.createElement('input');
-    inputEl.type = 'text';
-    inputEl.className = 'blank-input';
+    inputEl.type         = 'text';
+    inputEl.className    = 'blank-input';
     inputEl.setAttribute('data-answer', blank.getAttribute('data-answer'));
-    inputEl.placeholder = '';
-    // IME 관련 속성 추가
-    inputEl.setAttribute('autocomplete', 'off');
-    inputEl.setAttribute('autocorrect', 'off');
-    inputEl.setAttribute('autocapitalize', 'none');
-    inputEl.setAttribute('spellcheck', 'false');
-    inputEl.style.webkitTextAutocorrect = 'off';
-    inputEl.style.webkitTextTransform = 'none';
-    // 고유 name/id (선택 사항, 콘솔 경고 제거용)
-    inputEl.name = 'blank-' + idx;
-    inputEl.id = 'blank-' + idx;
-
-    // IME 조합 시작/종료 상태를 추적
-    inputEl.addEventListener('compositionstart', function() {
-      composingMap.set(inputEl, true);
-    });
-    inputEl.addEventListener('compositionend', function() {
-      composingMap.set(inputEl, false);
-    });
-    composingMap.set(inputEl, false);
-
-    // ▶ 포커스될 때 IME 버퍼 강제 해제 & 값 초기화
-    inputEl.addEventListener('focus', function() {
-      forceIMECommit();
-      this.value = '';
-    });
+    inputEl.placeholder  = '';
+    inputEl.autocomplete = 'off';
 
     // (2) 정답 표시용 span 생성
     const spanEl = document.createElement('span');
-    spanEl.className = 'answered';
-    spanEl.style.display = 'none';
+    spanEl.className     = 'answered';
+    spanEl.style.display = 'none'; // 초기에는 숨김
 
     // (3) 빈칸 요소 바로 뒤에 삽입 (순서: span → input)
     blank.insertAdjacentElement('afterend', spanEl);
@@ -71,31 +29,32 @@ document.addEventListener('DOMContentLoaded', function() {
     answers.push(spanEl);
   });
 
-  // (2-1) 페이지 로드 후, 각 input 크기를 기존 .blank와 동일하게 설정하고 숨김
+  // (2-1) 페이지 로드 후, 각 input 크기를 기존 .blank와 동일하게 설정
   inputs.forEach(function(input, idx) {
     const blankEl = blanks[idx];
     if (blankEl) {
       const bw = blankEl.offsetWidth;
       const bh = blankEl.offsetHeight;
-      input.style.width = bw + 'px';
+      input.style.width  = bw + 'px';
       input.style.height = bh + 'px';
     }
+    // 초기에는 숨겨두기
     input.style.setProperty('display', 'none', 'important');
   });
 
   // (3) “빈칸 채우기 모드” 버튼 클릭 토글
   toggleBtn.addEventListener('click', function() {
     if (bodyEl.classList.contains('fill-mode')) {
-      // ─── 채우기 모드 → 보기 모드 ───
+      // ─── 채우기 모드 → 보기 모드 전환 ───
       bodyEl.classList.remove('fill-mode');
       toggleBtn.textContent = '빈칸 채우기 모드';
 
-      // (3-1) 모든 입력란 숨김 & 값 초기화
+      // (3-1) 모든 입력란 숨김 및 값 초기화
       inputs.forEach(function(input) {
         input.value = '';
         input.style.setProperty('display', 'none', 'important');
       });
-      // (3-2) 모든 정답 span 초기화 & 숨김
+      // (3-2) 모든 정답 span 초기화 및 숨김
       answers.forEach(function(span) {
         span.textContent = '';
         span.style.setProperty('display', 'none', 'important');
@@ -103,11 +62,11 @@ document.addEventListener('DOMContentLoaded', function() {
         span.removeAttribute('data-wrong');
       });
     } else {
-      // ─── 보기 모드 → 채우기 모드 ───
+      // ─── 보기 모드 → 채우기 모드 전환 ───
       bodyEl.classList.add('fill-mode');
       toggleBtn.textContent = '보기 모드';
 
-      // (3-3) 모든 정답 span 초기화 & 숨김
+      // (3-3) 모든 정답 span 초기화 및 숨김
       answers.forEach(function(span) {
         span.textContent = '';
         span.style.setProperty('display', 'none', 'important');
@@ -115,12 +74,12 @@ document.addEventListener('DOMContentLoaded', function() {
         span.removeAttribute('data-wrong');
       });
 
-      // (3-4) 모든 입력란 보이게 & 값 초기화
+      // (3-4) 각 input 표시(값은 비워둔 채로)
       inputs.forEach(function(input) {
-        input.value = '';
-        input.style.removeProperty('display'); // display:none!important 제거
+        input.value = ''; // 토글 시에도 혹시 남아 있을 수 있는 값을 초기화
+        input.style.removeProperty('display');
       });
-      // (3-5) 첫 번째 입력란만 보이게 & 포커스
+      // (3-5) 첫 번째 입력란만 보이게 → 포커스
       if (inputs.length > 0) {
         inputs.forEach((inp, i) => {
           if (i === 0) {
@@ -142,43 +101,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     answers.forEach(function(span, idx) {
       if (span.classList.contains('wrong')) {
-        // 오답 표시 숨김
         span.style.setProperty('display', 'none', 'important');
         span.classList.remove('wrong');
         span.removeAttribute('data-wrong');
-        // 해당 입력란만 보이게 & 값 초기화 후 포커스
-        inputs.forEach((inp, i) => {
-          if (i === idx) {
-            inp.value = '';
-            inp.style.setProperty('display', 'inline-block', 'important');
-            inp.focus();
-          } else {
-            inp.style.setProperty('display', 'none', 'important');
-          }
-        });
+        // 해당 인덱스 input 보이게 & 값 초기화 후 포커스
+        const input = inputs[idx];
+        input.value = '';
+        input.style.setProperty('display', 'inline-block', 'important');
+        input.focus();
       }
     });
   });
 
-  // (5) 입력란 이벤트 처리: Enter키 + 입력 중 채점 초기화
+  // (5) 입력란 엔터키 이벤트: 공백 무시 채점 + 다음 입력란 포커스 이동
   inputs.forEach(function(input) {
     input.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
-        // IME 조합 중엔 처리하지 않음
-        if (composingMap.get(input)) {
-          return;
-        }
         event.preventDefault();
 
-        // ▶ IME 조합 버퍼 강제 해제
-        input.blur();
-        forceIMECommit();
-
-        const userRaw = input.value.trim();
-        const userNorm = userRaw.replace(/\s+/g, '');
+        const userRaw    = input.value.trim();
+        const userNorm   = userRaw.replace(/\s+/g, '');
         const correctRaw = input.dataset.answer.trim();
-        const correctNorm = correctRaw.replace(/\s+/g, '');
-        const idx = Array.from(inputs).indexOf(input);
+        const correctNorm= correctRaw.replace(/\s+/g, '');
+        const idx        = Array.from(inputs).indexOf(input);
         const answerSpan = answers[idx];
 
         // (5-1) 이전 채점 상태 초기화
@@ -187,12 +132,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (userNorm === correctNorm) {
           // 정답 처리
-          answerSpan.textContent = correctRaw;
+          answerSpan.textContent   = correctRaw;
           answerSpan.classList.add('correct');
           answerSpan.style.setProperty('display', 'inline-block', 'important');
         } else {
           // 오답 처리
-          answerSpan.textContent = correctRaw;
+          answerSpan.textContent   = correctRaw;
           answerSpan.classList.add('wrong');
           answerSpan.setAttribute('data-wrong', userRaw);
           answerSpan.style.setProperty('display', 'inline-block', 'important');
@@ -201,31 +146,23 @@ document.addEventListener('DOMContentLoaded', function() {
         // (5-2) 현재 입력란 숨김
         input.style.setProperty('display', 'none', 'important');
 
-        // (5-3) 다음 입력란 보이기 + 포커스 (50ms 딜레이)
+        // (5-3) 다음 입력란 보이기 + 포커스 & 값 초기화
         const nextInput = inputs[idx + 1];
         if (nextInput) {
-          setTimeout(function() {
-            inputs.forEach((inp, i) => {
-              if (i === idx + 1) {
-                inp.value = '';
-                inp.style.setProperty('display', 'inline-block', 'important');
-                inp.focus();
-              } else {
-                inp.style.setProperty('display', 'none', 'important');
-              }
-            });
-          }, 50);
+          nextInput.value = ''; // 이 줄을 추가하여, 이전에 남아 있을 수 있는 텍스트를 비웁니다.
+          nextInput.style.setProperty('display', 'inline-block', 'important');
+          nextInput.focus();
         }
       }
     });
 
-    // (5-4) 입력 도중 이전 채점 상태 초기화
+    // (5-4) 입력 중 이전 채점 상태 초기화
     input.addEventListener('input', function() {
-      const idx = Array.from(inputs).indexOf(input);
+      const idx        = Array.from(inputs).indexOf(input);
       const answerSpan = answers[idx];
       answerSpan.classList.remove('correct', 'wrong');
       answerSpan.removeAttribute('data-wrong');
     });
   });
 });
-// ================================================================================  
+// ================================================================================
