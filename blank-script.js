@@ -1,4 +1,4 @@
-// ======================== blank-script.js (전체 교체) ========================
+// ======================== blank-script.js  ========================
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
