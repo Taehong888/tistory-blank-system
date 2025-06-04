@@ -1,4 +1,4 @@
-// ======================== blank-script.js (모든 빈칸 한꺼번에 표시 + IME 잔여 자모 제거) ========================
+// ======================== blank-script.js (전체 새로 작성) ========================
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn  = document.getElementById('fill-toggle');
   const wrongBtn   = document.getElementById('wrong-note');
@@ -7,8 +7,27 @@ document.addEventListener('DOMContentLoaded', function() {
   const inputs     = [];
   const answers    = [];
 
-  blanks.forEach(function(blank) {
-    // (1) 입력란(input) 생성
+  // ▶ IME 조합 상태 추적용 WeakMap
+  const composingMap = new WeakMap();
+
+  // ▶ IME 버퍼(미완성 한글) 강제 커밋(해제) 함수
+  function forceIMECommit() {
+    const tempInput = document.createElement('input');
+    tempInput.style.position   = 'absolute';
+    tempInput.style.opacity    = '0';
+    tempInput.setAttribute('autocomplete', 'off');
+    tempInput.setAttribute('autocorrect', 'off');
+    tempInput.setAttribute('autocapitalize', 'none');
+    tempInput.setAttribute('spellcheck', 'false');
+    bodyEl.appendChild(tempInput);
+    tempInput.focus();
+    tempInput.blur();
+    bodyEl.removeChild(tempInput);
+  }
+
+  // 1) 각 .blank마다 <input> + <span> 생성
+  blanks.forEach(function(blank, idx) {
+    // (1) <input>
     const inputEl = document.createElement('input');
     inputEl.type         = 'text';
     inputEl.className    = 'blank-input';
@@ -16,12 +35,17 @@ document.addEventListener('DOMContentLoaded', function() {
     inputEl.placeholder  = '';
     inputEl.autocomplete = 'off';
 
-    // (2) 정답 표시용 span 생성
+    // IME 조합 상태 추적
+    inputEl.addEventListener('compositionstart', () => composingMap.set(inputEl, true));
+    inputEl.addEventListener('compositionend',   () => composingMap.set(inputEl, false));
+    composingMap.set(inputEl, false);
+
+    // (2) <span class="answered"> (채점 후 정답/오답 표시용)
     const spanEl = document.createElement('span');
     spanEl.className     = 'answered';
     spanEl.style.display = 'none'; // 초기에는 숨김
 
-    // (3) .blank 바로 뒤에 span → input 삽입
+    // (3) 빈칸(<span class="blank">) 바로 뒤에 insert: span → input 순서로
     blank.insertAdjacentElement('afterend', spanEl);
     spanEl.insertAdjacentElement('afterend', inputEl);
 
@@ -29,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     answers.push(spanEl);
   });
 
-  // (2-1) 페이지 로드 후, 각 input 크기를 기존 .blank와 동일하게 설정 (그리고 숨김)
+  // 2) 로드 직후: 각 input의 크기를 대응 blank와 똑같이 맞추고, 초기에는 숨김
   inputs.forEach(function(input, idx) {
     const blankEl = blanks[idx];
     if (blankEl) {
@@ -39,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     input.style.setProperty('display', 'none', 'important');
   });
 
-  // (3) “빈칸 채우기 모드” 버튼 클릭 토글
+  // 3) “빈칸 채우기 모드” 버튼 클릭 → 토글
   toggleBtn.addEventListener('click', function() {
     if (bodyEl.classList.contains('fill-mode')) {
       // ─── 채우기 모드 → 보기 모드 전환 ───
@@ -72,20 +96,23 @@ document.addEventListener('DOMContentLoaded', function() {
         span.removeAttribute('data-wrong');
       });
 
-      // (3-4) 모든 입력란을 한꺼번에 보이도록 (값은 이미 빈 상태)
+      // (3-4) 모든 입력란을 한꺼번에 보이도록 + 값도 비우기
       inputs.forEach(function(input) {
-        input.value = '';
+        input.value = ''; // 혹시 남아 있을 수 있는 값을 미리 비움
         input.style.setProperty('display', 'inline-block', 'important');
       });
 
-      // (3-5) 첫 번째 입력란에만 포커스
+      // (3-5) 첫 번째 입력란만 포커스
       if (inputs.length > 0) {
+        // 첫 칸에 IME 버퍼를 깨끗이 비우고 값도 빈 상태에서 포커스
+        forceIMECommit();
+        inputs[0].value = '';
         inputs[0].focus();
       }
     }
   });
 
-  // (4) “오답노트” 버튼 클릭: 틀린 항목만 재입력 모드
+  // 4) “오답노트” 버튼 클릭 → 틀렸던 칸만 재입력 모드
   wrongBtn.addEventListener('click', function() {
     if (!bodyEl.classList.contains('fill-mode')) {
       bodyEl.classList.add('fill-mode');
@@ -100,12 +127,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     answers.forEach(function(span, idx) {
       if (span.classList.contains('wrong')) {
-        // 오답인 칸만 보이게, 값 초기화 후 포커스
+        // 틀린 칸만 보이기 + 값 초기화 + 포커스
         span.style.setProperty('display', 'none', 'important');
         span.classList.remove('wrong');
         span.removeAttribute('data-wrong');
 
         const input = inputs[idx];
+        forceIMECommit();
         input.value = '';
         input.style.setProperty('display', 'inline-block', 'important');
         input.focus();
@@ -116,11 +144,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // (5) 입력란 엔터키 이벤트: 공백 무시 채점 + 다음 입력란 포커스
+  // 5) 입력란마다: 엔터키 누르면 “채점 → 다음 칸으로 포커스” 흐름
   inputs.forEach(function(input) {
     input.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
+        // IME 조합 중엔 Enter 무시(커밋되지 않은 조합 막기)
+        if (composingMap.get(input)) {
+          return;
+        }
         event.preventDefault();
+
         const userRaw    = input.value.trim();
         const userNorm   = userRaw.replace(/\s+/g, '');
         const correctRaw = input.dataset.answer.trim();
@@ -145,20 +178,21 @@ document.addEventListener('DOMContentLoaded', function() {
           answerSpan.style.setProperty('display', 'inline-block', 'important');
         }
 
-        // (5-2) 현재 input 숨김 (채점 표시를 위해)
+        // (5-2) 현재 입력란 숨김(채점 결과를 span으로 보여주기 위함)
         input.style.setProperty('display', 'none', 'important');
 
-        // (5-3) 다음 input을 깨끗하게 초기화 + 포커스
+        // (5-3) 다음 입력란만 “값을 빈 문자열로 초기화” + 보여준 뒤 포커스
         const nextInput = inputs[idx + 1];
         if (nextInput) {
-          nextInput.value = '';  // ▶ 여기서 “다음 칸”의 잔여 텍스트를 비웁니다
+          forceIMECommit();
+          nextInput.value = '';  // ▶ **여기서만** 다음 칸의 값을 비웁니다.
           nextInput.style.setProperty('display', 'inline-block', 'important');
           nextInput.focus();
         }
       }
     });
 
-    // (5-4) 입력 중이면 이전 채점 표시 초기화
+    // (5-4) 입력 중에는 기존 채점 표시를 초기화
     input.addEventListener('input', function() {
       const idx        = Array.from(inputs).indexOf(input);
       const answerSpan = answers[idx];
