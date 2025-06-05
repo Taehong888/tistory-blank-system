@@ -1,100 +1,153 @@
-/* 1) .blank (보기 모드) */
+/* ===========================================
+   blank-style.css
+   에듀프로젝트 사이트 빈칸 디자인 그대로 재현
+   =========================================== */
+
+/* ── 0) 공통 변수 선언 ── */
+:root {
+  --blank-font-size: 0.9em;        /* 에듀프로젝트와 동일한 글자 크기 */
+  --blank-line-height: 1.6em;      /* 글자 1줄 높이(전체 박스 높이) */
+  --blank-padding-vert: 2px;       /* 상하 패딩 2px */
+  --blank-padding-horiz: 4px;      /* 좌우 패딩 4px */
+  --blank-border-radius: 4px;      /* 모서리 반경 4px */
+  --blank-border-color: #B6DFB0;   /* 짙은 연두 (#B6DFB0) */
+  --blank-bg-view: #EFFBDD;        /* 보기 모드 배경 (#EFFBDD) */
+  --blank-bg-input: #FFFFFF;       /* 입력 모드 배경 (#FFFFFF) */
+  --correct-color: #5DCB5F;        /* 정답 텍스트 색 (#5DCB5F) */
+  --incorrect-color: #DD0031;      /* 오답 텍스트 색 (#DD0031) */
+}
+
+/* ── 1) .blank (보기 모드) ── */
 .blank {
   display: inline-block;
-  box-sizing: border-box;                /* border + padding을 width/height에 포함 */
-  font-family: inherit;                  /* 부모 폰트와 동일하게 */
-  font-size: 0.9em;                      /* 동일 폰트 크기 */
-  line-height: 1.6em;                    /* 동일 줄 높이 */
-  height: 1.6em;                         /* 전체 박스 높이 */
-  padding: 0 0.3em;                      /* 좌우 패딩 0.3em, 상하 패딩 0 */
+  box-sizing: border-box;
+
+  /* 폰트는 부모(본문)에서 상속받고, 에듀프로젝트와 동일한 크기·행높이 */
+  font-family: inherit;
+  font-size: var(--blank-font-size);
+  line-height: var(--blank-line-height);
+  height: var(--blank-line-height);
+
+  /* 배경·테두리·모서리·패딩을 에듀프로젝트와 동일하게 */
+  background-color: var(--blank-bg-view);
+  border: 1px solid var(--blank-border-color);
+  border-radius: var(--blank-border-radius);
+  padding: var(--blank-padding-vert) var(--blank-padding-horiz);
+
   margin: 0 3px;
   vertical-align: middle;
-  background-color: #e0f2d8;
-  border: 1px solid #aacb8e;
-  border-radius: 3px;
-  color: transparent;                    /* 기본에선 정답 텍스트 숨김 */
+
+  /* 텍스트는 기본에선 숨김(투명) 상태로 두고 */
+  color: transparent;
   position: relative;
+  /* 너비는 auto → JS에서 측정한 픽셀(width)으로 대체됨 */
+  width: auto;
 }
+
+/* ::before를 통해 data-answer 값만큼 숨겨진 공간 확보 */
 .blank::before {
   content: attr(data-answer);
   visibility: hidden;
   display: inline-block;
   white-space: nowrap;
 }
+
+/* ::after는 “hover 시”만 텍스트가 보이도록 */
 .blank::after {
-  /* hover 시 텍스트만 보여주기 */
   content: attr(data-answer);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: transparent;                    /* 기본엔 숨김 */
   white-space: nowrap;
+  color: transparent;
   transition: color 0.2s ease-in-out;
   pointer-events: none;
+
   font-family: inherit;
-  font-size: 0.9em;
-  line-height: 1.6em;
+  font-size: var(--blank-font-size);
+  line-height: var(--blank-line-height);
   z-index: 10;
 }
 .blank:hover::after {
-  color: #333;
+  color: #333;  /* hover 시 텍스트만 나타남 */
 }
 
-/* 2) .fillNode (입력 모드) */
+/* ── 2) .fillNode (입력 모드) ── */
 .fillNode {
   display: inline-block;
-  box-sizing: border-box;                /* JS에서 지정한 width가 포함된 전체 폭 */
+  box-sizing: border-box;
+
+  /* 동일 폰트 속성(본문과) */
   font-family: inherit;
-  font-size: 0.9em;
-  line-height: 1.6em;
-  height: 1.6em;
-  padding: 0 0.3em;                      /* .blank와 동일한 padding */
+  font-size: var(--blank-font-size);
+  line-height: var(--blank-line-height);
+  height: var(--blank-line-height);
+
+  /* 흰색 배경, 짙은 연두 테두리, 모서리, 패딩 = 에듀프로젝트와 똑같이 */
+  background-color: var(--blank-bg-input);
+  border: 1px solid var(--blank-border-color);
+  border-radius: var(--blank-border-radius);
+  padding: var(--blank-padding-vert) var(--blank-padding-horiz);
+
   margin: 0 3px;
   vertical-align: middle;
-  background-color: #ffffff;
-  border: 1px solid #cccccc;
-  border-radius: 3px;
-  /* width: auto;   — JS에서 직접 width(px) 값을 넣어 주므로 필요 없음 */
-}
-.fillNode:focus {
-  outline: none;
-  border-color: #557a3b;
-  background-color: #f9f9f9;
+
+  /* 너비는 JS에서 style.width로 px 단위 지정 */
+  width: auto;
 }
 
-/* 3) .correct (정답 모드) */
+/* 포커스 시 약간 테두리 강조(에듀프로젝트 스타일 참조) */
+.fillNode:focus {
+  outline: none;
+  border-color: var(--blank-border-color);
+  background-color: #FAFFFA; /* 에듀프로젝트보다 살짝 밝은 느낌 */
+}
+
+/* ── 3) .correct (정답 모드) ── */
 .correct {
   display: inline-block;
   box-sizing: border-box;
-  font-family: inherit;
-  font-size: 0.9em;
-  line-height: 1.6em;
-  height: 1.6em;
-  background: none;                      /* 배경 없음 */
-  border: none;                          /* 테두리 없음 */
-  padding: 0;                            /* 패딩 제거 (정답은 텍스트만) */
-  margin: 0 3px;
-  vertical-align: baseline;
-  color: #5DCB5F;                        /* 녹색 텍스트 */
-  /* width: auto;   — JS에서 지정한 width(px) 값을 그대로 사용 */
-}
 
-/* 4) .incorrect (오답 모드) */
-.incorrect {
-  display: inline-block;
-  box-sizing: border-box;
+  /* 동일 폰트 속성과 높이 */
   font-family: inherit;
-  font-size: 0.9em;
-  line-height: 1.6em;
-  height: 1.6em;
+  font-size: var(--blank-font-size);
+  line-height: var(--blank-line-height);
+  height: var(--blank-line-height);
+
+  /* “박스 없이 글자만” 보이도록 */
   background: none;
   border: none;
   padding: 0;
   margin: 0 3px;
   vertical-align: baseline;
-  color: #DD0031;                        /* 빨간색 텍스트 */
+
+  /* 초록 텍스트 색(에듀프로젝트와 동일) */
+  color: var(--correct-color);
+  width: auto;
+}
+
+/* ── 4) .incorrect (오답 모드) ── */
+.incorrect {
+  display: inline-block;
+  box-sizing: border-box;
+
+  /* 동일 폰트 속성과 높이 */
+  font-family: inherit;
+  font-size: var(--blank-font-size);
+  line-height: var(--blank-line-height);
+  height: var(--blank-line-height);
+
+  /* 박스 없이 텍스트만, 빨강색(에듀프로젝트와 동일) */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 3px;
+  vertical-align: baseline;
+
+  color: var(--incorrect-color);
   position: relative;
+  width: auto;
 }
 .incorrect::after {
   content: attr(data-wrong);
@@ -105,14 +158,15 @@
   background-color: rgba(0, 0, 0, 0.75);
   color: #fff;
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: 4px;
   white-space: nowrap;
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.1s ease-in-out;
+
   font-family: inherit;
-  font-size: 0.9em;
-  line-height: 1.6em;
+  font-size: var(--blank-font-size);
+  line-height: var(--blank-line-height);
   z-index: 10;
 }
 .incorrect:hover::after {
@@ -120,30 +174,34 @@
   opacity: 1;
 }
 
-/* 5) 기타 버튼, 본문 등 통일 (선택 사항) */
+/* ── 5) 버튼·본문 통일(선택) ── */
 .blackButton {
   color: #333;
   text-decoration: underline;
   cursor: pointer;
+
   font-family: inherit;
-  font-size: 0.9em;
+  font-size: var(--blank-font-size);
 }
 .blackButton:hover {
   text-decoration: none;
 }
 .entry-content {
   font-family: inherit;
-  font-size: 0.9em;
-  line-height: 1.6em;
+  font-size: var(--blank-font-size);
+  line-height: var(--blank-line-height);
 }
 th, td {
   border: 1px solid #666 !important;
   padding: 8px 10px !important;
   text-align: left !important;
   vertical-align: middle !important;
+
   font-family: inherit !important;
-  font-size: 0.9em !important;
-  line-height: 1.6em !important;
+  font-size: var(--blank-font-size) !important;
+  line-height: var(--blank-line-height) !important;
   font-weight: normal !important;
 }
-th { background-color: #f2f2f2 !important; }
+th {
+  background-color: #f2f2f2 !important;
+}
