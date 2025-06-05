@@ -53,7 +53,9 @@ function enableScript(blanks) {
 
     // 입력 너비를 원본 글자 수 ch 단위로 지정
     input.style.boxSizing = 'border-box';
-    input.style.width = `${originalAnswer.length}ch`;
+const rect = blank.getBoundingClientRect();
+const targetWidthPx = rect.width;
+input.style.width = `${targetWidthPx}px`;
 
     input.dataset.answer = answer;
     input.dataset.originalAnswer = originalAnswer;
