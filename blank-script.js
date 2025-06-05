@@ -1,4 +1,3 @@
-// ======================== blank-script.js ========================
 const blankArray = document.querySelectorAll('.blank');
 
 if (blankArray.length >= 1) {
@@ -30,10 +29,6 @@ function enableScript(blanks) {
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.textContent;
     input.size = answer.length * 1.2;
-
-    // 본문 입력란 폰트 크기 0.9em으로 고정
-    input.style.fontSize = '0.9em';
-
     if (isPlaceholder) {
       input.placeholder = placeholder;
       input.size = blank.textContent.length * 1.35;
@@ -48,9 +43,6 @@ function enableScript(blanks) {
       if (e.key === 'Enter') {
         const userAnswer = normalizeText(input.value.trim());
         const span = document.createElement('span');
-
-        // 정답/오답 텍스트 폰트 크기 0.9em으로 고정
-        span.style.fontSize = '0.9em';
 
         if (userAnswer === input.dataset.answer) {
           span.classList.add('fillNode');
@@ -68,7 +60,7 @@ function enableScript(blanks) {
         input.replaceWith(span);
 
         const nextInput = findNextInput();
-        nextInput && nextInput.focus();
+        nextInput.focus();
       }
     });
 
@@ -105,20 +97,13 @@ function enableScript(blanks) {
 }
 
 function findAnswer() {
-  // “보기 모드” 또는 “빈칸 채우기 모드” 상관없이 모든 .blank(스팬)과 입력란을 정답으로 교체
-  document.querySelectorAll('.blank').forEach(blankEl => {
-    const answerText = blankEl.getAttribute('data-answer');
+  const inputs = document.querySelectorAll('.fillNode');
+  inputs.forEach(input => {
     const span = document.createElement('span');
-    span.style.fontSize = '0.9em';
-    span.classList.add('fillNode', 'correct');
-    span.textContent = answerText;
-    blankEl.replaceWith(span);
-  });
-
-  document.querySelectorAll('input.fillNode').forEach(input => {
-    const span = document.createElement('span');
-    span.style.fontSize = '0.9em';
-    span.classList.add('fillNode', 'correct');
+    span.classList.remove('incorrect');
+    span.classList.add('correct');
+    span.classList.add('fillNode');
+    span.dataset.originalAnswer = input.dataset.originalAnswer;
     span.textContent = input.dataset.originalAnswer;
     input.replaceWith(span);
   });
@@ -129,7 +114,6 @@ function disableScript() {
 
   inputs.forEach(input => {
     const span = document.createElement('span');
-    span.style.fontSize = '0.9em';
     span.classList.remove('correct');
     span.classList.remove('incorrect');
     span.classList.add('blank');
@@ -145,90 +129,95 @@ function clearBlank() {
   enableScript(blanks);
 }
 
-// ====================================================================
-// ◀ 수정된 createLabelAndCheckbox() ▶
-// ====================================================================
+
+// ======================================
+// ▶ createLabelAndCheckbox 함수만 수정됨
+// ======================================
 function createLabelAndCheckbox() {
   const entryContent = document.getElementsByClassName("entry-content")[0];
-  let boxChecked = false;  // “채우기 모드 활성화 여부” 상태 저장
+  let boxChecked = false;
 
-  // 1) “토글 버튼” (초기: 빈칸 채우기 모드 상태)
-  const toggleBtn = document.createElement('div');
-  toggleBtn.id = 'blank-toggle-btn';
-  toggleBtn.style.display = 'inline-block';
-  toggleBtn.style.backgroundColor = '#557a3b';   // 짙은 초록
-  toggleBtn.style.color = '#ffffff';
-  toggleBtn.style.fontWeight = 'bold';
-  toggleBtn.style.fontSize = '0.9em';
-  toggleBtn.style.padding = '10px 20px';
-  toggleBtn.style.borderRadius = '6px';
-  toggleBtn.style.cursor = 'pointer';
-  toggleBtn.style.userSelect = 'none';
-  toggleBtn.style.marginRight = '10px';          // 옆 버튼과 간격
-  toggleBtn.textContent = '빈칸 채우기 모드';
+  // 1) “빈칸 채우기 모드” 토글용 박스
+  const toggleDiv = document.createElement('div');
+  toggleDiv.style.backgroundColor = '#b8fcb8';
+  toggleDiv.style.padding = '10px';
+  toggleDiv.style.borderRadius = '5px';
+  toggleDiv.style.marginBottom = '10px';
+  toggleDiv.style.display = 'flex';
+  toggleDiv.style.alignItems = 'center';
 
-  // 2) “정답 보기 버튼” (초기: 보이도록, 버튼 스타일)
-  const answerBtn = document.createElement('div');
-  answerBtn.id = 'blank-answer-btn';
-  answerBtn.style.display = 'inline-block';      // 처음부터 보이기
-  answerBtn.style.backgroundColor = '#d35400';    // 주황색
-  answerBtn.style.color = '#ffffff';
-  answerBtn.style.fontWeight = 'bold';
-  answerBtn.style.fontSize = '0.9em';
-  answerBtn.style.padding = '10px 20px';
-  answerBtn.style.borderRadius = '6px';
-  answerBtn.style.cursor = 'pointer';
-  answerBtn.style.userSelect = 'none';
-  answerBtn.style.marginRight = '10px';
-  answerBtn.textContent = '정답 보기';
-  answerBtn.addEventListener('click', findAnswer);
+  const toggleCheckbox = document.createElement('input');
+  toggleCheckbox.type = 'checkbox';
+  toggleCheckbox.id = 'toggleScript';
+  const toggleLabel = document.createElement('span');
+  toggleLabel.style.marginLeft = '8px';
+  toggleLabel.style.fontWeight = '800';
+  toggleLabel.style.color = '#0c3b18';
+  toggleLabel.textContent = '빈칸 채우기 모드';
 
-  // 3) “빈칸 초기화 버튼” (초기: 숨김, 버튼 스타일)
-  const clearBtn = document.createElement('div');
-  clearBtn.id = 'blank-clear-btn';
-  clearBtn.style.display = 'none';               // 초기에는 숨김
-  clearBtn.style.backgroundColor = '#4a90e2';     // 파란색
-  clearBtn.style.color = '#ffffff';
-  clearBtn.style.fontWeight = 'bold';
-  clearBtn.style.fontSize = '0.9em';
-  clearBtn.style.padding = '10px 20px';
-  clearBtn.style.borderRadius = '6px';
-  clearBtn.style.cursor = 'pointer';
-  clearBtn.style.userSelect = 'none';
-  clearBtn.style.marginRight = '10px';
-  clearBtn.textContent = '빈칸 초기화';
-  clearBtn.addEventListener('click', clearBlank);
+  toggleDiv.append(toggleCheckbox);
+  toggleDiv.append(toggleLabel);
 
-  // 4) 버튼들을 담을 컨테이너 (한 줄에 나란히)
-  const buttonContainer = document.createElement('div');
-  buttonContainer.style.marginBottom = '20px';
-  buttonContainer.appendChild(toggleBtn);
-  buttonContainer.appendChild(answerBtn);
-  buttonContainer.appendChild(clearBtn);
 
-  // 5) 포스트 맨 위에 container 추가
-  entryContent.prepend(buttonContainer);
+  // 2) “빈칸 초기화” 전용 박스 (기본 숨김)
+  const clearDiv = document.createElement('div');
+  clearDiv.style.backgroundColor = '#f0f0f0';
+  clearDiv.style.padding = '10px';
+  clearDiv.style.borderRadius = '5px';
+  clearDiv.style.marginBottom = '10px';
+  clearDiv.style.display = 'none';       // 처음엔 숨김 처리
+  clearDiv.style.cursor = 'pointer';
 
-  // 6) 토글 버튼 클릭 이벤트: “보기 모드 ↔ 빈칸 채우기 모드” 전환
-  toggleBtn.addEventListener('click', function () {
-    if (!boxChecked) {
-      // → “채우기 모드” 활성화
-      boxChecked = true;
-      toggleBtn.textContent = '보기 모드';
-      answerBtn.style.display = 'none';
-      clearBtn.style.display = 'inline-block';
+  const clearButton = document.createElement('span');
+  clearButton.classList.add('blackButton');
+  clearButton.textContent = '빈칸 초기화';
+  clearButton.addEventListener('click', clearBlank);
+
+  clearDiv.append(clearButton);
+
+
+  // 3) “정답 보기” 전용 박스 (기본 숨김)
+  const answerDiv = document.createElement('div');
+  answerDiv.style.backgroundColor = '#f0f0f0';
+  answerDiv.style.padding = '10px';
+  answerDiv.style.borderRadius = '5px';
+  answerDiv.style.marginBottom = '20px';
+  answerDiv.style.display = 'none';      // 처음엔 숨김 처리
+  answerDiv.style.cursor = 'pointer';
+
+  const answerButton = document.createElement('span');
+  answerButton.classList.add('blackButton');
+  answerButton.textContent = '정답 보기';
+  answerButton.addEventListener('click', findAnswer);
+
+  answerDiv.append(answerButton);
+
+
+  // 4) entry-content 맨 위에 “토글 박스 → 초기화 박스 → 정답보기 박스” 순으로 추가
+  entryContent.prepend(answerDiv);
+  entryContent.prepend(clearDiv);
+  entryContent.prepend(toggleDiv);
+
+
+  // 5) 토글 체크박스 change 이벤트
+  toggleCheckbox.addEventListener('change', function () {
+    if (this.checked) {
+      // 최초 체크 시에만 화면에 “초기화/정답보기” 박스를 나타내기
+      if (!boxChecked) {
+        boxChecked = true;
+        clearDiv.style.display = 'block';
+        answerDiv.style.display = 'block';
+      }
       const blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
-      // → “보기 모드” (채우기 모드 비활성화)
-      boxChecked = false;
-      toggleBtn.textContent = '빈칸 채우기 모드';
-      answerBtn.style.display = 'inline-block';
-      clearBtn.style.display = 'none';
+      // 체크 해제 시에 “초기화/정답보기” 박스 숨기고, 채우기 모드 비활성화
+      clearDiv.style.display = 'none';
+      answerDiv.style.display = 'none';
       disableScript();
     }
   });
 }
-// ====================================================================
+// ======================================
 // createLabelAndCheckbox 끝
-// ====================================================================
+// ======================================
