@@ -5,7 +5,7 @@
 /* 공통 변수: 글자 크기와 줄 높이만 통일 */
 :root {
   --common-font-size: 1.0em;    /* 필요 시 1.0em 등으로 변경 */
-  --common-line-height: 1.6em;  /* 빈칸, 입력창, 정답·오답 가이드라인 */
+  --common-line-height: 10em;  /* 빈칸, 입력창, 정답·오답 가이드라인 */
 }
 
 /* 1) .blank (보기 모드) */
