@@ -1,164 +1,180 @@
+// ===========================================
+// blank-script.js
+// - 티스토리 빈칸 채우기 기능 구현 스크립트
+// ===========================================
+
 document.addEventListener('DOMContentLoaded', function() {
-  const toggleBtn  = document.getElementById('fill-toggle');
-  const wrongBtn   = document.getElementById('wrong-note');
-  const bodyEl     = document.body;
+  const blankArray = document.querySelectorAll('.blank');
 
-  // 1) 기존 .blank(span) 요소들을 찾아서, 대응되는
-  //    <input class="blank-input"> / <span class="answered"> 요소 생성
-  const blanks   = document.querySelectorAll('.blank');
-  const inputs   = [];
-  const answers  = [];
+  if (blankArray.length >= 1) {
+    createLabelAndCheckbox();
+  }
 
-  blanks.forEach(function(blank) {
-    // (1) 입력용 input 생성
-    const inputEl = document.createElement('input');
-    inputEl.type         = 'text';
-    inputEl.className    = 'blank-input';
-    // .blank에 있던 data-answer 속성을 input에도 붙임
-    inputEl.setAttribute('data-answer', blank.getAttribute('data-answer'));
-    inputEl.placeholder  = '';
-    inputEl.autocomplete = 'off';
+  if (document.getElementsByClassName('blankTranslation').length != 0) {
+    const blanks = document.querySelectorAll('.blankTranslation');
+    enableScript(blanks);
+  }
 
-    // (2) 정답 표시용 span 생성
-    const spanEl = document.createElement('span');
-    spanEl.className     = 'answered';
-    spanEl.style.display = 'none'; // 초기엔 숨김
+  function enableScript(blanks) {
+    let currentInput = 0;
+    let solvedProblems = 0;
+    const isPlaceholder = document.getElementsByClassName('blankTranslation').length != 0;
 
-    // (3) blank 뒤에 span → input 순으로 삽입
-    blank.insertAdjacentElement('afterend', spanEl);
-    spanEl.insertAdjacentElement('afterend', inputEl);
+    blanks.forEach(blank => {
+      const placeholder = blank.textContent;
+      const answer = normalizeText(blank.textContent);
+      const normalizedAnswer = normalizeText(answer);
 
-    inputs.push(inputEl);
-    answers.push(spanEl);
-  });
+      const input = document.createElement('input');
+      input.classList.add('fillNode');
+      input.type = 'text';
+      input.dataset.answer = normalizedAnswer;
+      input.dataset.originalAnswer = blank.textContent;
+      input.size = Math.floor(answer.length * 1.2);
 
-  // 2) 페이지 로드 직후, 각 input의 크기를 원래 .blank와 동일하게 설정
-  inputs.forEach(function(input, idx) {
-    const blankEl = blanks[idx];
-    if (blankEl) {
-      // offsetWidth/offsetHeight로 픽셀 단위 폭/높이를 가져옴
-      const bw = blankEl.offsetWidth;
-      const bh = blankEl.offsetHeight;
-
-      // box-sizing:border-box 상태이므로, padding+border 포함한 전체 크기를 지정
-      input.style.width  = bw + 'px';
-      input.style.height = bh + 'px';
-    }
-  });
-
-  // 3) “빈칸 채우기 모드” 버튼 클릭 시 토글 로직
-  toggleBtn.addEventListener('click', function() {
-    if (bodyEl.classList.contains('fill-mode')) {
-      // ─── 채우기 모드 → 보기 모드 전환 ───
-      bodyEl.classList.remove('fill-mode');
-      toggleBtn.textContent = '빈칸 채우기 모드';
-
-      // (3-1) 모든 입력란 숨김
-      inputs.forEach(function(input) {
-        input.value = '';
-        input.style.setProperty('display', 'none', 'important');
-      });
-      // (3-2) 모든 정답 span 초기화 및 숨김
-      answers.forEach(function(span) {
-        span.textContent = '';
-        span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('correct', 'wrong');
-        span.removeAttribute('data-wrong');
-      });
-    } else {
-      // ─── 보기 모드 → 채우기 모드 전환 ───
-      bodyEl.classList.add('fill-mode');
-      toggleBtn.textContent = '보기 모드';
-
-      // (3-3) 기존 정답 span 초기화 후 숨김
-      answers.forEach(function(span) {
-        span.textContent = '';
-        span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('correct', 'wrong');
-        span.removeAttribute('data-wrong');
-      });
-      // (3-4) 각 input에서 display:none!important 제거 → 보이도록
-      inputs.forEach(function(input) {
-        input.style.removeProperty('display');
-      });
-      // (3-5) 첫 번째 input만 보이게 설정하고 포커스
-      if (inputs.length > 0) {
-        inputs[0].style.setProperty('display', 'inline-block', 'important');
-        inputs[0].focus();
+      if (isPlaceholder) {
+        input.placeholder = placeholder;
+        input.size = Math.floor(blank.textContent.length * 1.35);
       }
-    }
-  });
 
-  // 4) “오답노트” 버튼 클릭 시: 틀린 항목만 재입력 모드
-  wrongBtn.addEventListener('click', function() {
-    if (!bodyEl.classList.contains('fill-mode')) {
-      bodyEl.classList.add('fill-mode');
-      toggleBtn.textContent = '보기 모드';
-    }
-    answers.forEach(function(span, idx) {
-      if (span.classList.contains('wrong')) {
-        // (4-1) 오답 span 숨기고 클래스 제거
-        span.style.setProperty('display', 'none', 'important');
-        span.classList.remove('wrong');
-        span.removeAttribute('data-wrong');
+      input.classList.add('quizQuestion');
 
-        // (4-2) 해당 인덱스 input 보이게 & 포커스
-        const input = inputs[idx];
-        input.value = '';
-        input.style.setProperty('display', 'inline-block', 'important');
-        input.focus();
-      }
-    });
-  });
+      input.addEventListener('click', function(e) {
+        currentInput = Array.from(document.querySelectorAll('.quizQuestion')).indexOf(e.target);
+      });
 
-  // 5) 각 입력란 Enter키 처리, 다음 입력란 포커스
-  inputs.forEach(function(input) {
-    input.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          const userAnswer = normalizeText(input.value.trim());
+          const span = document.createElement('span');
 
-        const userRaw    = input.value.trim();
-        const userNorm   = userRaw.replace(/\s+/g, '');
-        const correctRaw = input.dataset.answer.trim();
-        const correctNorm= correctRaw.replace(/\s+/g, '');
-        const idx        = Array.from(inputs).indexOf(input);
-        const answerSpan = answers[idx];
+          if (userAnswer === input.dataset.answer) {
+            span.classList.add('fillNode', 'correct');
+            span.textContent = input.dataset.originalAnswer;
+            span.dataset.originalAnswer = input.dataset.originalAnswer;
+          } else {
+            span.classList.add('fillNode', 'incorrect');
+            span.textContent = input.dataset.originalAnswer;
+            span.dataset.originalAnswer = input.dataset.originalAnswer;
+          }
 
-        // (5-1) 이전 채점 상태 초기화
-        answerSpan.classList.remove('correct', 'wrong');
-        answerSpan.removeAttribute('data-wrong');
+          solvedProblems += 1;
+          input.replaceWith(span);
 
-        if (userNorm === correctNorm) {
-          // 정답 처리
-          answerSpan.textContent   = correctRaw;
-          answerSpan.classList.add('correct');
-          answerSpan.style.setProperty('display', 'inline-block', 'important');
-        } else {
-          // 오답 처리
-          answerSpan.textContent   = correctRaw;
-          answerSpan.classList.add('wrong');
-          answerSpan.setAttribute('data-wrong', userRaw);
-          answerSpan.style.setProperty('display', 'inline-block', 'important');
+          const nextInput = findNextInput();
+          if (nextInput) {
+            nextInput.focus();
+          }
         }
+      });
 
-        // (5-2) 현재 input 숨김
-        input.style.setProperty('display', 'none', 'important');
+      blank.replaceWith(input);
+    });
 
-        // (5-3) 다음 input show + 포커스
-        const nextInput = inputs[idx + 1];
-        if (nextInput) {
-          nextInput.style.setProperty('display', 'inline-block', 'important');
-          nextInput.focus();
+    function normalizeText(text) {
+      return text
+        .replace(/[\/⋅.,]/g, '')
+        .replace(/이요/g, '이고')
+        .replace(/은 /g, '')
+        .replace(/는 /g, '')
+        .replace(/이/g, '')
+        .replace(/가/g, '')
+        .replace(/을/g, '')
+        .replace(/를/g, '')
+        .replace(/및/g, '')
+        .replace(/와/g, '')
+        .replace(/과/g, '')
+        .replace(/에게/g, '')
+        .replace(/\s+/g, '');
+    }
+
+    function findNextInput() {
+      const inputs = document.querySelectorAll('input.quizQuestion');
+      const correctProblems = document.getElementsByClassName('correct').length;
+      const prob = Math.floor((correctProblems * 100) / solvedProblems);
+
+      if (document.getElementsByClassName('quizQuestion').length === 0) {
+        alert(
+          `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
+        );
+        return null;
+      }
+      return inputs[currentInput];
+    }
+  }
+
+  function findAnswer() {
+    const inputs = document.querySelectorAll('.fillNode');
+    inputs.forEach(input => {
+      const span = document.createElement('span');
+      span.classList.remove('incorrect');
+      span.classList.add('correct', 'fillNode');
+      span.dataset.originalAnswer = input.dataset.originalAnswer;
+      span.textContent = input.dataset.originalAnswer;
+      input.replaceWith(span);
+    });
+  }
+
+  function disableScript() {
+    const inputs = document.querySelectorAll('.fillNode');
+    inputs.forEach(input => {
+      const span = document.createElement('span');
+      span.classList.remove('correct', 'incorrect');
+      span.classList.add('blank', 'fillNode');
+      span.textContent = input.dataset.originalAnswer;
+      input.replaceWith(span);
+    });
+  }
+
+  function clearBlank() {
+    disableScript();
+    const blanks = document.querySelectorAll('.blank');
+    enableScript(blanks);
+  }
+
+  function createLabelAndCheckbox() {
+    const container = document.createElement('div');
+    container.id = 'blankToggleContainer';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'toggleScript';
+
+    const label = document.createElement('label');
+    label.htmlFor = 'toggleScript';
+    label.innerHTML =
+      '<span>빈칸 채우기 모드</span><p>* 마스킹한 내용이 빈칸 문제로 변환되며, 정답을 입력하고 Enter키를 누르시면 정오를 확인하실 수 있습니다. PC에서만 적용됩니다.</p>';
+
+    container.appendChild(checkbox);
+    container.appendChild(label);
+
+    // 초기 안내문(모바일 사용자 안내문 추가)
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes('mobile') && !userAgent.includes('ipad') && !userAgent.includes('tablet')) {
+      const mobileNotice = document.createElement('p');
+      mobileNotice.classList.add('mobileNotice');
+      mobileNotice.textContent = '* 모바일 환경에서는 기능이 제한될 수 있습니다.';
+      container.appendChild(mobileNotice);
+    }
+
+    document.querySelector('.entry-content').prepend(container);
+
+    let boxChecked = false;
+    checkbox.addEventListener('change', function() {
+      if (this.checked) {
+        if (!boxChecked) {
+          boxChecked = true;
+          const extraInfo = document.createElement('div');
+          extraInfo.innerHTML =
+            "<p>* <span class='blackButton' onclick='clearBlank();'>빈칸 초기화</span>: 빈칸을 모두 제거하고 다시 생성합니다.</p>" +
+            "<p>* <span class='blackButton' onclick='findAnswer();'>정답 보기</span>: 빈칸의 정답을 모두 보여줍니다.</p>";
+          container.appendChild(extraInfo);
         }
+        const blanks = document.querySelectorAll('.blank');
+        enableScript(blanks);
+      } else {
+        disableScript();
       }
     });
-
-    // (5-4) 입력 중 이전 채점 상태 초기화
-    input.addEventListener('input', function() {
-      const idx        = Array.from(inputs).indexOf(input);
-      const answerSpan = answers[idx];
-      answerSpan.classList.remove('correct', 'wrong');
-      answerSpan.removeAttribute('data-wrong');
-    });
-  });
+  }
 });
