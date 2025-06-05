@@ -57,6 +57,7 @@
 
 /* 2) .fillNode (input 빈칸) */
 .fillNode {
+   display: inline-flex;
   box-sizing: border-box;
   padding: 0 0.3em !important;
   background-color: #ffffff;
@@ -64,6 +65,9 @@
   border-radius: 1px;
   margin: 0 !important;
   vertical-align: middle;
+  justify-content: center;
+  align-items: center;
+  top: -2.5px;
 
   /* input 자체가 size 속성으로 너비가 정해지므로, width:auto */
   width: auto;
