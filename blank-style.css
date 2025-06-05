@@ -10,16 +10,18 @@
 
 /* 1) .blank (보기 모드) */
 .blank {
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;            /* baseline에 맞추기 */
+  justify-content: center;          /* 수평 중앙 */
   background-color: #e0f2d8;
   border: 1px solid #aacb8e;
   border-radius: 1px;
   padding: 0 0.3em;
   margin: 0;
   vertical-align: baseline;         /* baseline 정렬 */
-  font-size: 1.0em;                 /* 본문과 동일 */
-  line-height: 1.8em;               /* 줄 높이, 박스 높이와 동일하게 */
-  height: 1.8em;                    /* 박스 전체 높이 고정 */
+  font-size: 1.0em;
+  line-height: 1.8em;
+  height: 1.8em;
   box-sizing: border-box;
   width: auto;
   min-width: 2em;
