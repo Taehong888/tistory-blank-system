@@ -4,19 +4,15 @@ if (blankArray.length >= 1) {
   createLabelAndCheckbox();
 }
 
-if (document.getElementsByClassName("blankTranslation").length != 0) {
+if (document.getElementsByClassName("blankTranslation").length !== 0) {
   blanks = document.querySelectorAll('.blankTranslation');
   enableScript(blanks);
 }
 
 function enableScript(blanks) {
-  var currentInput = 0;
-  var solvedProblems = 0;
-  var isPlaceholder = false;
-
-  if (document.getElementsByClassName("blankTranslation").length != 0) {
-    isPlaceholder = true;
-  }
+  let currentInput = 0;
+  let solvedProblems = 0;
+  const isPlaceholder = document.getElementsByClassName("blankTranslation").length !== 0;
 
   blanks.forEach(blank => {
     const placeholder = blank.textContent;
@@ -28,7 +24,6 @@ function enableScript(blanks) {
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
-    input.setAttribute('style', `width: ${answer.length}ch`); // 유동적 너비
 
     if (isPlaceholder) {
       input.placeholder = placeholder;
@@ -84,8 +79,8 @@ function enableScript(blanks) {
 
   function findNextInput() {
     const inputs = document.querySelectorAll('input.quizQuestion');
-    var correctProblems = document.getElementsByClassName("correct").length;
-    var prob = Math.floor(correctProblems * 100 / solvedProblems);
+    const correctProblems = document.getElementsByClassName("correct").length;
+    const prob = Math.floor(correctProblems * 100 / solvedProblems);
 
     if (inputs.length === 0) {
       alert(`문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`);
