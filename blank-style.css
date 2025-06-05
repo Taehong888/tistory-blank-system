@@ -1,18 +1,21 @@
-/* blank-style.css */
+/* ===========================================
+   blank-style.css
+   =========================================== */
 
 /* 1) .blank (보기 모드) */
 .blank {
   display: inline-block;
-  background-color: #e0f2d8;
-  border: 1px solid #aacb8e;
+  background-color: #e0f2d8;        /* 연두색 배경 */
+  border: 1px solid #aacb8e;        /* 짙은 연두 테두리 */
   border-radius: 3px;
   padding: 0 0.3em;
   margin: 0 3px;
   vertical-align: middle;
   font-size: 0.9em;
-  line-height: 1.6em;
-  height: 1.6em;
-  color: transparent;
+  line-height: 1.6em;               /* 고정된 line-height */
+  height: 1.6em;                    /* 고정된 높이 */
+  width: 6ch;                       /* 모든 빈칸을 동일한 너비로 고정(필요 시 값 조정) */
+  color: transparent;               /* 숨긴 정답 */
   position: relative;
   box-sizing: border-box;
 }
@@ -54,15 +57,16 @@
   margin: 0 3px;
   outline: none;
   transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-  line-height: 1.6em;
-  height: 1.6em;
+  line-height: 1.6em;               /* 고정된 line-height */
+  height: 1.6em;                    /* 고정된 높이 */
+  width: 6ch;                       /* 모든 입력 칸을 동일한 너비로 고정(필요 시 값 조정) */
 }
 .fillNode:focus {
   border-color: #557a3b;
   background-color: #f9f9f9;
 }
 
-/* 3) .correct / .incorrect */
+/* 3) .correct / .incorrect (정답·오답 표시) */
 .correct {
   display: inline-block;
   font-size: 0.9em;
@@ -70,7 +74,9 @@
   margin: 0 3px;
   vertical-align: baseline;
   line-height: 1.8;
-  color: #5DCB5F;
+  color: #5DCB5F;                   /* 초록 */
+  width: 6ch;                       /* 모든 정답 표시 박스도 동일 너비로 고정 */
+  text-align: center;               /* 길이에 상관없이 중앙 정렬 */
 }
 .incorrect {
   display: inline-block;
@@ -79,7 +85,10 @@
   margin: 0 3px;
   vertical-align: baseline;
   line-height: 1.8;
-  color: #DD0031;
+  color: #DD0031;                   /* 빨강 */
+  width: 6ch;                       /* 모든 오답 표시 박스도 동일 너비로 고정 */
+  text-align: center;
+  position: relative;
 }
 .incorrect::after {
   content: attr(data-wrong);
@@ -120,13 +129,13 @@
 th,
 td {
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;
+  padding: 8px 10px !important;          
   text-align: left !important;
   vertical-align: middle !important;
   font-size: 0.9em !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
-  line-height: 1.8 !important;
+  line-height: 1.8 !important;             
 }
 th {
   background-color: #f2f2f2 !important;
