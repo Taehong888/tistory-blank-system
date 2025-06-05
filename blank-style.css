@@ -1,118 +1,167 @@
 /* ===========================================
-   blank-style.css
-   - 보기 모드의 .blank 높이를 채우기 모드와 동일하게 고정
+   blank-style.css (글자 수에 맞춘 자동 너비 + 정답모드 박스 제거)
    =========================================== */
 
-/* 1) 전체 폰트/기본 스타일 */
-body {
-  font-size: 0.9em;         /* 전체 텍스트 크기 기준 0.9em */
-  line-height: 1.8;         /* 전체 줄 간격을 1.8로 넉넉히 설정 */
-  font-family: sans-serif;  /* 기본 폰트 설정 */
-  color: #333333;           /* 기본 글자색 설정 */
-  background-color: #f5f5f5; /* 가벼운 배경색 설정 */
-  margin: 0;
-  padding: 0;
+/* 공통 변수: 글자 크기와 줄 높이만 통일 */
+:root {
+  --common-font-size: 0.9em;    /* 필요 시 1.0em 등으로 변경 */
+  --common-line-height: 1.6em;  /* 빈칸, 입력창, 정답·오답 가이드라인 */
 }
 
-/* 2) 빈칸(span.blank)의 기본 스타일 (보기 모드) */
+/* 1) .blank (보기 모드) */
 .blank {
   display: inline-block;
-  min-width: 1.5em;           /* 최소 너비 설정 */
-  padding: 0.2em 0.4em;       /* 위아래 0.2, 좌우 0.4 정도의 여백 */
-  margin: 0 0.2em;            /* 빈칸 사이 약간의 여백 */
-  background-color: #eaf6ea;  /* 연한 초록 배경 */
-  border: 2px solid #7bbf7b;  /* 약간 짙은 초록 테두리 */
-  border-radius: 4px;         /* 모서리 둥글게 */
-  text-align: center;         /* 텍스트 중앙 정렬 */
-  font-weight: bold;
-  cursor: default;
-}
+  background-color: #e0f2d8;    /* 연두색 배경 */
+  border: 1px solid #aacb8e;    /* 짙은 연두 테두리 */
+  border-radius: 3px;
+  padding: 0 0.3em;
+  margin: 0 3px;
+  vertical-align: middle;
 
-/* 3) 입력란(input.fillNode)의 기본 스타일 (채우기 모드) */
-input.fillNode {
+  /* 글자 크기/줄 높이를 모두 통일 */
+  font-size: var(--common-font-size);
+  line-height: var(--common-line-height);
+  height: var(--common-line-height);
+
+  /* 너비는 자동으로 내용(정답) 길이에 맞췄다가, 텍스트는 숨김 처리 */
+  width: auto;
+  color: transparent;
+  position: relative;
+  box-sizing: border-box;
+}
+/* ::before를 이용해 보이지 않는 상태에서 너비만 맞추기 */
+.blank::before {
+  content: attr(data-answer);
+  visibility: hidden;
   display: inline-block;
-  padding: 0.2em 0.4em;
-  margin: 0 0.2em;
-  border: 2px solid #7bbf7b;
-  border-radius: 4px;
-  font-size: 0.9em;
-  font-weight: bold;
-  outline: none;
-  box-sizing: content-box;   /* size 속성이 텍스트 길이에 맞게 동작하게 */
+  white-space: nowrap;
+}
+/* ::after는 hover 시에만 텍스트 색상을 바꿔 보여준다 */
+.blank::after {
+  content: attr(data-answer);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: transparent; /* 정상 상태에서는 투명 */
+  white-space: nowrap;
+  transition: color 0.2s ease-in-out;
+  pointer-events: none;
+  font-size: var(--common-font-size);
+  line-height: var(--common-line-height);
+  z-index: 10;
+}
+.blank:hover::after {
+  color: #333; /* hover 시에만 정답 텍스트 보이기 */
 }
 
-/* 4) 정답/오답 표시 스타일 */
-span.correct {
+/* 2) .fillNode (input 빈칸) */
+.fillNode {
+  box-sizing: border-box;
+  padding: 0 0.3em;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  margin: 0 3px;
+  vertical-align: middle;
+
+  /* input 자체가 size 속성으로 너비가 정해지므로, width:auto */
+  width: auto;
+
+  /* 통일된 글자 크기와 줄 높이 */
+  font-size: var(--common-font-size);
+  line-height: var(--common-line-height);
+  height: var(--common-line-height);
+}
+.fillNode:focus {
+  border-color: #557a3b;
+  background-color: #f9f9f9;
+}
+
+/* 3) .correct / .incorrect (정답·오답 표시) */
+/* 정답 모드(.correct)는 “글자만 보이게” 테두리나 배경 없음 */
+.correct {
   display: inline-block;
-  padding: 0.2em 0.4em;
-  margin: 0 0.2em;
-  background-color: #d4f8d4;  /* 아주 연한 초록 */
-  border: 2px solid #3ea83e;  /* 짙은 초록 */
-  border-radius: 4px;
-  font-weight: bold;
-  color: #0c3b18;
+  font-size: var(--common-font-size);
+  font-weight: normal;
+  margin: 0 3px;
+  vertical-align: baseline;
+
+  /* width:auto → 글자만큼만 차지 */
+  width: auto;
+  color: #5DCB5F;    /* 초록색 텍스트 */
+  /* background / border 없음 → 그냥 글자만 보임 */
 }
 
-span.incorrect {
+/* 오답(.incorrect)도 “글자만” 차지하되, 마우스 오버 시 tooltip */
+.incorrect {
   display: inline-block;
-  padding: 0.2em 0.4em;
-  margin: 0 0.2em;
-  background-color: #f8d4d4;  /* 연한 빨강 */
-  border: 2px solid #e03e3e;  /* 짙은 빨강 */
-  border-radius: 4px;
-  font-weight: bold;
-  color: #800000;
+  font-size: var(--common-font-size);
+  font-weight: normal;
+  margin: 0 3px;
+  vertical-align: baseline;
+
+  width: auto;
+  color: #DD0031;    /* 빨간 텍스트 */
+  position: relative;
+}
+.incorrect::after {
+  content: attr(data-wrong);
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.1s ease-in-out;
+  pointer-events: none;
+  font-size: var(--common-font-size);
+  line-height: var(--common-line-height);
+  z-index: 10;
+}
+.incorrect:hover::after {
+  visibility: visible;
+  opacity: 1;
 }
 
-/* 5) '빈칸 채우기 모드' 레이블과 안내문 스타일 */
-#blankToggleContainer {
-  background-color: #b8fcb8;   /* 연한 초록 */
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 30px;
-  font-family: sans-serif;
-}
-
-#blankToggleContainer label {
-  font-weight: 800;
-  color: #0c3b18;
-  display: block;
-  margin-bottom: 5px;
-}
-
-#blankToggleContainer p {
-  font-size: 0.875em;
-  color: #07611f;
-  line-height: 1.2em;
-  margin: 4px 0;
-}
-
-/* 6) 체크박스 디자인(필요 시 추가 커스터마이징 가능) */
-#toggleScript {
-  margin-right: 8px;
-  transform: translateY(2px);
-}
-
-/* 7) '빈칸 초기화' 및 '정답 보기' 버튼 스타일 (.blackButton) */
+/* 4) .blackButton (버튼 스타일) */
 .blackButton {
-  color: #ffffff;
-  background-color: #333333;
-  display: inline-block;
-  padding: 0.2em 0.5em;
-  font-size: 0.85em;
-  border-radius: 4px;
+  color: #333;
+  text-decoration: underline;
   cursor: pointer;
-  margin-right: 0.5em;
+  font-size: var(--common-font-size); /* 버튼 글자 크기 통일 */
+}
+.blackButton:hover {
   text-decoration: none;
 }
 
-.blackButton:hover {
-  background-color: #555555;
+/* 5) .entry-content 내부 텍스트(필요 시 전체 통일) */
+.entry-content {
+  font-size: var(--common-font-size);
+  line-height: var(--common-line-height);
 }
 
-/* 8) PC가 아닐 때 경고문 스타일 (예: 모바일 안내) */
-#blankToggleContainer .mobileNotice {
-  font-size: 0.85em;
-  color: #bb0000;
-  margin-top: 6px;
+/* 6) 표(th, td) 공통 스타일 */
+th,
+td {
+  border: 1px solid #666 !important;
+  padding: 8px 10px !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  font-size: var(--common-font-size) !important;
+  font-weight: normal !important;
+  font-family: sans-serif !important;
+  line-height: var(--common-line-height) !important;
+}
+th {
+  background-color: #f2f2f2 !important;
+  vertical-align: center !important;
+}
+td {
+  /* 줄 높이 그대로 유지 */
 }
