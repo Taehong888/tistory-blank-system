@@ -20,8 +20,7 @@ function enableScript(blanks) {
 
   blanks.forEach(blank => {
     const placeholder = blank.textContent;
-
-    // data-answer 속성에서 실제 정답을 가져오거나, 텍스트 자체를 정답으로 사용
+    // data-answer 속성 있으면 그걸, 없으면 텍스트 그대로 사용
     const answer = normalizeText(blank.getAttribute('data-answer') || blank.textContent);
     const normalizedAnswer = normalizeText(answer);
     const input = document.createElement('input');
@@ -131,34 +130,42 @@ function clearBlank() {
 
 function createLabelAndCheckbox() {
   const label = document.createElement('label');
+  // “빈칸 채우기 모드” 설명 + “빈칸 초기화”ㆍ“정답 보기” 버튼 링크를 항상 표기
   label.innerHTML =
-    "<span style='font-weight: 800; color: #0c3b18;'> 빈칸 채우기 모드</span>" +
-    "<p style='font-size: 0.875em; color: #07611f;'>* 마스킹한 내용이 빈칸 문제로 변환되며, 정답을 입력하고 enter키를 누르시면 정오를 확인하실 수 있습니다. PC에서만 적용됩니다.</p>";
+    "<span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>" +
+    "<p style='font-size:0.875em; color:#07611f; margin:0.5em 0 0.5em 0;'>" +
+      "* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다." +
+    "</p>" +
+    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0;'>" +
+      "<span class='blackButton' onclick='clearBlank();' style='cursor:pointer; color:#333; text-decoration:underline;'>빈칸 초기화</span>: 빈칸을 모두 제거하고 재실행" +
+    "</p>" +
+    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0;'>" +
+      "<span class='blackButton' onclick='findAnswer();' style='cursor:pointer; color:#333; text-decoration:underline;'>정답 보기</span>: 빈칸의 정답을 모두 표시" +
+    "</p>";
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.id = 'toggleScript';
+  checkbox.style.marginRight = '8px';
 
   const resultDiv = document.createElement('div');
-  resultDiv.append(label);
-  resultDiv.prepend(label);
   resultDiv.style.backgroundColor = '#b8fcb8';
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
   resultDiv.style.marginBottom = '20px';
-  resultDiv.prepend(checkbox);
+  resultDiv.append(checkbox, label);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
 
   checkbox.addEventListener('change', function () {
     if (this.checked) {
-      // 언제나 빈칸 채우기 모드 켜기
-      disableScript(); // 먼저 기존 상태를 모두 blank로 복원
+      // 무조건 빈칸 채우기 모드 실행
+      disableScript(); 
       blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
-      // 언제나 보기 모드로 돌아가기
+      // 무조건 보기 모드로 복귀
       disableScript();
     }
   });
