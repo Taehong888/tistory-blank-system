@@ -23,9 +23,9 @@
   vertical-align: middle;            /* 인라인 레벨로 박스 자체를 본문 중간에 맞춤 */
 
   /* 글자 크기/줄 높이를 모두 통일 */
-  font-size: var(--common-font-size);     /* 본문과 동일 크기 */
-  line-height: var(--common-line-height); /* 본문과 동일 행높이 */
-  height:    var(--common-line-height);   /* 본문과 동일 총 높이 */
+  font-size: 1.0em !important;  
+  line-height: 1.6em !important;
+  height: 1.7em !important;
 
   /* 너비는 자동으로 내용(정답) 길이에 맞췄다가, 텍스트는 숨김 처리 */
   width: auto;
@@ -78,9 +78,9 @@
   width: auto;
 
   /* 통일된 글자 크기와 줄 높이(= 높이) */
-  font-size:   var(--common-font-size);
-  line-height: var(--common-line-height);
-  height:      var(--common-line-height);
+  font-size: 1.0em !important;  
+  line-height: 1.6em !important;
+  height: 1.7em !important;
 }
 .fillNode:focus {
   border-color: #557a3b;
