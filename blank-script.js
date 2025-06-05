@@ -27,9 +27,9 @@ function enableScript(blanks) {
     input.classList.add('fillNode', 'quizQuestion');
     input.type = 'text';
 
-    // “size” 속성에 정답 길이 설정 → 글자 수 만큼 너비 자동 조절
-    input.style.boxSizing = 'border-box';
-    input.style.width = `${originalAnswer.length}ch`;
+    // “width”를 ch 단위로 지정 → 정답 글자 수만큼 폭을 정확히 확보
+input.style.boxSizing = 'border-box';
+input.style.width = `${originalAnswer.length}ch`;
 
     // 정답 정보는 dataset에 저장
     input.dataset.answer = answer;
