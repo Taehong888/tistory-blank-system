@@ -55,7 +55,7 @@
   vertical-align: middle;
 
   /* 높이 고정: line-height와 동일 */
-  height: var(--common-line-height);
+  height: 1.8em !important
   width: auto;       /* 자동 너비 (content에 따라) */
   color: transparent;/* 정답 텍스트는 숨김 처리 */
   position: relative;
@@ -106,7 +106,7 @@
   border-radius: 3px;
   margin: 0;
   vertical-align: middle;
-  height: var(--common-line-height);
+  height: 1.8em !important
   width: auto;             /* JS에서 calc(…)로 자동 지정됨 */
 }
 .fillNode:focus {
