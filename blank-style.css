@@ -24,7 +24,6 @@
   width: auto;
   color: transparent;
   position: relative;
-   top: -2.5px;
    justify-content: center;
    align-items: center;
    min-width: 2em;
@@ -69,7 +68,6 @@
   vertical-align: middle;
   justify-content: center;
   align-items: center;
-  top: -5px;
    min-width: 2em;
 
 
