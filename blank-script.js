@@ -20,7 +20,6 @@ function enableScript(blanks) {
 
   blanks.forEach(blank => {
     const placeholder = blank.textContent;
-    // data-answer 속성 있으면 그걸, 없으면 텍스트 그대로 사용
     const answer = normalizeText(blank.getAttribute('data-answer') || blank.textContent);
     const normalizedAnswer = normalizeText(answer);
     const input = document.createElement('input');
@@ -110,14 +109,13 @@ function findAnswer() {
 }
 
 function disableScript() {
-  // fillNode(입력란 또는 정답/오답 스팬)를 .blank로 복원
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
     const original = node.dataset.originalAnswer;
     const blankSpan = document.createElement('span');
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
-    blankSpan.textContent = ''; // CSS .blank 클래스가 hover 시 정답을 표시
+    blankSpan.textContent = '';
     node.replaceWith(blankSpan);
   });
 }
@@ -128,20 +126,35 @@ function clearBlank() {
   enableScript(blanks);
 }
 
+// ✅ 수정된 함수: createLabelAndCheckbox
 function createLabelAndCheckbox() {
   const label = document.createElement('label');
-  // “빈칸 채우기 모드” 설명 + “빈칸 초기화”ㆍ“정답 보기” 버튼 링크를 항상 표기
   label.innerHTML =
     "<span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>" +
     "<p style='font-size:0.875em; color:#07611f; margin:0.5em 0 0.5em 0;'>" +
       "* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다." +
-    "</p>" +
-    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0;'>" +
-      "<span class='blackButton' onclick='clearBlank();' style='cursor:pointer; color:#333; text-decoration:underline;'>빈칸 초기화</span>: 빈칸을 모두 제거하고 재실행" +
-    "</p>" +
-    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0;'>" +
-      "<span class='blackButton' onclick='findAnswer();' style='cursor:pointer; color:#333; text-decoration:underline;'>정답 보기</span>: 빈칸의 정답을 모두 표시" +
     "</p>";
+
+  const buttonContainer = document.createElement('div');
+  buttonContainer.id = 'blankButtons';
+  buttonContainer.style.display = 'none'; // 처음엔 숨김
+
+  const clearButton = document.createElement('p');
+  clearButton.style.fontSize = '0.875em';
+  clearButton.style.color = '#07611f';
+  clearButton.style.margin = '0.3em 0';
+  clearButton.innerHTML =
+    "<span class='blackButton' onclick='clearBlank();' style='cursor:pointer; color:#333; text-decoration:underline;'>빈칸 초기화</span>: 빈칸을 모두 제거하고 재실행";
+
+  const showAnswerButton = document.createElement('p');
+  showAnswerButton.style.fontSize = '0.875em';
+  showAnswerButton.style.color = '#07611f';
+  showAnswerButton.style.margin = '0.3em 0';
+  showAnswerButton.innerHTML =
+    "<span class='blackButton' onclick='findAnswer();' style='cursor:pointer; color:#333; text-decoration:underline;'>정답 보기</span>: 빈칸의 정답을 모두 표시";
+
+  buttonContainer.appendChild(clearButton);
+  buttonContainer.appendChild(showAnswerButton);
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -153,19 +166,19 @@ function createLabelAndCheckbox() {
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
   resultDiv.style.marginBottom = '20px';
-  resultDiv.append(checkbox, label);
+  resultDiv.append(checkbox, label, buttonContainer);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
 
   checkbox.addEventListener('change', function () {
     if (this.checked) {
-      // 무조건 빈칸 채우기 모드 실행
+      buttonContainer.style.display = 'block';
       disableScript(); 
       blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
-      // 무조건 보기 모드로 복귀
+      buttonContainer.style.display = 'none';
       disableScript();
     }
   });
