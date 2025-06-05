@@ -61,7 +61,7 @@
 /* 2) .fillNode (input 빈칸) */
 .fillNode {
   box-sizing: border-box;
-  padding: 0 !important;
+  padding: 0 0.3em !important;
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 3px;
