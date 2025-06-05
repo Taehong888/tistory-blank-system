@@ -93,6 +93,8 @@
   /* width:auto → 글자만큼만 차지 */
   width: auto;
   color: #5DCB5F;    /* 초록색 텍스트 */
+  position: relative;
+
   /* background / border 없음 → 그냥 글자만 보임 */
 }
 
