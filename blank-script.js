@@ -1,3 +1,8 @@
+// ==========================
+// blank-script.js (수정된 버전)
+// “input.size” 대신 “width: Xch”로 입력창 너비를 고정
+// ==========================
+
 // 전역 변수 선언
 let blanks = [];
 
@@ -27,9 +32,13 @@ function enableScript(blanks) {
     input.classList.add('fillNode', 'quizQuestion');
     input.type = 'text';
 
-    // “width”를 ch 단위로 지정 → 정답 글자 수만큼 폭을 정확히 확보
-input.style.boxSizing = 'border-box';
-input.style.width = `${originalAnswer.length}ch`;
+    // ─────────────────────────────────────────────────
+    // (수정 전) input.size = originalAnswer.length;
+    //
+    // (수정 후) “width”를 ch 단위로 지정 → 정답 글자 수만큼 폭을 정확히 확보
+    input.style.boxSizing = 'border-box';
+    input.style.width = `${originalAnswer.length}ch`;
+    // ─────────────────────────────────────────────────
 
     // 정답 정보는 dataset에 저장
     input.dataset.answer = answer;
