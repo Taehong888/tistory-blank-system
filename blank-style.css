@@ -1,54 +1,58 @@
 /* ===========================================
-   blank-style.css (글자 크기 통일 버전)
+   blank-style.css (글자 수에 맞춘 자동 너비 + 정답모드 박스 제거)
    =========================================== */
 
-/* 공통 변수: 원하는 글자 크기를 한 곳에서 관리 */
+/* 공통 변수: 글자 크기와 줄 높이만 통일 */
 :root {
-  --common-font-size: 0.9em;   /* 필요 시 1.0em 등으로 변경 가능 */
-  --common-line-height: 1.6em; /* 빈칸, 입력창, 정답·오답 박스의 높이와 일치 */
-  --common-width: 6ch;         /* 모든 박스 너비를 동일하게 고정 */
+  --common-font-size: 1.0em;    /* 필요 시 1.0em 등으로 변경 */
+  --common-line-height: 1.6em;  /* 빈칸, 입력창, 정답·오답 가이드라인 */
 }
 
 /* 1) .blank (보기 모드) */
 .blank {
   display: inline-block;
-  background-color: #e0f2d8;      /* 연두색 배경 */
-  border: 1px solid #aacb8e;      /* 짙은 연두 테두리 */
+  background-color: #e0f2d8;    /* 연두색 배경 */
+  border: 1px solid #aacb8e;    /* 짙은 연두 테두리 */
   border-radius: 3px;
   padding: 0 0.3em;
   margin: 0 3px;
   vertical-align: middle;
+
+  /* 글자 크기/줄 높이를 모두 통일 */
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
-  height: var(--common-line-height); 
-  width: var(--common-width);
-  color: transparent;             /* 정답 텍스트는 숨김 */
+  height: var(--common-line-height);
+
+  /* 너비는 자동으로 내용(정답) 길이에 맞췄다가, 텍스트는 숨김 처리 */
+  width: auto;
+  color: transparent;
   position: relative;
   box-sizing: border-box;
 }
+/* ::before를 이용해 보이지 않는 상태에서 너비만 맞추기 */
 .blank::before {
   content: attr(data-answer);
   visibility: hidden;
   display: inline-block;
   white-space: nowrap;
 }
+/* ::after는 hover 시에만 텍스트 색상을 바꿔 보여준다 */
 .blank::after {
   content: attr(data-answer);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: transparent;
+  color: transparent; /* 정상 상태에서는 투명 */
   white-space: nowrap;
   transition: color 0.2s ease-in-out;
   pointer-events: none;
   font-size: var(--common-font-size);
-  font-weight: normal;
   line-height: var(--common-line-height);
   z-index: 10;
 }
 .blank:hover::after {
-  color: #333;
+  color: #333; /* hover 시에만 정답 텍스트 보이기 */
 }
 
 /* 2) .fillNode (input 빈칸) */
@@ -58,15 +62,16 @@
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 3px;
-  font-size: var(--common-font-size);
-  color: #333333;
-  vertical-align: middle;
   margin: 0 3px;
-  outline: none;
-  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  vertical-align: middle;
+
+  /* input 자체가 size 속성으로 너비가 정해지므로, width:auto */
+  width: auto;
+
+  /* 통일된 글자 크기와 줄 높이 */
+  font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   height: var(--common-line-height);
-  width: var(--common-width);
 }
 .fillNode:focus {
   border-color: #557a3b;
@@ -74,27 +79,30 @@
 }
 
 /* 3) .correct / .incorrect (정답·오답 표시) */
+/* 정답 모드(.correct)는 “글자만 보이게” 테두리나 배경 없음 */
 .correct {
   display: inline-block;
   font-size: var(--common-font-size);
   font-weight: normal;
   margin: 0 3px;
   vertical-align: baseline;
-  line-height: 1.8;              /* 답글은 줄 높이를 약간 여유 있게 두어도 됨 */
-  color: #5DCB5F;               /* 초록색 */
-  width: var(--common-width);
-  text-align: center;           /* 정답 텍스트 중앙 정렬 */
+
+  /* width:auto → 글자만큼만 차지 */
+  width: auto;
+  color: #5DCB5F;    /* 초록색 텍스트 */
+  /* background / border 없음 → 그냥 글자만 보임 */
 }
+
+/* 오답(.incorrect)도 “글자만” 차지하되, 마우스 오버 시 tooltip */
 .incorrect {
   display: inline-block;
   font-size: var(--common-font-size);
   font-weight: normal;
   margin: 0 3px;
   vertical-align: baseline;
-  line-height: 1.8;
-  color: #DD0031;               /* 빨강색 */
-  width: var(--common-width);
-  text-align: center;
+
+  width: auto;
+  color: #DD0031;    /* 빨간 텍스트 */
   position: relative;
 }
 .incorrect::after {
@@ -113,8 +121,7 @@
   transition: opacity 0.1s ease-in-out;
   pointer-events: none;
   font-size: var(--common-font-size);
-  font-weight: normal;
-  line-height: 1.8;
+  line-height: var(--common-line-height);
   z-index: 10;
 }
 .incorrect:hover::after {
@@ -133,7 +140,7 @@
   text-decoration: none;
 }
 
-/* 5) .entry-content 내부 텍스트(전반적인 글자 크기 조정 필요 시) */
+/* 5) .entry-content 내부 텍스트(필요 시 전체 통일) */
 .entry-content {
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
@@ -143,18 +150,4 @@
 th,
 td {
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;
-  text-align: left !important;
-  vertical-align: middle !important;
-  font-size: var(--common-font-size) !important;
-  font-weight: normal !important;
-  font-family: sans-serif !important;
-  line-height: 1.8 !important;
-}
-th {
-  background-color: #f2f2f2 !important;
-  vertical-align: center !important;
-}
-td {
-  /* 줄 높이 1.8 유지 */
-}
+  padding: 8p
