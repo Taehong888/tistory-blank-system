@@ -28,13 +28,11 @@ function enableScript(blanks) {
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
+    input.size = Math.ceil((answer.length || 2) * 1.2); // 유동적으로 크기 설정
 
-    // ✅ 너비 유동 조정
     if (isPlaceholder) {
       input.placeholder = placeholder;
-      input.style.width = `${blank.textContent.length * 1.35}em`;
-    } else {
-      input.style.width = `${normalizedAnswer.length * 1.2}em`;
+      input.size = Math.ceil(blank.textContent.length * 1.35);
     }
 
     input.classList.add('quizQuestion');
@@ -118,11 +116,11 @@ function disableScript() {
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
     blankSpan.textContent = '';
-    
-    // ✅ 보기모드 박스도 유동 크기로
     blankSpan.style.display = 'inline-block';
-    blankSpan.style.minWidth = `${original.length * 1.2}em`;
-
+    blankSpan.style.minWidth = Math.max(2, original.length * 0.65) + 'em'; // 글자 수 기반
+    blankSpan.style.borderBottom = '1px solid #666';
+    blankSpan.style.height = '1.2em';
+    blankSpan.style.verticalAlign = 'middle';
     node.replaceWith(blankSpan);
   });
 }
@@ -135,15 +133,19 @@ function clearBlank() {
 
 function createLabelAndCheckbox() {
   const label = document.createElement('label');
+
   label.innerHTML =
     "<span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>" +
     "<p style='font-size:0.875em; color:#07611f; margin:0.5em 0 0.5em 0;'>" +
       "* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다." +
-    "</p>" +
-    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0; display:none;' id='clearBtnWrap'>" +
+    "</p>";
+
+  const extraControls = document.createElement('div');
+  extraControls.innerHTML =
+    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0; display:none' id='clearBtnWrapper'>" +
       "<span class='blackButton' onclick='clearBlank();' style='cursor:pointer; color:#333; text-decoration:underline;'>빈칸 초기화</span>: 빈칸을 모두 제거하고 재실행" +
     "</p>" +
-    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0; display:none;' id='answerBtnWrap'>" +
+    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0; display:none' id='answerBtnWrapper'>" +
       "<span class='blackButton' onclick='findAnswer();' style='cursor:pointer; color:#333; text-decoration:underline;'>정답 보기</span>: 빈칸의 정답을 모두 표시" +
     "</p>";
 
@@ -157,25 +159,25 @@ function createLabelAndCheckbox() {
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
   resultDiv.style.marginBottom = '20px';
-  resultDiv.append(checkbox, label);
+  resultDiv.append(checkbox, label, extraControls);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
 
   checkbox.addEventListener('change', function () {
-    const clearBtnWrap = document.getElementById('clearBtnWrap');
-    const answerBtnWrap = document.getElementById('answerBtnWrap');
+    const clearBtn = document.getElementById('clearBtnWrapper');
+    const answerBtn = document.getElementById('answerBtnWrapper');
 
     if (this.checked) {
       disableScript();
       blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
-      clearBtnWrap.style.display = 'block';
-      answerBtnWrap.style.display = 'block';
+      clearBtn.style.display = 'block';
+      answerBtn.style.display = 'block';
     } else {
       disableScript();
-      clearBtnWrap.style.display = 'none';
-      answerBtnWrap.style.display = 'none';
+      clearBtn.style.display = 'none';
+      answerBtn.style.display = 'none';
     }
   });
 }
