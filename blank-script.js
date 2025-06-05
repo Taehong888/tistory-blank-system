@@ -18,23 +18,31 @@ function enableScript(blanks) {
   let solvedProblems = 0;
 
   blanks.forEach((blank, index) => {
-    // 원래 정답 문자열
+    // 1) 원래 정답 문자열
     const originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
     const answer = normalizeText(originalAnswer);
 
-    // 1) input 요소 생성
+    // 2) 보기 모드(.blank)의 현재 “픽셀 너비”를 측정
+    //    getBoundingClientRect()는 화면에 렌더된 상태에서 exact width(px)를 반환한다.
+    const blankRect = blank.getBoundingClientRect();
+    const targetWidthPx = blankRect.width;
+
+    // 3) input 요소 생성
     const input = document.createElement('input');
     input.classList.add('fillNode', 'quizQuestion');
     input.type = 'text';
 
-    // “size” 속성에 정답 길이 설정 → 글자 수 만큼 너비 자동 조절
-    input.size = originalAnswer.length;
+    // ‼️ 여기서는 input.size 대신 “픽셀 단위 width”를 직접 지정한다. ‼️
+    // box-sizing: border-box; 상태이므로 ‘width = targetWidthPx’면
+    // border + padding을 포함한 전체 박스 너비가 동일해진다.
+    input.style.boxSizing = 'border-box';
+    input.style.width = `${targetWidthPx}px`;
 
-    // 정답 정보는 dataset에 저장
+    // 정답 데이터 속성 기록
     input.dataset.answer = answer;
     input.dataset.originalAnswer = originalAnswer;
 
-    // 클릭했을 때 currentInput 업데이트
+    // 클릭 시 currentInput 인덱스 업데이트
     input.addEventListener('click', function (e) {
       currentInput = Array.from(document.querySelectorAll("input.quizQuestion")).indexOf(e.target);
     });
@@ -51,27 +59,28 @@ function enableScript(blanks) {
         } else {
           // 오답
           span.classList.add('fillNode', 'incorrect');
-          // 틀린 값을 data-wrong에 저장해야 ::after로 툴팁이 나온다
+          // 틀린 값을 data-wrong에 저장해야 ::after 툴팁이 뜬다
           span.dataset.wrong = input.value.trim();
         }
 
-        // span 안에 원래 정답 문자열만 표시
+        // span에도 동일한 픽셀 너비를 지정하여 “정답 보기” 시에도 크기가 그대로 유지되게 함
+        span.style.boxSizing = 'border-box';
+        span.style.width = `${targetWidthPx}px`;
+
+        // span 안에는 원래 정답 문자열만 텍스트로 넣는다
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        // size 속성을 제거하거나, width:auto를 적용하기 위해 size 속성도 함께 제거
-        span.removeAttribute('data-size');
 
         solvedProblems += 1;
         input.replaceWith(span);
 
-        // 나머지 input들 다시 확인 후 포커스 이동
+        // 남은 input에 포커스 이동
         const inputs = document.querySelectorAll('input.quizQuestion');
         if (inputs.length > 0) {
-          // currentInput이 넘치지 않도록 조정
           currentInput = Math.min(currentInput, inputs.length - 1);
           inputs[currentInput].focus();
         } else {
-          // 전부 풀었으면 정답률 표시
+          // 모든 문제를 풀었을 때 정답률 출력
           const correctProblems = document.getElementsByClassName("correct").length;
           const prob = Math.floor((correctProblems * 100) / solvedProblems);
           alert(`문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`);
@@ -79,10 +88,10 @@ function enableScript(blanks) {
       }
     });
 
-    // 기존 빈칸(span)을 생성한 input으로 교체
+    // 4) 실제 교체: blank(span) → input
     blank.replaceWith(input);
 
-    // 첫 번째 input에 초기 포커스
+    // 페이지 로드 직후 첫 번째 input만 자동으로 포커스
     if (index === 0) {
       input.focus();
     }
@@ -90,31 +99,39 @@ function enableScript(blanks) {
 }
 
 function findAnswer() {
-  // 모든 .fillNode 요소(입력창 또는 정오 판정 후 span)를 찾아서
+  // 모든 .fillNode 요소(입력창 또는 정오·오답 표시 span)를 찾아서
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
-    // dataset.originalAnswer가 정답 문자열
+    // 각 노드의 data-originalAnswer가 바로 정답 문자열
     const original = node.dataset.originalAnswer;
     const span = document.createElement('span');
     span.classList.add('fillNode', 'correct');
+
+    // 이 span도 같은 픽셀 너비를 유지해야 하므로, 
+    // node.getBoundingClientRect().width 로 측정해서 지정
+    const measuredWidth = node.getBoundingClientRect().width;
+    span.style.boxSizing = 'border-box';
+    span.style.width = `${measuredWidth}px`;
+
     span.dataset.originalAnswer = original;
     span.textContent = original;
-    // size 속성이 아니라, CSS의 auto 너비를 사용함
-    span.removeAttribute('data-size');
     node.replaceWith(span);
   });
 }
 
 function disableScript() {
-  // .fillNode (input 또는 정오/오답 표시 span)을 모두 찾아서
+  // 모든 .fillNode 요소(input 또는 정오/오답 표시 span)→ .blank(span)으로 복원
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
+    // 원래 정답 문자열
     const original = node.dataset.originalAnswer;
     const blankSpan = document.createElement('span');
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
-    // 박스 안에 기존 텍스트가 보이지 않도록 빈 문자열만 둠
+
+    // 보기 모드에서는 텍스트가 보이지 않도록 빈 문자열만 넣는다
     blankSpan.textContent = '';
+
     node.replaceWith(blankSpan);
   });
 }
@@ -180,7 +197,6 @@ function createLabelAndCheckbox() {
   });
 }
 
-// 입력 및 정답 판정 시 사용할 정규화 함수(여러 상황에 맞춰 가장 간단히 유지)
 function normalizeText(text) {
   return text.replace(/[\/⋅.,]/g, '')
              .replace(/이요/g, '이고')
