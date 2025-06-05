@@ -1,7 +1,8 @@
 // ==========================
-// blank-script.js (패딩 보정을 포함한 전체 수정된 버전)
-//  • .blank의 실제 픽셀 너비를 읽어와, .fillNode 입력창 폭 = blankWidth + (paddingLeft+paddingRight)
-//  • 자동 포커스 제거, Tab 키 이동 지원
+// blank-script.js (전체 수정된 버전: 다음 빈칸 자동 포커스 복원 포함)
+//  • .blank의 실제 픽셀 너비를 읽어와 <input>과 <span>에 그대로 적용
+//  • Enter 누르면 다음 빈칸으로 자동 이동
+//  • Tab 키 이동 지원
 //  • 화면 리사이즈/회전 시 너비 재계산 지원
 // ==========================
 
@@ -40,7 +41,10 @@ function recalcAllWidths() {
 }
 
 function enableScript(blanks) {
-  blanks.forEach((blank) => {
+  let currentInput = 0;
+  let solvedProblems = 0;
+
+  blanks.forEach((blank, index) => {
     const originalAnswer = blank.getAttribute("data-answer") || blank.textContent;
     const answer = normalizeText(originalAnswer);
 
@@ -51,7 +55,7 @@ function enableScript(blanks) {
 
       // 현재 문서에서 1em이 몇 px인지 구하기
       const computed = window.getComputedStyle(blank);
-      const emInPx = parseFloat(computed.fontSize); // e.g. "16px" → 16
+      const emInPx = parseFloat(computed.fontSize); // 예: "16px" → 16
       // .fillNode는 padding-left/right: 0.3em 이므로, 총 0.3em * 2 만큼의 px를 더해줌
       const paddingTotalPx = emInPx * 0.3 * 2;
 
@@ -70,11 +74,51 @@ function enableScript(blanks) {
       input.dataset.answer = answer;
       input.dataset.originalAnswer = originalAnswer;
 
-      // (4) 키다운 이벤트: Enter로 정답 처리, Tab으로 다음 입력창 이동
+      // (4) 클릭 시 currentInput 업데이트 (자동 포커스 복원용)
+      input.addEventListener("click", function (e) {
+        currentInput = Array.from(
+          document.querySelectorAll("input.quizQuestion")
+        ).indexOf(e.target);
+      });
+
+      // (5) 키다운 이벤트: Enter로 정답 처리 및 다음 빈칸 자동 포커스, Tab으로 다음 입력창 이동
       input.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
           e.preventDefault();
-          processAnswer(input, originalAnswer, targetWidthPx);
+
+          // (5-1) 정오 판정
+          const userAnswer = normalizeText(input.value.trim());
+          const span = document.createElement("span");
+
+          if (userAnswer === input.dataset.answer) {
+            span.classList.add("fillNode", "correct");
+          } else {
+            span.classList.add("fillNode", "incorrect");
+            span.dataset.wrong = input.value.trim();
+          }
+
+          span.textContent = input.dataset.originalAnswer;
+          span.dataset.originalAnswer = input.dataset.originalAnswer;
+          span.style.boxSizing = "border-box";
+          span.style.width = `${targetWidthPx}px`;
+
+          solvedProblems += 1;
+          input.replaceWith(span);
+
+          // (5-2) 다음 빈칸 자동 포커스
+          const inputs = document.querySelectorAll("input.quizQuestion");
+          if (inputs.length > 0) {
+            currentInput = Math.min(currentInput, inputs.length - 1);
+            inputs[currentInput].focus();
+          } else {
+            // 모든 칸을 풀었을 때
+            const correctProblems =
+              document.getElementsByClassName("correct").length;
+            const prob = Math.floor((correctProblems * 100) / solvedProblems);
+            alert(
+              `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
+            );
+          }
         } else if (e.key === "Tab") {
           e.preventDefault();
           const inputs = Array.from(
@@ -86,32 +130,18 @@ function enableScript(blanks) {
         }
       });
 
-      // (5) .blank → <input> 교체
+      // (6) .blank → <input> 교체
       blank.replaceWith(input);
-      // 자동 포커스 제거: 사용자가 클릭/탭하여 활성화
+      // 첫 번째 칸은 index === 0일 때만 자동 포커스
+      if (index === 0) {
+        input.focus();
+      }
     }, 0);
   });
 }
 
-function processAnswer(input, originalAnswer, widthPx) {
-  const userAnswer = normalizeText(input.value.trim());
-  const span = document.createElement("span");
-
-  if (userAnswer === input.dataset.answer) {
-    span.classList.add("fillNode", "correct");
-  } else {
-    span.classList.add("fillNode", "incorrect");
-    span.dataset.wrong = input.value.trim();
-  }
-
-  span.textContent = input.dataset.originalAnswer;
-  span.dataset.originalAnswer = input.dataset.originalAnswer;
-
-  // (A) 정오/오답 span에도 동일한 픽셀 너비 적용
-  span.style.boxSizing = "border-box";
-  span.style.width = `${widthPx}px`;
-
-  input.replaceWith(span);
+function processAnswer(input, originalAnswer, widthPx, moveNext) {
+  // (이 함수는 예전 방식이 아니라 enableScript 내부에서 바로 처리하므로 사용되지 않습니다.)
 }
 
 function findAnswer() {
