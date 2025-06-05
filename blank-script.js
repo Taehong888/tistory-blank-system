@@ -196,16 +196,11 @@ function createLabelAndCheckbox() {
   resultDiv.style.backgroundColor = '#b8fcb8';
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
-  resultDiv.style.marginBottom = '0px';
+  resultDiv.style.marginBottom = '20px';
   resultDiv.append(checkbox, label, controlArea);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
-
-  const nextElem = resultDiv.nextElementSibling;
-  if (nextElem) {
-    nextElem.style.marginTop = '0px';
-  }
   
   checkbox.addEventListener('change', function () {
     if (this.checked) {
