@@ -61,11 +61,11 @@
 /* 2) .fillNode (input 빈칸) */
 .fillNode {
   box-sizing: border-box;
-  padding: 0 0.3em;
+  padding: 0 !important;
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 3px;
-  margin: 0 3px;
+  margin: 0 !important;
   vertical-align: middle;
 
   /* input 자체가 size 속성으로 너비가 정해지므로, width:auto */
