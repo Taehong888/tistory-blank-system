@@ -1,6 +1,7 @@
 // ==========================
 // blank-script.js (수정된 버전)
-// “input.size” 대신 “width: Xch”로 입력창 너비를 고정
+// “표(table-layout: fixed) 환경에서 .blank의 픽셀 너비를 측정하여
+//  그만큼 <input>에 적용하는 버전”
 // ==========================
 
 // 전역 변수 선언
@@ -23,11 +24,16 @@ function enableScript(blanks) {
   let solvedProblems = 0;
 
   blanks.forEach((blank, index) => {
-    // 원래 정답 문자열
+    // (A) 원래 정답 문자열
     const originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
     const answer = normalizeText(originalAnswer);
 
-    // 1) input 요소 생성
+    // (B) “보기 모드(.blank)”가 화면에 렌더된 후의 실제 픽셀 너비를 측정
+    //     → table-layout: fixed 환경에서도 cell 폭에 맞추어 계산된 연두 박스 폭을 분명하게 얻어 올 수 있음
+    const rect = blank.getBoundingClientRect();
+    const targetWidthPx = rect.width;
+
+    // (C) input 요소 생성
     const input = document.createElement('input');
     input.classList.add('fillNode', 'quizQuestion');
     input.type = 'text';
@@ -35,53 +41,54 @@ function enableScript(blanks) {
     // ─────────────────────────────────────────────────
     // (수정 전) input.size = originalAnswer.length;
     //
-    // (수정 후) “width”를 ch 단위로 지정 → 정답 글자 수만큼 폭을 정확히 확보
+    // (수정 후) blank.getBoundingClientRect().width 만큼 픽셀 너비를 직접 지정
     input.style.boxSizing = 'border-box';
-    input.style.width = `${originalAnswer.length}ch`;
+    input.style.width = `${targetWidthPx}px`;
     // ─────────────────────────────────────────────────
 
-    // 정답 정보는 dataset에 저장
+    // (D) 정답 정보 dataset에 저장
     input.dataset.answer = answer;
     input.dataset.originalAnswer = originalAnswer;
 
-    // 클릭했을 때 currentInput 업데이트
+    // (E) 클릭했을 때 currentInput 업데이트
     input.addEventListener('click', function (e) {
       currentInput = Array.from(document.querySelectorAll("input.quizQuestion")).indexOf(e.target);
     });
 
-    // Enter 키 입력 시 정오 판정
+    // (F) Enter 키 입력 시 정오 판정
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         const userAnswer = normalizeText(input.value.trim());
         const span = document.createElement('span');
 
         if (userAnswer === input.dataset.answer) {
-          // 정답
+          // 정답 모드(.correct)
           span.classList.add('fillNode', 'correct');
         } else {
-          // 오답
+          // 오답 모드(.incorrect)
           span.classList.add('fillNode', 'incorrect');
-          // 틀린 값을 data-wrong에 저장해야 ::after로 툴팁이 나온다
+          // 틀린 원본 값을 data-wrong에 저장해야 tooltip이 동작
           span.dataset.wrong = input.value.trim();
         }
 
-        // span 안에 원래 정답 문자열만 표시
+        // (G) 새로 생성된 span에도 “원래 정답” 텍스트만 표시
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        // size 속성을 제거하거나, width:auto를 적용하기 위해 size 속성도 함께 제거
-        span.removeAttribute('data-size');
+
+        // (H) span에도 같은 픽셀 너비를 적용
+        span.style.boxSizing = 'border-box';
+        span.style.width = `${targetWidthPx}px`;
 
         solvedProblems += 1;
         input.replaceWith(span);
 
-        // 나머지 input들 다시 확인 후 포커스 이동
+        // (I) 남아 있는 input이 있으면 다음 input에 포커스 이동
         const inputs = document.querySelectorAll('input.quizQuestion');
         if (inputs.length > 0) {
-          // currentInput이 넘치지 않도록 조정
           currentInput = Math.min(currentInput, inputs.length - 1);
           inputs[currentInput].focus();
         } else {
-          // 전부 풀었으면 정답률 표시
+          // 모두 풀었으면 정답률 알림
           const correctProblems = document.getElementsByClassName("correct").length;
           const prob = Math.floor((correctProblems * 100) / solvedProblems);
           alert(`문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`);
@@ -89,10 +96,10 @@ function enableScript(blanks) {
       }
     });
 
-    // 기존 빈칸(span)을 생성한 input으로 교체
+    // (J) 실제로 “<span class='blank'>” → “<input>”으로 교체
     blank.replaceWith(input);
 
-    // 첫 번째 input에 초기 포커스
+    // (K) 첫 번째 input에는 초기 포커스
     if (index === 0) {
       input.focus();
     }
@@ -100,30 +107,34 @@ function enableScript(blanks) {
 }
 
 function findAnswer() {
-  // 모든 .fillNode 요소(입력창 또는 정오 판정 후 span)를 찾아서
+  // 모든 .fillNode 요소(input 또는 채점 후 span)을 찾아서
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
-    // dataset.originalAnswer가 정답 문자열
+    // dataset.originalAnswer가 원래 정답 문자열
     const original = node.dataset.originalAnswer;
     const span = document.createElement('span');
     span.classList.add('fillNode', 'correct');
     span.dataset.originalAnswer = original;
     span.textContent = original;
-    // size 속성이 아니라, CSS의 auto 너비를 사용함
-    span.removeAttribute('data-size');
+
+    // (A) span에도 “이전 input이나 span”의 픽셀 너비를 그대로 적용
+    const measuredWidth = node.getBoundingClientRect().width;
+    span.style.boxSizing = 'border-box';
+    span.style.width = `${measuredWidth}px`;
+
     node.replaceWith(span);
   });
 }
 
 function disableScript() {
-  // .fillNode (input 또는 정오/오답 표시 span)을 모두 찾아서
+  // .fillNode(input 또는 정오/오답 표시 span)을 모두 찾아서
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
     const original = node.dataset.originalAnswer;
     const blankSpan = document.createElement('span');
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
-    // 박스 안에 기존 텍스트가 보이지 않도록 빈 문자열만 둠
+    // 빈칸(span)에는 텍스트를 보이지 않도록 빈 문자열만 둠
     blankSpan.textContent = '';
     node.replaceWith(blankSpan);
   });
@@ -190,19 +201,20 @@ function createLabelAndCheckbox() {
   });
 }
 
-// 입력 및 정답 판정 시 사용할 정규화 함수(여러 상황에 맞춰 가장 간단히 유지)
+// 정규화 함수: 입력값과 정답 비교 시 사용할 간단한 텍스트 전처리
 function normalizeText(text) {
-  return text.replace(/[\/⋅.,]/g, '')
-             .replace(/이요/g, '이고')
-             .replace(/은 /g, '')
-             .replace(/는 /g, '')
-             .replace(/이/g, '')
-             .replace(/가/g, '')
-             .replace(/을/g, '')
-             .replace(/를/g, '')
-             .replace(/및/g, '')
-             .replace(/와/g, '')
-             .replace(/과/g, '')
-             .replace(/에게/g, '')
-             .replace(/\s+/g, '');
+  return text
+    .replace(/[\/⋅.,]/g, '')
+    .replace(/이요/g, '이고')
+    .replace(/은 /g, '')
+    .replace(/는 /g, '')
+    .replace(/이/g, '')
+    .replace(/가/g, '')
+    .replace(/을/g, '')
+    .replace(/를/g, '')
+    .replace(/및/g, '')
+    .replace(/와/g, '')
+    .replace(/과/g, '')
+    .replace(/에게/g, '')
+    .replace(/\s+/g, '');
 }
