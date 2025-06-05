@@ -106,3 +106,24 @@
 .blackButton:hover {
   text-decoration: none;
 }
+
+===========================================
+   6) 표(th, td) 공통 스타일
+   =========================================== */
+th,
+td {
+  border: 1px solid #666 !important;
+  padding: 8px 10px !important;           /* 셀 내부 여백 */
+  text-align: left !important;
+  vertical-align: middle !important;
+  font-size: 0.9em !important;
+  font-weight: normal !important;
+  font-family: sans-serif !important;
+  line-height: 1.8 !important;             /* 표 내부 줄 간격 1.8 */
+}
+th {
+  background-color: #f2f2f2 !important;
+  vertical-align: center !important;
+}
+td {
+  /* 줄 높이 1.8 유지 */
