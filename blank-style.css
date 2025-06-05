@@ -1,25 +1,26 @@
+/* ===========================================
+   blank-style.css (빈칸 보기 & 채우기 모드 공통 스타일)
+   =========================================== */
+
+/* 1) .blank (보기 모드) */
 .blank {
   display: inline-block;
   background-color: #e0f2d8;
   border: 1px solid #aacb8e;
   border-radius: 3px;
-  margin: 0 3px;
-  vertical-align: middle;
   font-size: 0.9em;
   line-height: 1.6;
   height: 1.6em;
-  color: transparent;
   position: relative;
-  text-align: center;
+  color: transparent;
+  white-space: nowrap;
   padding: 0 2px;
-  min-width: 1ch;
-  width: fit-content;
+  margin: 0 3px;
+  vertical-align: middle;
 }
 
 .blank::before {
   content: attr(data-answer);
-  display: inline-block;
-  width: calc(attr(data-answer length) * 1ch); /* 제거됨: CSS에서 attr 길이 사용 불가 */
   visibility: hidden;
   white-space: nowrap;
 }
@@ -35,11 +36,81 @@
   transition: color 0.2s ease-in-out;
   pointer-events: none;
   font-size: 0.9em;
-  font-weight: normal;
-  line-height: 1.6;
   z-index: 10;
 }
 
 .blank:hover::after {
   color: #333;
+}
+
+/* 2) .fillNode (input 빈칸) */
+.fillNode {
+  display: inline-block;
+  box-sizing: content-box;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: #333333;
+  vertical-align: middle;
+  margin: 0 3px;
+  padding: 0 2px;
+  line-height: 1.6;
+  height: 1.6em;
+  white-space: nowrap;
+  text-align: center;
+  width: auto;
+  min-width: 1ch;
+}
+.fillNode:focus {
+  border-color: #557a3b;
+  background-color: #f9f9f9;
+}
+
+/* 3) 정답 / 오답 상태 */
+.correct, .incorrect {
+  display: inline-block;
+  font-size: 0.9em;
+  line-height: 1.6;
+  padding: 0 2px;
+  height: 1.6em;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin: 0 3px;
+}
+
+.correct { color: #5DCB5F; }
+.incorrect { color: #DD0031; }
+
+.incorrect::after {
+  content: attr(data-wrong);
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.1s ease-in-out;
+  pointer-events: none;
+  font-size: 0.9em;
+  z-index: 10;
+}
+.incorrect:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* 4) 버튼 스타일 */
+.blackButton {
+  color: #333;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.blackButton:hover {
+  text-decoration: none;
 }
