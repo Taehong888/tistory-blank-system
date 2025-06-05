@@ -1,5 +1,5 @@
 // ==========================
-// blank-script.js (Enter 후 포커스 이동 시 새 입력값 비우기 추가 버전)
+// blank-script.js (Enter 후 포커스 이동 시 새 입력값 비우기 + 빈공간 제거 버전)
 // ==========================
 
 // 전역 변수 선언
@@ -45,7 +45,8 @@ function enableScript(blanks) {
     }
 
     input.classList.add('quizQuestion');
-    input.style.width = calc(${blankWidth}px + 0.3em);
+    // (A) 계산된 width에 ‘0.3em’만 추가하여 iPad에서도 잘려 보이지 않도록
+    input.style.width = `calc(${blankWidth}px + 0.3em)`;
 
     input.addEventListener('click', function (e) {
       currentInput = Array.from(
@@ -69,7 +70,8 @@ function enableScript(blanks) {
 
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        span.style.width = ${blankWidth}px;
+        // (A) 정답/오답 표시 시에도 동일한 픽셀 너비 유지
+        span.style.width = `${blankWidth}px`;
 
         solvedProblems += 1;
         input.replaceWith(span);
@@ -79,16 +81,15 @@ function enableScript(blanks) {
         // ──────────────────────────────────────────────────────────────────
         const inputs = document.querySelectorAll('input.quizQuestion');
         if (inputs.length > 0) {
-          // currentInput를 재계산하든, 그대로 사용하든 상관없습니다
           currentInput = Math.min(currentInput, inputs.length - 1);
           const nextInput = inputs[currentInput];
           nextInput.focus();
-          nextInput.value = ''; // ★ 추가한 부분: iPad 키버퍼 초기화용
+          nextInput.value = ''; // ★ iPad 키버퍼 초기화용
         } else {
           const correctProblems = document.getElementsByClassName("correct").length;
           const prob = Math.floor((correctProblems * 100) / solvedProblems);
           alert(
-            문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%
+            `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
           );
         }
       }
@@ -101,7 +102,7 @@ function enableScript(blanks) {
         const next = inputs[idx + 1];
         if (next) {
           next.focus();
-          next.value = ''; // Tab으로 이동할 때도 버퍼된 키 초기화
+          next.value = ''; // Tab 이동 시에도 버퍼된 키 초기화
         }
       }
     });
@@ -126,7 +127,7 @@ function enableScript(blanks) {
 
     if (inputs.length === 0) {
       alert(
-        문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%
+        `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
       );
     }
     return inputs[currentInput];
@@ -164,10 +165,12 @@ function clearBlank() {
 
 function createLabelAndCheckbox() {
   const label = document.createElement('label');
-  label.innerHTML = 
+  label.innerHTML = `
     <span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>
-    <p style='font-size:0.875em; color:#07611f;'>* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다.</p>
-  ;
+    <p style='font-size:0.875em; color:#07611f;'>
+      * 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다.
+    </p>
+  `;
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -196,12 +199,20 @@ function createLabelAndCheckbox() {
   resultDiv.style.backgroundColor = '#b8fcb8';
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
-  resultDiv.style.marginBottom = '10px';
+  resultDiv.style.marginBottom = '0px';  // 연두 박스 자체의 아래쪽 여백 0
   resultDiv.append(checkbox, label, controlArea);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
-  
+
+  // ──────────────────────────────────────────────────────────────────
+  // 연두 박스 아래에 오는 “다음 요소” (<p>나 <h*> 등)의 margin-top을 0으로 강제
+  // ──────────────────────────────────────────────────────────────────
+  const nextElem = resultDiv.nextElementSibling;
+  if (nextElem) {
+    nextElem.style.marginTop = '0px';
+  }
+
   checkbox.addEventListener('change', function () {
     if (this.checked) {
       controlArea.style.display = 'block';
