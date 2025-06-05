@@ -74,8 +74,8 @@
   width: auto;
 
   /* 통일된 글자 크기와 줄 높이 */
-  font-size: var(--common-font-size);
-  line-height: 1.8 !important;
+    font-size: 1em;               /* 상위와 맞춰서 */
+  font-family: 'Noto Sans KR', sans-serif;  /* 사용한 글꼴로 강제 */
   height: 1.8em !important;
 
 }
