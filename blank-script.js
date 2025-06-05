@@ -1,19 +1,18 @@
-<script>
 const blankArray = document.querySelectorAll('.blank');
 
 if (blankArray.length >= 1) {
   createLabelAndCheckbox();
 }
 
-if (document.getElementsByClassName("blankTranslation").length !== 0) {
+if (document.getElementsByClassName("blankTranslation").length != 0) {
   blanks = document.querySelectorAll('.blankTranslation');
   enableScript(blanks);
 }
 
 function enableScript(blanks) {
-  let currentInput = 0;
-  let solvedProblems = 0;
-  const isPlaceholder = document.getElementsByClassName("blankTranslation").length !== 0;
+  var currentInput = 0;
+  var solvedProblems = 0;
+  var isPlaceholder = document.getElementsByClassName("blankTranslation").length !== 0;
 
   blanks.forEach(blank => {
     const placeholder = blank.textContent;
@@ -25,12 +24,15 @@ function enableScript(blanks) {
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
+    input.size = answer.length;
 
     if (isPlaceholder) {
       input.placeholder = placeholder;
+      input.size = placeholder.length;
     }
 
     input.classList.add('quizQuestion');
+    input.style.width = `${placeholder.length}ch`;
 
     input.addEventListener('click', function (e) {
       currentInput = Array.from(document.querySelectorAll("input.quizQuestion")).indexOf(e.target);
@@ -49,10 +51,10 @@ function enableScript(blanks) {
 
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        blank.replaceWith(span);
-        input.replaceWith(span);
+        span.style.width = `${input.dataset.originalAnswer.length}ch`;
 
         solvedProblems += 1;
+        input.replaceWith(span);
 
         const nextInput = findNextInput();
         if (nextInput) nextInput.focus();
@@ -63,20 +65,13 @@ function enableScript(blanks) {
   });
 
   function normalizeText(text) {
-    return text
-      .replace(/[\/⋅.,]/g, '')
-      .replace(/이요/g, '이고')
-      .replace(/은 /g, '')
-      .replace(/는 /g, '')
-      .replace(/이/g, '')
-      .replace(/가/g, '')
-      .replace(/을/g, '')
-      .replace(/를/g, '')
-      .replace(/및/g, '')
-      .replace(/와/g, '')
-      .replace(/과/g, '')
-      .replace(/에게/g, '')
-      .replace(/\s+/g, '');
+    return text.replace(/[\/⋅.,]/g, '')
+      .replace(/이요/g, '이고').replace(/은 /g, '')
+      .replace(/는 /g, '').replace(/이/g, '')
+      .replace(/가/g, '').replace(/을/g, '')
+      .replace(/를/g, '').replace(/및/g, '')
+      .replace(/와/g, '').replace(/과/g, '')
+      .replace(/에게/g, '').replace(/\s+/g, '');
   }
 
   function findNextInput() {
@@ -95,10 +90,10 @@ function findAnswer() {
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
     const span = document.createElement('span');
-    span.classList.remove('incorrect');
-    span.classList.add('correct', 'fillNode');
+    span.classList.add('fillNode', 'correct');
     span.dataset.originalAnswer = node.dataset.originalAnswer;
     span.textContent = node.dataset.originalAnswer;
+    span.style.width = `${node.dataset.originalAnswer.length}ch`;
     node.replaceWith(span);
   });
 }
@@ -110,7 +105,8 @@ function disableScript() {
     const blankSpan = document.createElement('span');
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
-    blankSpan.textContent = ''; // hover로 정답 표시
+    blankSpan.textContent = '';
+    blankSpan.style.width = `${original.length}ch`;
     node.replaceWith(blankSpan);
   });
 }
@@ -123,47 +119,53 @@ function clearBlank() {
 
 function createLabelAndCheckbox() {
   const label = document.createElement('label');
-  label.innerHTML =
-    "<span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>" +
-    "<p style='font-size:0.875em; color:#07611f; margin:0.5em 0;'>* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다.</p>";
-
-  const controlGroup = document.createElement('div');
-  controlGroup.id = 'controlGroup';
-  controlGroup.style.marginTop = '10px';
-  controlGroup.style.display = 'none';
-  controlGroup.innerHTML =
-    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0;'>" +
-    "<span class='blackButton' onclick='clearBlank();'>빈칸 초기화</span>: 빈칸을 모두 제거하고 재실행</p>" +
-    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0;'>" +
-    "<span class='blackButton' onclick='findAnswer();'>정답 보기</span>: 빈칸의 정답을 모두 표시</p>";
+  label.innerHTML = `
+    <span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>
+    <p style='font-size:0.875em; color:#07611f;'>* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다.</p>
+  `;
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.id = 'toggleScript';
   checkbox.style.marginRight = '8px';
 
+  const controlArea = document.createElement('div');
+  controlArea.style.display = 'none';
+
+  const clearBtn = document.createElement('span');
+  clearBtn.textContent = '빈칸 초기화';
+  clearBtn.className = 'blackButton';
+  clearBtn.style.cursor = 'pointer';
+  clearBtn.onclick = clearBlank;
+
+  const answerBtn = document.createElement('span');
+  answerBtn.textContent = '정답 보기';
+  answerBtn.className = 'blackButton';
+  answerBtn.style.cursor = 'pointer';
+  answerBtn.style.marginLeft = '15px';
+  answerBtn.onclick = findAnswer;
+
+  controlArea.append(clearBtn, answerBtn);
+
   const resultDiv = document.createElement('div');
   resultDiv.style.backgroundColor = '#b8fcb8';
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
   resultDiv.style.marginBottom = '20px';
-  resultDiv.append(checkbox, label, controlGroup);
+  resultDiv.append(checkbox, label, controlArea);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
 
   checkbox.addEventListener('change', function () {
-    const group = document.getElementById('controlGroup');
     if (this.checked) {
-      group.style.display = 'block';
+      controlArea.style.display = 'block';
       disableScript();
       blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
-      group.style.display = 'none';
+      controlArea.style.display = 'none';
       disableScript();
     }
   });
 }
-</script>
-/* */
