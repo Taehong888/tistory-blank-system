@@ -1,5 +1,5 @@
 // ==========================
-// blank-script.js (원본)
+// blank-script.js (필요 부분만 수정된 버전)
 // ==========================
 
 // 전역 변수 선언
@@ -24,14 +24,15 @@ function enableScript(blanks) {
 
   blanks.forEach(blank => {
     const placeholder = blank.textContent;
-    const answer = normalizeText(blank.getAttribute('data-answer') || blank.textContent);
+    const rawAnswer   = blank.getAttribute('data-answer') || blank.textContent;
+    const answer      = normalizeText(rawAnswer);
     const normalizedAnswer = normalizeText(answer);
-    const input = document.createElement('input');
+    const input       = document.createElement('input');
 
     input.classList.add('fillNode');
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
-    input.dataset.originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
+    input.dataset.originalAnswer = rawAnswer;
     input.size = answer.length;
 
     if (isPlaceholder) {
