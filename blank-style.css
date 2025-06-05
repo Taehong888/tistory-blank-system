@@ -1,44 +1,43 @@
 /* ===========================================
-   blank-style.css (보기 모드·입력 모드 높이 통일용)
+   blank-style.css (보기 모드·입력 모드 높이 완전 일치)
    =========================================== */
 
-/* ── 공통 변수 선언 (필요 시 한 곳에서 값만 바꿀 수 있도록) ── */
+/* ── 1) 공통 변수 선언 ── */
 :root {
   --common-font-size: 0.9em;     /* 글자 크기 */
-  --common-line-height: 1.6em;   /* line-height(및 높이) */
+  --common-line-height: 1.6em;   /* 줄 높이 (박스 전체 높이) */
   --common-padding: 0 0.3em;     /* 좌우 패딩만 주고 상하 패딩은 0 */
+  --common-font-family: inherit; /* 부모 요소와 동일한 폰트 패밀리 */
 }
 
-/* ── 1) .blank (보기 모드) ── */
+/* ── 2) .blank (보기 모드) ── */
 .blank {
   display: inline-block;
-  /* 배경과 테두리 */
-  background-color: #e0f2d8;      /* 연두색 배경 */
-  border: 1px solid #aacb8e;      /* 짙은 연두 테두리 */
-  border-radius: 3px;
+  box-sizing: border-box;
 
-  /* 여백 및 정렬 */
-  margin: 0 3px;
-  vertical-align: middle;         /* 테이블 셀 안에서도 중앙 정렬 */
-
-  /* 글자 크기·줄 높이 통일 */
+  /* 똑같은 폰트 속성 */
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
-
-  /* height와 box-sizing을 동일하게 맞춤 */
-  box-sizing: border-box;
   height: var(--common-line-height);
 
-  /* 좌우 패딩만 주되, 높이 계산에 포함되도록 box-sizing: border-box */
-  padding: var(--common-padding);
+  /* 배경·테두리 */
+  background-color: #e0f2d8;
+  border: 1px solid #aacb8e;
+  border-radius: 3px;
 
-  /* 너비는 자동; 안에는 글자가 보이지 않도록 처리 */
+  /* 패딩 + 마진, 정렬 */
+  padding: var(--common-padding);
+  margin: 0 3px;
+  vertical-align: middle;
+
+  /* 너비는 자동, 텍스트는 숨김 */
   width: auto;
-  color: transparent;  /* 정답은 숨김 */
+  color: transparent;
   position: relative;
 }
 
-/* ::before를 이용해 “숨겨진 텍스트 길이만큼” 너비 확보 */
+/* ::before로 정답 길이만큼 너비 확보 */
 .blank::before {
   content: attr(data-answer);
   visibility: hidden;
@@ -46,99 +45,105 @@
   white-space: nowrap;
 }
 
-/* hover 시에만 텍스트 보이도록 설정 */
+/* hover 시에만 텍스트가 보이도록 */
 .blank::after {
   content: attr(data-answer);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: transparent;               /* 기본 상태에서는 숨김 */
+  color: transparent;
   white-space: nowrap;
   transition: color 0.2s ease-in-out;
   pointer-events: none;
 
-  /* .blank와 동일한 폰트 속성 */
+  /* 같은 폰트 속성 유지 */
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   z-index: 10;
 }
 .blank:hover::after {
-  color: #333;  /* hover 시 정답 텍스트 나타남 */
+  color: #333;
 }
 
-/* ── 2) .fillNode (입력 모드) ── */
+/* ── 3) .fillNode (입력 모드) ── */
 .fillNode {
   display: inline-block;
-  /* 같은 box-sizing, 폰트 속성, 높이, 패딩 */
   box-sizing: border-box;
+
+  /* 같은 폰트 속성 */
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   height: var(--common-line-height);
-  padding: var(--common-padding);
 
   /* 배경·테두리 */
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 3px;
 
-  /* margin 및 정렬 */
+  /* 패딩 + 마진 + 정렬 */
+  padding: var(--common-padding);
   margin: 0 3px;
   vertical-align: middle;
 
-  /* 너비 자동, size 속성에 맞춰 확장됨 */
+  /* 너비는 input의 size 속성에 맞춰 자동 결정 */
   width: auto;
 }
 
-/* 포커스를 받을 때 테두리·배경 강조 */
+/* 포커스 시 강조 */
 .fillNode:focus {
+  outline: none;
   border-color: #557a3b;
   background-color: #f9f9f9;
-  outline: none;
 }
 
-/* ── 3) .correct (정답 모드) ── */
-/* 정답 모드는 “글자만” 보여야 하므로, 배경·테두리 모두 제거 */
+/* ── 4) .correct (정답 모드) ── */
+/* 박스 없이 글자만 보이도록 변경 */
 .correct {
   display: inline-block;
 
-  /* 폰트 속성 통일 */
+  /* 같은 폰트 속성 */
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   height: var(--common-line-height);
 
-  /* 색상만 초록, padding/마진은 기존과 동일 */
-  color: #5DCB5F;
-  margin: 0 3px;
-  vertical-align: baseline;
-
-  /* 너비 자동 */
-  width: auto;
+  /* 배경·테두리 모두 제거 */
   background: none;
   border: none;
   padding: 0;
+  margin: 0 3px;
+  vertical-align: baseline;
+
+  /* 너비 자동, 텍스트만 초록색으로 표시 */
+  width: auto;
+  color: #5DCB5F;
 }
 
-/* ── 4) .incorrect (오답 모드) ── */
-/* 오답도 “글자만” 나타나며, tooltip으로 틀린 입력값 표시 */
+/* ── 5) .incorrect (오답 모드) ── */
+/* 박스 없이 글자만 보이되, 툴팁은 유지 */
 .incorrect {
   display: inline-block;
 
-  /* 폰트 속성 통일 */
+  /* 같은 폰트 속성 */
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   height: var(--common-line-height);
 
-  /* 빨간 텍스트, 배경·테두리 제거 */
-  color: #DD0031;
-  margin: 0 3px;
-  vertical-align: baseline;
-  width: auto;
+  /* 배경·테두리 제거 */
   background: none;
   border: none;
   padding: 0;
+  margin: 0 3px;
+  vertical-align: baseline;
 
-  position: relative;  /* ::after 절대 위치 조정을 위해 필요 */
+  /* 텍스트만 빨강색 표시 */
+  width: auto;
+  color: #DD0031;
+  position: relative;
 }
 .incorrect::after {
   content: attr(data-wrong);
@@ -155,6 +160,8 @@
   opacity: 0;
   transition: opacity 0.1s ease-in-out;
 
+  /* 같은 폰트 속성 유지 */
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   z-index: 10;
@@ -164,26 +171,28 @@
   opacity: 1;
 }
 
-/* ── 5) 버튼 스타일 통일 ── */
+/* ── 6) .blackButton (버튼) ── */
 .blackButton {
   color: #333;
   text-decoration: underline;
   cursor: pointer;
 
-  /* 버튼 글씨도 같은 폰트 크기 */
+  /* 같은 폰트 크기 적용 */
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
 }
 .blackButton:hover {
   text-decoration: none;
 }
 
-/* ── 6) entry-content 전체 텍스트 통일 ── */
+/* ── 7) .entry-content 내부 텍스트 통일 ── */
 .entry-content {
+  font-family: var(--common-font-family);
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
 }
 
-/* ── 7) 표(th, td) 내부 텍스트 통일 ── */
+/* ── 8) 표(th, td) 내부 텍스트 통일 ── */
 th,
 td {
   border: 1px solid #666 !important;
@@ -191,10 +200,10 @@ td {
   text-align: left !important;
   vertical-align: middle !important;
 
-  /* 동일한 폰트 크기·줄 높이 적용 */
+  /* 같은 폰트 속성 적용 */
+  font-family: var(--common-font-family) !important;
   font-size: var(--common-font-size) !important;
   line-height: var(--common-line-height) !important;
-  font-family: sans-serif !important;
   font-weight: normal !important;
 }
 th {
