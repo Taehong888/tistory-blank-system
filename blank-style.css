@@ -72,9 +72,9 @@
   width: auto;
 
   /* 통일된 글자 크기와 줄 높이 */
-  font-size: var(--common-font-size);
-  line-height: var(--common-line-height);
-  height: var(--common-line-height);
+  font-size: 1.0em !important;
+  line-height: 1.6em !important;
+  height: 1.6em !important;
 }
 .fillNode:focus {
   border-color: #557a3b;
