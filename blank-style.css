@@ -58,7 +58,7 @@
 /* 2) .fillNode (입력 모드) */
 .fillNode {
   box-sizing: border-box;
-  padding: 0 0.3em;
+  padding: 0 0.0em;
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 3px;
@@ -66,8 +66,8 @@
   vertical-align: middle;
 
   font-size: var(--common-font-size);
-  line-height: 1.6em !important;   /* 보기 모드와 높이/줄 동일 */
-  height: 1.7em !important;
+  line-height: 1.7em !important;   /* 보기 모드와 높이/줄 동일 */
+  height: 1.8em !important;
 
   width: auto; /* JS에서 ch 단위로 지정 */
 }
