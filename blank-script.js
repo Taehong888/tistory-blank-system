@@ -40,7 +40,7 @@ function enableScript(blanks) {
     }
 
     input.classList.add('quizQuestion');
-    input.style.width = `${answer.length}ch`;
+    input.style.width = `${rawAnswer.length}ch`;
 
     input.addEventListener('click', function (e) {
       currentInput = Array.from(document.querySelectorAll("input.quizQuestion")).indexOf(e.target);
@@ -59,7 +59,7 @@ function enableScript(blanks) {
 
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        span.style.width = `${answer.length}ch`;
+        span.style.width = `${rawAnswer.length}ch`;
 
         solvedProblems += 1;
         input.replaceWith(span);
