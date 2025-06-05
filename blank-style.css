@@ -17,9 +17,9 @@
   padding: 0 0.3em;
   margin: 0;
   vertical-align: middle !important;
-  font-size: 1.0em !important;            /* 본문과 동일 크기 */
-  line-height: 1.6 !important;            /* 박스 내부 텍스트 줄 높이 */
-  height: 1.6em !important;               /* 박스 전체 높이 고정 (1.6em + 0.3em) */
+  font-size: var(--common-font-size);            /* 본문과 동일 크기 */
+  line-height: 2.3em   !important;            /* 박스 내부 텍스트 줄 높이 */
+  height: 2.3em !important;               /* 박스 전체 높이 고정 (1.6em + 0.3em) */
   box-sizing: border-box;
   width: auto;
   color: transparent;
@@ -72,9 +72,9 @@
   width: auto;
 
   /* 통일된 글자 크기와 줄 높이 */
-  font-size: 1.0em !important;
-  line-height: 1.6em !important;
-  height: 1.7em !important;
+  font-size: var(--common-font-size);
+  line-height: 2.3em !important;
+  height: 2.3em !important;
    display: inline-flex;
   align-items: center;
 }
