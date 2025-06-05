@@ -18,7 +18,7 @@
   margin: 0 0.3em;
   vertical-align: baseline !important;
   font-size: var(--common-font-size);            /* 본문과 동일 크기 */
-  line-height: 1.8 !important;            /* 박스 내부 텍스트 줄 높이 */
+  line-height: 1.8em !important;            /* 박스 내부 텍스트 줄 높이 */
   height: 1.8em !important;               /* 박스 전체 높이 고정 (1.6em + 0.3em) */
   box-sizing: border-box;
   width: auto;
@@ -64,7 +64,7 @@
   border: 1px solid #cccccc;
   border-radius: 1px;
   margin: 0 0.3em !important;
-  vertical-align: middle;
+  vertical-align: baseline;
   justify-content: center;
   align-items: center;
    min-width: 2em;
@@ -77,6 +77,8 @@
     font-size: 1em;               /* 상위와 맞춰서 */
   font-family: 'Noto Sans KR', sans-serif;  /* 사용한 글꼴로 강제 */
   height: 1.8em !important;
+  line-height: 1.8em !important;            /* 박스 내부 텍스트 줄 높이 */
+
 
 }
 .fillNode:focus {
