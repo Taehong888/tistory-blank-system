@@ -1,3 +1,4 @@
+<script>
 const blankArray = document.querySelectorAll('.blank');
 
 if (blankArray.length >= 1) {
@@ -48,6 +49,7 @@ function enableScript(blanks) {
 
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
+        blank.replaceWith(span);
         input.replaceWith(span);
 
         solvedProblems += 1;
@@ -163,3 +165,4 @@ function createLabelAndCheckbox() {
     }
   });
 }
+</script>
