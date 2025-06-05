@@ -95,7 +95,7 @@
 .fillNode {
   box-sizing: border-box;
   font-family: var(--common-font-family);
-  font-size: var(--common-font-size);
+  font-size: 1.0em !important; 
   line-height: var(--common-line-height);
   letter-spacing: var(--common-letter-spacing);
   word-spacing: var(--common-word-spacing);
@@ -191,21 +191,18 @@
    =========================================== */
 th,
 td {
-  font-family: var(--common-font-family);
-  font-size: var(--common-font-size) !important;
-  line-height: var(--common-line-height) !important;
-  letter-spacing: var(--common-letter-spacing) !important;
-  word-spacing: var(--common-word-spacing) !important;
-
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;
+  padding: 8px 10px !important;           /* 셀 내부 여백 */
   text-align: left !important;
   vertical-align: middle !important;
+  font-size: 0.9em !important;
+  font-weight: normal !important;
+  font-family: sans-serif !important;
+  line-height: 1.8 !important;             /* 표 내부 줄 간격 1.8 */
 }
 th {
   background-color: #f2f2f2 !important;
   vertical-align: center !important;
 }
 td {
-  /* 줄 높이 그대로 유지 */
-}
+  /* 줄 높이 1.8 유지 */
