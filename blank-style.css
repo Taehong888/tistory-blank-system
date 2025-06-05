@@ -4,7 +4,7 @@
 
 /* 공통 변수: 글자 크기와 줄 높이만 통일 */
 :root {
-  --common-font-size: 0.9em;    /* 필요 시 1.0em 등으로 변경 */
+  --common-font-size: 1.0em;    /* 필요 시 1.0em 등으로 변경 */
   --common-line-height: 1.6em;  /* 빈칸, 입력창, 정답·오답 가이드라인 */
 }
 
@@ -18,10 +18,13 @@
   margin: 0 3px;
   vertical-align: middle;
 
+   
+
   /* 글자 크기/줄 높이를 모두 통일 */
-  font-size: var(--common-font-size);
-  line-height: var(--common-line-height);
-  height: var(--common-line-height);
+  font-size: 1.0em !important;            /* 본문과 동일 크기 */
+  line-height: 1.6 !important;            /* 박스 내부 텍스트 줄 높이 */
+  height: 1.6em !important;               /* 박스 전체 높이 고정 (1.6em + 0.3em) */
+
 
   /* 너비는 자동으로 내용(정답) 길이에 맞췄다가, 텍스트는 숨김 처리 */
   width: auto;
