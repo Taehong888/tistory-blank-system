@@ -196,7 +196,7 @@ function createLabelAndCheckbox() {
   resultDiv.style.backgroundColor = '#b8fcb8';
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
-  resultDiv.style.marginBottom = '0px';
+  resultDiv.style.marginBottom = '20px';
   resultDiv.append(checkbox, label, controlArea);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
@@ -213,21 +213,4 @@ function createLabelAndCheckbox() {
       disableScript();
     }
   });
-}
-
-// 입력 및 정답 판정 시 사용할 정규화 함수(여러 상황에 맞춰 가장 간단히 유지)
-function normalizeText(text) {
-  return text.replace(/[\/⋅.,]/g, '')
-             .replace(/이요/g, '이고')
-             .replace(/은 /g, '')
-             .replace(/는 /g, '')
-             .replace(/이/g, '')
-             .replace(/가/g, '')
-             .replace(/을/g, '')
-             .replace(/를/g, '')
-             .replace(/및/g, '')
-             .replace(/와/g, '')
-             .replace(/과/g, '')
-             .replace(/에게/g, '')
-             .replace(/\s+/g, '');
 }
