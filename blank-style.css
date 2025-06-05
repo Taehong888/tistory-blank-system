@@ -33,7 +33,6 @@
 .blank::before {
   content: attr(data-answer);
   visibility: hidden;
-  display: inline-block;
   white-space: nowrap;
 }
 /* ::after는 hover 시에만 텍스트 색상을 바꿔 보여준다 */
