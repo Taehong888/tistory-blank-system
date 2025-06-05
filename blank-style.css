@@ -16,7 +16,7 @@
   border-radius: 1px;
   padding: 0 0.3em;
   margin: 0;
-  vertical-align: middle;
+  vertical-align: middle !important;
 
    
 
@@ -75,6 +75,8 @@
   font-size: 1.0em !important;
   line-height: 1.6em !important;
   height: 1.7em !important;
+   display: inline-flex;
+  align-items: center;
 }
 .fillNode:focus {
   border-color: #557a3b;
