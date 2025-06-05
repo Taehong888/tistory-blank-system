@@ -45,7 +45,7 @@ function enableScript(blanks) {
     }
 
     input.classList.add('quizQuestion');
-    input.style.width = `${blankWidth}px`;
+    input.style.width = `calc(${blankWidth}px + 0.6em)`;
 
     input.addEventListener('click', function (e) {
       currentInput = Array.from(
