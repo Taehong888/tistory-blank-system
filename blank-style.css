@@ -1,5 +1,5 @@
 /* ===========================================
-   blank-style.css (개선된 버전!)
+   blank-style.css (PC + iPad 일관된 UX를 위한 개선)
    =========================================== */
 
 /* 공통 변수: 글자 크기와 줄 높이만 통일 */
@@ -11,19 +11,19 @@
 /* 1) .blank (보기 모드) */
 .blank {
   display: inline-block;
-  background-color: #e0f2d8;
-  border: 1px solid #aacb8e;
+  background-color: #e0f2d8;    /* 연두색 배경 */
+  border: 1px solid #aacb8e;    /* 짙은 연두 테두리 */
   border-radius: 3px;
   padding: 0 0.3em;
   margin: 0 3px;
   vertical-align: middle;
 
   font-size: var(--common-font-size);
-  line-height: 1.6em !important;
-  height: 1.7em !important;
+  line-height: 1.6em !important;       /* 박스 내부 텍스트 줄 높이 */
+  height: 1.7em !important;            /* 박스 전체 높이 (1.6em + 상하 약 0.05em/padding) */
 
-  width: auto;
-  color: transparent;
+  width: auto;                         /* 텍스트 길이에 따라 자동 너비 */
+  color: transparent;                  /* 정답은 숨김 */
   position: relative;
   box-sizing: border-box;
 }
@@ -40,14 +40,16 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: transparent;
+  color: transparent;                  /* 기본 숨김 */
   white-space: nowrap;
   transition: color 0.2s ease-in-out;
   pointer-events: none;
+
   font-size: var(--common-font-size);
   line-height: 1.6em;
   z-index: 10;
 }
+/* 데스크톱 hover, 터치 기기 tap 시 모두 정답 표시 */
 .blank:hover::after,
 .blank:active::after {
   color: #333;
@@ -64,14 +66,15 @@
   vertical-align: middle;
 
   font-size: var(--common-font-size);
-  line-height: 1.6em !important;
+  line-height: 1.6em !important;   /* 보기 모드와 높이/줄 동일 */
   height: 1.7em !important;
 
-  width: auto;
+  width: auto; /* JS에서 ch 단위로 지정 */
 }
 .fillNode:focus {
   border-color: #557a3b;
   background-color: #f9f9f9;
+  outline: none;
 }
 
 /* 3) .correct / .incorrect (정답·오답 표시) */
@@ -83,16 +86,15 @@
   vertical-align: baseline;
 
   width: auto;
-  color: #5DCB5F;
+  color: #5DCB5F;    /* 초록 텍스트 */
   background: none;
   border: none;
   padding: 0;
 
-  white-space: normal;
+  white-space: normal;     /* 줄바꿈 허용 */
   word-break: break-word;
   max-width: 100%;
 }
-
 .incorrect {
   display: inline-block;
   font-size: var(--common-font-size);
@@ -101,13 +103,13 @@
   vertical-align: baseline;
 
   width: auto;
-  color: #DD0031;
+  color: #DD0031;    /* 빨간 텍스트 */
   position: relative;
 }
 .incorrect::after {
   content: attr(data-wrong);
   position: absolute;
-  bottom: 100%;
+  bottom: 100%;      /* 셀 위쪽에 표시 */
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.75);
@@ -124,7 +126,8 @@
   line-height: 1.6em;
   z-index: 10;
 }
-.incorrect:hover::after {
+.incorrect:hover::after,
+.incorrect:active::after {
   visibility: visible;
   opacity: 1;
 }
