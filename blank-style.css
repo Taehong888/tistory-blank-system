@@ -1,109 +1,144 @@
 /* ===========================================
-   blank-style.css (글자 수에 맞춘 자동 너비 + 정답모드 박스 제거)
+   blank-style.css (보기 모드·입력 모드 높이 통일용)
    =========================================== */
 
-/* 공통 변수: 글자 크기와 줄 높이만 통일 */
+/* ── 공통 변수 선언 (필요 시 한 곳에서 값만 바꿀 수 있도록) ── */
 :root {
-  --common-font-size: 1.0em;    /* 필요 시 1.0em 등으로 변경 */
-  --common-line-height: 1.6em;  /* 빈칸, 입력창, 정답·오답 가이드라인 */
+  --common-font-size: 0.9em;     /* 글자 크기 */
+  --common-line-height: 1.6em;   /* line-height(및 높이) */
+  --common-padding: 0 0.3em;     /* 좌우 패딩만 주고 상하 패딩은 0 */
 }
 
-/* 1) .blank (보기 모드) */
+/* ── 1) .blank (보기 모드) ── */
 .blank {
   display: inline-block;
-  background-color: #e0f2d8;    /* 연두색 배경 */
-  border: 1px solid #aacb8e;    /* 짙은 연두 테두리 */
+  /* 배경과 테두리 */
+  background-color: #e0f2d8;      /* 연두색 배경 */
+  border: 1px solid #aacb8e;      /* 짙은 연두 테두리 */
   border-radius: 3px;
-  padding: 0 0.3em;
-  margin: 0 3px;
-  vertical-align: middle;
 
-  /* 글자 크기/줄 높이를 모두 통일 */
+  /* 여백 및 정렬 */
+  margin: 0 3px;
+  vertical-align: middle;         /* 테이블 셀 안에서도 중앙 정렬 */
+
+  /* 글자 크기·줄 높이 통일 */
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
+
+  /* height와 box-sizing을 동일하게 맞춤 */
+  box-sizing: border-box;
   height: var(--common-line-height);
 
-  /* 너비는 자동으로 내용(정답) 길이에 맞췄다가, 텍스트는 숨김 처리 */
+  /* 좌우 패딩만 주되, 높이 계산에 포함되도록 box-sizing: border-box */
+  padding: var(--common-padding);
+
+  /* 너비는 자동; 안에는 글자가 보이지 않도록 처리 */
   width: auto;
-  color: transparent;
+  color: transparent;  /* 정답은 숨김 */
   position: relative;
-  box-sizing: border-box;
 }
-/* ::before를 이용해 보이지 않는 상태에서 너비만 맞추기 */
+
+/* ::before를 이용해 “숨겨진 텍스트 길이만큼” 너비 확보 */
 .blank::before {
   content: attr(data-answer);
   visibility: hidden;
   display: inline-block;
   white-space: nowrap;
 }
-/* ::after는 hover 시에만 텍스트 색상을 바꿔 보여준다 */
+
+/* hover 시에만 텍스트 보이도록 설정 */
 .blank::after {
   content: attr(data-answer);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: transparent; /* 정상 상태에서는 투명 */
+  color: transparent;               /* 기본 상태에서는 숨김 */
   white-space: nowrap;
   transition: color 0.2s ease-in-out;
   pointer-events: none;
+
+  /* .blank와 동일한 폰트 속성 */
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   z-index: 10;
 }
 .blank:hover::after {
-  color: #333; /* hover 시에만 정답 텍스트 보이기 */
+  color: #333;  /* hover 시 정답 텍스트 나타남 */
 }
 
-/* 2) .fillNode (input 빈칸) */
+/* ── 2) .fillNode (입력 모드) ── */
 .fillNode {
+  display: inline-block;
+  /* 같은 box-sizing, 폰트 속성, 높이, 패딩 */
   box-sizing: border-box;
-  padding: 0 0.3em;
-  background-color: #ffffff;
-  border: 1px solid #cccccc;
-  border-radius: 3px;
-  margin: 0 3px;
-  vertical-align: middle;
-
-  /* input 자체가 size 속성으로 너비가 정해지므로, width:auto */
-  width: auto;
-
-  /* 통일된 글자 크기와 줄 높이 */
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   height: var(--common-line-height);
+  padding: var(--common-padding);
+
+  /* 배경·테두리 */
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+
+  /* margin 및 정렬 */
+  margin: 0 3px;
+  vertical-align: middle;
+
+  /* 너비 자동, size 속성에 맞춰 확장됨 */
+  width: auto;
 }
+
+/* 포커스를 받을 때 테두리·배경 강조 */
 .fillNode:focus {
   border-color: #557a3b;
   background-color: #f9f9f9;
+  outline: none;
 }
 
-/* 3) .correct / .incorrect (정답·오답 표시) */
-/* 정답 모드(.correct)는 “글자만 보이게” 테두리나 배경 없음 */
+/* ── 3) .correct (정답 모드) ── */
+/* 정답 모드는 “글자만” 보여야 하므로, 배경·테두리 모두 제거 */
 .correct {
   display: inline-block;
+
+  /* 폰트 속성 통일 */
   font-size: var(--common-font-size);
-  font-weight: normal;
+  line-height: var(--common-line-height);
+  height: var(--common-line-height);
+
+  /* 색상만 초록, padding/마진은 기존과 동일 */
+  color: #5DCB5F;
   margin: 0 3px;
   vertical-align: baseline;
 
-  /* width:auto → 글자만큼만 차지 */
+  /* 너비 자동 */
   width: auto;
-  color: #5DCB5F;    /* 초록색 텍스트 */
-  /* background / border 없음 → 그냥 글자만 보임 */
+  background: none;
+  border: none;
+  padding: 0;
 }
 
-/* 오답(.incorrect)도 “글자만” 차지하되, 마우스 오버 시 tooltip */
+/* ── 4) .incorrect (오답 모드) ── */
+/* 오답도 “글자만” 나타나며, tooltip으로 틀린 입력값 표시 */
 .incorrect {
   display: inline-block;
+
+  /* 폰트 속성 통일 */
   font-size: var(--common-font-size);
-  font-weight: normal;
+  line-height: var(--common-line-height);
+  height: var(--common-line-height);
+
+  /* 빨간 텍스트, 배경·테두리 제거 */
+  color: #DD0031;
   margin: 0 3px;
   vertical-align: baseline;
-
   width: auto;
-  color: #DD0031;    /* 빨간 텍스트 */
-  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+
+  position: relative;  /* ::after 절대 위치 조정을 위해 필요 */
 }
 .incorrect::after {
   content: attr(data-wrong);
@@ -119,7 +154,7 @@
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.1s ease-in-out;
-  pointer-events: none;
+
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
   z-index: 10;
@@ -129,38 +164,39 @@
   opacity: 1;
 }
 
-/* 4) .blackButton (버튼 스타일) */
+/* ── 5) 버튼 스타일 통일 ── */
 .blackButton {
   color: #333;
   text-decoration: underline;
   cursor: pointer;
-  font-size: var(--common-font-size); /* 버튼 글자 크기 통일 */
+
+  /* 버튼 글씨도 같은 폰트 크기 */
+  font-size: var(--common-font-size);
 }
 .blackButton:hover {
   text-decoration: none;
 }
 
-/* 5) .entry-content 내부 텍스트(필요 시 전체 통일) */
+/* ── 6) entry-content 전체 텍스트 통일 ── */
 .entry-content {
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
 }
 
-/* 6) 표(th, td) 공통 스타일 */
+/* ── 7) 표(th, td) 내부 텍스트 통일 ── */
 th,
 td {
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;           /* 셀 내부 여백 */
+  padding: 8px 10px !important;
   text-align: left !important;
   vertical-align: middle !important;
-  font-size: 0.9em !important;
-  font-weight: normal !important;
+
+  /* 동일한 폰트 크기·줄 높이 적용 */
+  font-size: var(--common-font-size) !important;
+  line-height: var(--common-line-height) !important;
   font-family: sans-serif !important;
-  line-height: 1.8 !important;             /* 표 내부 줄 간격 1.8 */
+  font-weight: normal !important;
 }
 th {
   background-color: #f2f2f2 !important;
-  vertical-align: center !important;
 }
-td {
-  /* 줄 높이 1.8 유지 */
