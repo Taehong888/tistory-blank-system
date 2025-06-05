@@ -1,21 +1,28 @@
 /* ===========================================
-   blank-style.css
+   blank-style.css (글자 크기 통일 버전)
    =========================================== */
+
+/* 공통 변수: 원하는 글자 크기를 한 곳에서 관리 */
+:root {
+  --common-font-size: 0.9em;   /* 필요 시 1.0em 등으로 변경 가능 */
+  --common-line-height: 1.6em; /* 빈칸, 입력창, 정답·오답 박스의 높이와 일치 */
+  --common-width: 6ch;         /* 모든 박스 너비를 동일하게 고정 */
+}
 
 /* 1) .blank (보기 모드) */
 .blank {
   display: inline-block;
-  background-color: #e0f2d8;        /* 연두색 배경 */
-  border: 1px solid #aacb8e;        /* 짙은 연두 테두리 */
+  background-color: #e0f2d8;      /* 연두색 배경 */
+  border: 1px solid #aacb8e;      /* 짙은 연두 테두리 */
   border-radius: 3px;
   padding: 0 0.3em;
   margin: 0 3px;
   vertical-align: middle;
-  font-size: 0.9em;
-  line-height: 1.6em;               /* 고정된 line-height */
-  height: 1.6em;                    /* 고정된 높이 */
-  width: 6ch;                       /* 모든 빈칸을 동일한 너비로 고정(필요 시 값 조정) */
-  color: transparent;               /* 숨긴 정답 */
+  font-size: var(--common-font-size);
+  line-height: var(--common-line-height);
+  height: var(--common-line-height); 
+  width: var(--common-width);
+  color: transparent;             /* 정답 텍스트는 숨김 */
   position: relative;
   box-sizing: border-box;
 }
@@ -35,9 +42,9 @@
   white-space: nowrap;
   transition: color 0.2s ease-in-out;
   pointer-events: none;
-  font-size: 0.9em;
+  font-size: var(--common-font-size);
   font-weight: normal;
-  line-height: 1.6em;
+  line-height: var(--common-line-height);
   z-index: 10;
 }
 .blank:hover::after {
@@ -51,15 +58,15 @@
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 3px;
-  font-size: 0.9em;
+  font-size: var(--common-font-size);
   color: #333333;
   vertical-align: middle;
   margin: 0 3px;
   outline: none;
   transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-  line-height: 1.6em;               /* 고정된 line-height */
-  height: 1.6em;                    /* 고정된 높이 */
-  width: 6ch;                       /* 모든 입력 칸을 동일한 너비로 고정(필요 시 값 조정) */
+  line-height: var(--common-line-height);
+  height: var(--common-line-height);
+  width: var(--common-width);
 }
 .fillNode:focus {
   border-color: #557a3b;
@@ -69,24 +76,24 @@
 /* 3) .correct / .incorrect (정답·오답 표시) */
 .correct {
   display: inline-block;
-  font-size: 0.9em;
+  font-size: var(--common-font-size);
   font-weight: normal;
   margin: 0 3px;
   vertical-align: baseline;
-  line-height: 1.8;
-  color: #5DCB5F;                   /* 초록 */
-  width: 6ch;                       /* 모든 정답 표시 박스도 동일 너비로 고정 */
-  text-align: center;               /* 길이에 상관없이 중앙 정렬 */
+  line-height: 1.8;              /* 답글은 줄 높이를 약간 여유 있게 두어도 됨 */
+  color: #5DCB5F;               /* 초록색 */
+  width: var(--common-width);
+  text-align: center;           /* 정답 텍스트 중앙 정렬 */
 }
 .incorrect {
   display: inline-block;
-  font-size: 0.9em;
+  font-size: var(--common-font-size);
   font-weight: normal;
   margin: 0 3px;
   vertical-align: baseline;
   line-height: 1.8;
-  color: #DD0031;                   /* 빨강 */
-  width: 6ch;                       /* 모든 오답 표시 박스도 동일 너비로 고정 */
+  color: #DD0031;               /* 빨강색 */
+  width: var(--common-width);
   text-align: center;
   position: relative;
 }
@@ -105,7 +112,7 @@
   opacity: 0;
   transition: opacity 0.1s ease-in-out;
   pointer-events: none;
-  font-size: 0.9em;
+  font-size: var(--common-font-size);
   font-weight: normal;
   line-height: 1.8;
   z-index: 10;
@@ -120,22 +127,29 @@
   color: #333;
   text-decoration: underline;
   cursor: pointer;
+  font-size: var(--common-font-size); /* 버튼 글자 크기 통일 */
 }
 .blackButton:hover {
   text-decoration: none;
+}
+
+/* 5) .entry-content 내부 텍스트(전반적인 글자 크기 조정 필요 시) */
+.entry-content {
+  font-size: var(--common-font-size);
+  line-height: var(--common-line-height);
 }
 
 /* 6) 표(th, td) 공통 스타일 */
 th,
 td {
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;          
+  padding: 8px 10px !important;
   text-align: left !important;
   vertical-align: middle !important;
-  font-size: 0.9em !important;
+  font-size: var(--common-font-size) !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
-  line-height: 1.8 !important;             
+  line-height: 1.8 !important;
 }
 th {
   background-color: #f2f2f2 !important;
