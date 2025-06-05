@@ -4,7 +4,7 @@
 
 /* ── 1) 공통 변수 선언 ── */
 :root {
-  --common-font-size: 0.9em;     /* 글자 크기 */
+  --common-font-size: 1.0em;     /* 글자 크기 */
   --common-line-height: 1.6em;   /* 줄 높이 (박스 전체 높이) */
   --common-padding: 0 0.3em;     /* 좌우 패딩만 주고 상하 패딩은 0 */
   --common-font-family: inherit; /* 부모 요소와 동일한 폰트 패밀리 */
