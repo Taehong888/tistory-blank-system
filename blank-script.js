@@ -1,92 +1,93 @@
 // ==========================
-// blank-script.js (PC + iPad 일관 UX 개선 포함)
-//  - Tab 키로 다음 입력창 이동
-//  - 화면 회전 / 윈도우 리사이즈 시 ch 단위 재계산
-//  - 자동 포커스 제거
+// blank-script.js (전체 수정된 버전)
+//  • .blank의 실제 픽셀 너비를 읽어와 <input>과 <span>에 그대로 적용
+//  • 자동 포커스 제거, Tab 키 이동 지원
+//  • 화면 리사이즈/회전 시 너비 재계산 지원
 // ==========================
 
 let blanks = [];
 
-// 페이지 로드 후 .blank가 있으면 레이블/체크박스 생성
+// 페이지 로드 후 초기화
 document.addEventListener('DOMContentLoaded', () => {
   const blankArray = document.querySelectorAll('.blank');
   if (blankArray.length >= 1) {
     createLabelAndCheckbox();
   }
-  // OR blankTranslation 있으면 즉시 enable
+  // blankTranslation 요소가 있으면 즉시 enableScript 호출
   if (document.getElementsByClassName("blankTranslation").length !== 0) {
     blanks = document.querySelectorAll('.blankTranslation');
     enableScript(blanks);
   }
 });
 
-// 윈도우 리사이즈 및 화면 회전 시 입력 너비 재계산
+// 윈도우 리사이즈 및 화면 회전 이벤트: ch 단위 대신 픽셀 너비 재계산
 window.addEventListener('resize', recalcAllWidths);
 window.addEventListener('orientationchange', recalcAllWidths);
 
 function recalcAllWidths() {
-  // 모든 .fillNode(input)와 .correct/.incorrect(span)에 대해
-  // data-original-answer 길이를 다시 ch 단위로 지정
+  // 화면에 보이는 모든 .fillNode(input)과 .correct/.incorrect(span)에 대해
+  // data-original-answer 글자 수 × ch 단위로 너비 재설정
   document.querySelectorAll('.fillNode').forEach(node => {
     const original = node.dataset.originalAnswer;
-    if (original) {
-      node.style.width = `${original.length}ch`;
-    }
+    if (!original) return;
+    node.style.width = `${original.length}ch`;
   });
   document.querySelectorAll('.correct, .incorrect').forEach(span => {
     const original = span.dataset.originalAnswer;
-    if (original) {
-      span.style.width = `${original.length}ch`;
-    }
+    if (!original) return;
+    span.style.width = `${original.length}ch`;
   });
 }
 
 function enableScript(blanks) {
-  blanks.forEach((blank, index) => {
+  blanks.forEach((blank) => {
     const originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
     const answer = normalizeText(originalAnswer);
 
-    // input 생성
-    const input = document.createElement('input');
-    input.classList.add('fillNode', 'quizQuestion');
-    input.type = 'text';
+    // (1) blank가 렌더된 후 실제 폭을 측정
+    setTimeout(() => {
+      const rect = blank.getBoundingClientRect();
+      const targetWidthPx = rect.width;
 
-    // 입력 너비를 원본 글자 수 ch 단위로 지정
-    input.style.boxSizing = 'border-box';
-const rect = blank.getBoundingClientRect();
-const targetWidthPx = rect.width;
-input.style.width = `${targetWidthPx}px`;
+      // (2) input 요소 생성
+      const input = document.createElement('input');
+      input.classList.add('fillNode', 'quizQuestion');
+      input.type = 'text';
 
-    input.dataset.answer = answer;
-    input.dataset.originalAnswer = originalAnswer;
+      // (3) 실제 픽셀 너비를 그대로 적용
+      input.style.boxSizing = 'border-box';
+      input.style.width = `${targetWidthPx}px`;
 
-    // 클릭 시 별도 처리 없음 (자동 포커스 제거)
+      input.dataset.answer = answer;
+      input.dataset.originalAnswer = originalAnswer;
 
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        processAnswer(input, originalAnswer);
-      } else if (e.key === 'Tab') {
-        e.preventDefault();
-        // Tab 누르면 다음 입력창으로 포커스
-        const inputs = Array.from(document.querySelectorAll('input.quizQuestion'));
-        const idx = inputs.indexOf(input);
-        const next = inputs[idx + 1];
-        if (next) next.focus();
-      }
-    });
+      // (4) 키다운 이벤트: Enter로 정답 처리, Tab으로 다음 입력창 이동
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          processAnswer(input, originalAnswer, targetWidthPx);
+        } else if (e.key === 'Tab') {
+          e.preventDefault();
+          const inputs = Array.from(document.querySelectorAll('input.quizQuestion'));
+          const idx = inputs.indexOf(input);
+          const next = inputs[idx + 1];
+          if (next) next.focus();
+        }
+      });
 
-    blank.replaceWith(input);
-    // 자동 포커스 제거: 사용자가 탭/클릭하여 이동
+      // (5) blank → input 교체
+      blank.replaceWith(input);
+      // 자동 포커스 제거
+
+    }, 0);
   });
 }
 
-function processAnswer(input, originalAnswer) {
+function processAnswer(input, originalAnswer, widthPx) {
   const userAnswer = normalizeText(input.value.trim());
   const span = document.createElement('span');
-  const answer = input.dataset.answer;
 
-  if (userAnswer === answer) {
+  if (userAnswer === input.dataset.answer) {
     span.classList.add('fillNode', 'correct');
   } else {
     span.classList.add('fillNode', 'incorrect');
@@ -95,8 +96,10 @@ function processAnswer(input, originalAnswer) {
 
   span.textContent = input.dataset.originalAnswer;
   span.dataset.originalAnswer = input.dataset.originalAnswer;
+
+  // (A) 정오/오답 span에도 동일한 픽셀 너비 적용
   span.style.boxSizing = 'border-box';
-  span.style.width = `${originalAnswer.length}ch`;
+  span.style.width = `${widthPx}px`;
 
   input.replaceWith(span);
 }
@@ -105,12 +108,17 @@ function findAnswer() {
   document.querySelectorAll('.fillNode').forEach(node => {
     const original = node.dataset.originalAnswer;
     if (!original) return;
+
     const span = document.createElement('span');
     span.classList.add('fillNode', 'correct');
     span.dataset.originalAnswer = original;
     span.textContent = original;
+
+    // (B) 현재 노드의 렌더된 픽셀 너비를 가져와 동일하게 적용
+    const measuredWidth = node.getBoundingClientRect().width;
     span.style.boxSizing = 'border-box';
-    span.style.width = `${original.length}ch`;
+    span.style.width = `${measuredWidth}px`;
+
     node.replaceWith(span);
   });
 }
@@ -188,7 +196,7 @@ function createLabelAndCheckbox() {
   });
 }
 
-// 텍스트 비교용 정규화 함수
+// 정답 비교용 텍스트 정규화 함수
 function normalizeText(text) {
   return text
     .replace(/[\/⋅.,]/g, '')
