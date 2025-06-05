@@ -1,5 +1,5 @@
 /* ===========================================
-   blank-style.css (PC + iPad 일관 UX 개선 포함)
+   blank-style.css (입력창 폰트 크기 수정 버전)
    =========================================== */
 
 /* 공통 변수: 글자 크기와 줄 높이만 통일 */
@@ -8,7 +8,7 @@
   --common-line-height: 1.9em;
 }
 
-/* 1) .blank (보기 모드) */
+/* 1) .blank (보기 모드) — 건드리지 마세요 */
 .blank {
   display: inline-block;
   background-color: #e0f2d8;
@@ -53,7 +53,7 @@
   color: #333;
 }
 
-/* 2) .fillNode (입력 모드) */
+/* 2) .fillNode (입력 모드) — 아래 부분만 수정했습니다 */
 .fillNode {
   box-sizing: border-box;
 
@@ -68,12 +68,13 @@
   margin: 0 3px;
   vertical-align: middle;
 
-  font-size: var(--common-font-size);
-  font-family: inherit;
+  /* 폰트 크기를 .blank와 동일하게 맞추고, 부모 폰트도 그대로 상속 */
+  font-size: var(--common-font-size) !important;
+  font-family: inherit !important;
   line-height: 1.6em !important;
   height: 1.7em !important;
 
-  width: auto;
+  width: auto; /* JS에서 픽셀/CH 단위로 폭 고정 */
 }
 .fillNode:focus {
   border-color: #557a3b;
@@ -81,7 +82,7 @@
   outline: none;
 }
 
-/* 3) .correct / .incorrect (정답·오답 표시) */
+/* 3) .correct / .incorrect (정답·오답 표시) — 건드리지 마세요 */
 .correct {
   display: inline-block;
   font-size: var(--common-font-size);
@@ -99,7 +100,6 @@
   word-break: break-word;
   max-width: 100%;
 }
-
 .incorrect {
   display: inline-block;
   font-size: var(--common-font-size);
@@ -137,7 +137,7 @@
   opacity: 1;
 }
 
-/* 4) .blackButton (버튼 스타일) */
+/* 4) .blackButton (버튼 스타일) — 건드리지 마세요 */
 .blackButton {
   color: #333;
   text-decoration: underline;
@@ -148,13 +148,13 @@
   text-decoration: none;
 }
 
-/* 5) .entry-content 내부 텍스트 통일 */
+/* 5) .entry-content 내부 텍스트 통일 — 건드리지 마세요 */
 .entry-content {
   font-size: var(--common-font-size);
   line-height: var(--common-line-height);
 }
 
-/* 6) 표(th, td) 공통 스타일 */
+/* 6) 표(th, td) 공통 스타일 — 건드리지 마세요 */
 th,
 td {
   border: 1px solid #666 !important;
