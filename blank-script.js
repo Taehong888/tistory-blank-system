@@ -28,11 +28,13 @@ function enableScript(blanks) {
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
-    input.size = Math.ceil(answer.length * 1.2);
 
+    // ✅ 너비 유동 조정
     if (isPlaceholder) {
       input.placeholder = placeholder;
-      input.size = Math.ceil(blank.textContent.length * 1.35);
+      input.style.width = `${blank.textContent.length * 1.35}em`;
+    } else {
+      input.style.width = `${normalizedAnswer.length * 1.2}em`;
     }
 
     input.classList.add('quizQuestion');
@@ -116,6 +118,11 @@ function disableScript() {
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
     blankSpan.textContent = '';
+    
+    // ✅ 보기모드 박스도 유동 크기로
+    blankSpan.style.display = 'inline-block';
+    blankSpan.style.minWidth = `${original.length * 1.2}em`;
+
     node.replaceWith(blankSpan);
   });
 }
@@ -126,35 +133,19 @@ function clearBlank() {
   enableScript(blanks);
 }
 
-// ✅ 수정된 함수: createLabelAndCheckbox
 function createLabelAndCheckbox() {
   const label = document.createElement('label');
   label.innerHTML =
     "<span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>" +
     "<p style='font-size:0.875em; color:#07611f; margin:0.5em 0 0.5em 0;'>" +
       "* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다." +
+    "</p>" +
+    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0; display:none;' id='clearBtnWrap'>" +
+      "<span class='blackButton' onclick='clearBlank();' style='cursor:pointer; color:#333; text-decoration:underline;'>빈칸 초기화</span>: 빈칸을 모두 제거하고 재실행" +
+    "</p>" +
+    "<p style='font-size:0.875em; color:#07611f; margin:0.3em 0; display:none;' id='answerBtnWrap'>" +
+      "<span class='blackButton' onclick='findAnswer();' style='cursor:pointer; color:#333; text-decoration:underline;'>정답 보기</span>: 빈칸의 정답을 모두 표시" +
     "</p>";
-
-  const buttonContainer = document.createElement('div');
-  buttonContainer.id = 'blankButtons';
-  buttonContainer.style.display = 'none'; // 처음엔 숨김
-
-  const clearButton = document.createElement('p');
-  clearButton.style.fontSize = '0.875em';
-  clearButton.style.color = '#07611f';
-  clearButton.style.margin = '0.3em 0';
-  clearButton.innerHTML =
-    "<span class='blackButton' onclick='clearBlank();' style='cursor:pointer; color:#333; text-decoration:underline;'>빈칸 초기화</span>: 빈칸을 모두 제거하고 재실행";
-
-  const showAnswerButton = document.createElement('p');
-  showAnswerButton.style.fontSize = '0.875em';
-  showAnswerButton.style.color = '#07611f';
-  showAnswerButton.style.margin = '0.3em 0';
-  showAnswerButton.innerHTML =
-    "<span class='blackButton' onclick='findAnswer();' style='cursor:pointer; color:#333; text-decoration:underline;'>정답 보기</span>: 빈칸의 정답을 모두 표시";
-
-  buttonContainer.appendChild(clearButton);
-  buttonContainer.appendChild(showAnswerButton);
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -166,20 +157,25 @@ function createLabelAndCheckbox() {
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
   resultDiv.style.marginBottom = '20px';
-  resultDiv.append(checkbox, label, buttonContainer);
+  resultDiv.append(checkbox, label);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
 
   checkbox.addEventListener('change', function () {
+    const clearBtnWrap = document.getElementById('clearBtnWrap');
+    const answerBtnWrap = document.getElementById('answerBtnWrap');
+
     if (this.checked) {
-      buttonContainer.style.display = 'block';
-      disableScript(); 
+      disableScript();
       blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
+      clearBtnWrap.style.display = 'block';
+      answerBtnWrap.style.display = 'block';
     } else {
-      buttonContainer.style.display = 'none';
       disableScript();
+      clearBtnWrap.style.display = 'none';
+      answerBtnWrap.style.display = 'none';
     }
   });
 }
