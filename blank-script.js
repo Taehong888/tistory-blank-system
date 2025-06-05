@@ -1,5 +1,5 @@
 // ==========================
-// blank-script.js (필요 부분만 수정된 버전)
+// blank-script.js (박스 없이 텍스트만 표시하도록 수정된 버전)
 // ==========================
 
 // 전역 변수 선언
@@ -23,24 +23,18 @@ function enableScript(blanks) {
   let isPlaceholder = document.getElementsByClassName("blankTranslation").length !== 0;
 
   blanks.forEach(blank => {
-    // ───────────────────────────────────────────────────────────
-    // (A) rawAnswer: 실제 data-answer 속성에 저장된 정답 문자열
-    // ───────────────────────────────────────────────────────────
     const placeholder = blank.textContent;
     const rawAnswer   = blank.getAttribute('data-answer') || blank.textContent;
     const answer      = normalizeText(rawAnswer);
     const normalizedAnswer = normalizeText(answer);
 
-    // ───────────────────────────────────────────────────────────
-    // (A1) “보기 모드 녹색 박스”의 실제 픽셀 너비를 구해서 저장
-    //     → 이 값을 흰색 입력창 폭으로 그대로 사용
-    // ───────────────────────────────────────────────────────────
-    const blankWidth = blank.getBoundingClientRect().width; // ★ 수정됨
+    // 보기 모드 녹색 박스에서 폭을 가져와서 저장
+    const blankWidth = blank.getBoundingClientRect().width;
 
     const input = document.createElement('input');
     input.classList.add('fillNode');
     input.type = 'text';
-    input.dataset.answer         = normalizedAnswer;
+    input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = rawAnswer;
     input.size = answer.length;
 
@@ -50,12 +44,7 @@ function enableScript(blanks) {
     }
 
     input.classList.add('quizQuestion');
-
-    // ───────────────────────────────────────────────────────────
-    // (B) “이전: input.style.width = `${rawAnswer.length}ch`;”
-    //     → 이제 “보기 모드 녹색 박스 폭” 그대로 픽셀 단위로 적용
-    // ───────────────────────────────────────────────────────────
-    input.style.width = `${blankWidth}px`; // ★ 수정됨
+    input.style.width = `${blankWidth}px`;
 
     input.addEventListener('click', function (e) {
       currentInput = Array.from(
@@ -65,23 +54,35 @@ function enableScript(blanks) {
 
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
+        e.preventDefault();
         const userAnswer = normalizeText(input.value.trim());
         const span = document.createElement('span');
 
         if (userAnswer === input.dataset.answer) {
-          span.classList.add('fillNode', 'correct');
+          // ─────────────────────────────────────────────────────────
+          // ★ 수정: 'fillNode' 클래스를 제거하고, 'correct'만 남깁니다.
+          //     이렇게 하면 흰색 배경과 테두리가 사라지고
+          //     초록색 텍스트만 보이게 됩니다.
+          // ─────────────────────────────────────────────────────────
+          span.classList.add('correct');
         } else {
-          span.classList.add('fillNode', 'incorrect');
+          // ─────────────────────────────────────────────────────────
+          // ★ 수정: 'fillNode' 클래스를 제거하고, 'incorrect'만 남깁니다.
+          //     이렇게 하면 흰색 배경과 테두리가 사라지고
+          //     빨간색 텍스트(틀린 정답)만 보이게 됩니다.
+          // ─────────────────────────────────────────────────────────
+          span.classList.add('incorrect');
+          span.dataset.wrong = input.value.trim();
         }
 
-        span.textContent           = input.dataset.originalAnswer;
+        span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
 
         // ─────────────────────────────────────────────────────────
-        // (C) “이전: span.style.width = `${rawAnswer.length}ch`;”
-        //     → 이제 입력창과 동일하게 ‘blankWidth’ 픽셀로 고정
+        // ★ 수정: 이제 span 폭도 제거해 둡니다. 
+        //     (텍스트만 나오게 하려면 width를 고정할 필요가 없습니다.)
         // ─────────────────────────────────────────────────────────
-        span.style.width = `${blankWidth}px`; // ★ 수정됨
+        // span.style.width = `${blankWidth}px`;  <-- 이 줄 삭제
 
         solvedProblems += 1;
         input.replaceWith(span);
@@ -91,7 +92,6 @@ function enableScript(blanks) {
       }
     });
 
-    // 원래 녹색 <span class="blank">를 흰색 <input>으로 교체
     blank.replaceWith(input);
   });
 
@@ -121,13 +121,15 @@ function findAnswer() {
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
     const span = document.createElement('span');
-    span.classList.add('fillNode', 'correct');
+    // ─────────────────────────────────────────────────────────
+    // ★ 수정: fillNode 클래스를 제거하고, correct 클래스만 추가
+    //     → 정답 모드일 때도 텍스트만 보여 줍니다.
+    // ─────────────────────────────────────────────────────────
+    span.classList.add('correct');
     span.dataset.originalAnswer = node.dataset.originalAnswer;
     span.textContent = node.dataset.originalAnswer;
-    // (D) 정답 노드도 JS에서 폭을 지정하고 싶다면, blankWidth 대신
-    //     노드를 생성할 당시 같은 로직으로 width를 계산해야 합니다.
-    //     여기서는 원래 코드처럼 data-originalAnswer 길이 기반으로 설정:
-    span.style.width = `${node.dataset.originalAnswer.length}ch`;
+    // 폭을 지정할 필요가 없으므로 아래 줄 삭제
+    // span.style.width = `${node.dataset.originalAnswer.length}ch`;
     node.replaceWith(span);
   });
 }
@@ -140,11 +142,11 @@ function disableScript() {
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
     blankSpan.textContent = '';
-    // ─────────────────────────────────────────────────────────────────
-    // (E) “원래: blankSpan.style.width = `${original.length}ch`;”
-    //     → 지워서 CSS의 자동 폭(가상 요소 ::before)로 돌아가게 합니다.
-    // ─────────────────────────────────────────────────────────────────
-    // blankSpan.style.width = `${original.length}ch`; // ★ 삭제됨
+    // ─────────────────────────────────────────────────────────
+    // ★ 수정: 새로 생성하는 빈칸(span)에 width 할당을 하지 않습니다.
+    //     → CSS의 자동 폭 계산(.blank::before)으로 되돌아갑니다.
+    // ─────────────────────────────────────────────────────────
+    // blankSpan.style.width = `${original.length}ch`;  <-- 삭제
     node.replaceWith(blankSpan);
   });
 }
