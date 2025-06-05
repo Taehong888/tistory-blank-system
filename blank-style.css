@@ -87,7 +87,7 @@
   display: inline-block;
   font-size: var(--common-font-size);
   font-weight: normal;
-  margin: 0 3px;
+  margin: 0;
   vertical-align: baseline;
 
   /* width:auto → 글자만큼만 차지 */
@@ -101,7 +101,7 @@
   display: inline-block;
   font-size: var(--common-font-size);
   font-weight: normal;
-  margin: 0 3px;
+  margin: 0;
   vertical-align: baseline;
 
   width: auto;
