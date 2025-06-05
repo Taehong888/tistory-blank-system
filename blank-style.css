@@ -25,7 +25,8 @@
   color: transparent;
   position: relative;
   box-sizing: border-box;
-  left: 10%;
+  top: 110%;
+
 
 }
 /* ::before를 이용해 보이지 않는 상태에서 너비만 맞추기 */
