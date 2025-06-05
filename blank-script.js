@@ -23,15 +23,24 @@ function enableScript(blanks) {
   let isPlaceholder = document.getElementsByClassName("blankTranslation").length !== 0;
 
   blanks.forEach(blank => {
+    // ───────────────────────────────────────────────────────────
+    // (A) rawAnswer: 실제 data-answer 속성에 저장된 정답 문자열
+    // ───────────────────────────────────────────────────────────
     const placeholder = blank.textContent;
     const rawAnswer   = blank.getAttribute('data-answer') || blank.textContent;
     const answer      = normalizeText(rawAnswer);
     const normalizedAnswer = normalizeText(answer);
-    const input       = document.createElement('input');
 
+    // ───────────────────────────────────────────────────────────
+    // (A1) “보기 모드 녹색 박스”의 실제 픽셀 너비를 구해서 저장
+    //     → 이 값을 흰색 입력창 폭으로 그대로 사용
+    // ───────────────────────────────────────────────────────────
+    const blankWidth = blank.getBoundingClientRect().width; // ★ 수정됨
+
+    const input = document.createElement('input');
     input.classList.add('fillNode');
     input.type = 'text';
-    input.dataset.answer = normalizedAnswer;
+    input.dataset.answer         = normalizedAnswer;
     input.dataset.originalAnswer = rawAnswer;
     input.size = answer.length;
 
@@ -41,10 +50,17 @@ function enableScript(blanks) {
     }
 
     input.classList.add('quizQuestion');
-    input.style.width = `${rawAnswer.length}ch`;
+
+    // ───────────────────────────────────────────────────────────
+    // (B) “이전: input.style.width = `${rawAnswer.length}ch`;”
+    //     → 이제 “보기 모드 녹색 박스 폭” 그대로 픽셀 단위로 적용
+    // ───────────────────────────────────────────────────────────
+    input.style.width = `${blankWidth}px`; // ★ 수정됨
 
     input.addEventListener('click', function (e) {
-      currentInput = Array.from(document.querySelectorAll("input.quizQuestion")).indexOf(e.target);
+      currentInput = Array.from(
+        document.querySelectorAll("input.quizQuestion")
+      ).indexOf(e.target);
     });
 
     input.addEventListener('keydown', function (e) {
@@ -58,9 +74,14 @@ function enableScript(blanks) {
           span.classList.add('fillNode', 'incorrect');
         }
 
-        span.textContent = input.dataset.originalAnswer;
+        span.textContent           = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        span.style.width = `${rawAnswer.length}ch`;
+
+        // ─────────────────────────────────────────────────────────
+        // (C) “이전: span.style.width = `${rawAnswer.length}ch`;”
+        //     → 이제 입력창과 동일하게 ‘blankWidth’ 픽셀로 고정
+        // ─────────────────────────────────────────────────────────
+        span.style.width = `${blankWidth}px`; // ★ 수정됨
 
         solvedProblems += 1;
         input.replaceWith(span);
@@ -70,17 +91,18 @@ function enableScript(blanks) {
       }
     });
 
+    // 원래 녹색 <span class="blank">를 흰색 <input>으로 교체
     blank.replaceWith(input);
   });
 
   function normalizeText(text) {
     return text.replace(/[\/⋅.,]/g, '')
-      .replace(/이요/g, '이고').replace(/은 /g, '')
-      .replace(/는 /g, '').replace(/이/g, '')
-      .replace(/가/g, '').replace(/을/g, '')
-      .replace(/를/g, '').replace(/및/g, '')
-      .replace(/와/g, '').replace(/과/g, '')
-      .replace(/에게/g, '').replace(/\s+/g, '');
+               .replace(/이요/g, '이고').replace(/은 /g, '')
+               .replace(/는 /g, '').replace(/이/g, '')
+               .replace(/가/g, '').replace(/을/g, '')
+               .replace(/를/g, '').replace(/및/g, '')
+               .replace(/와/g, '').replace(/과/g, '')
+               .replace(/에게/g, '').replace(/\s+/g, '');
   }
 
   function findNextInput() {
@@ -102,6 +124,9 @@ function findAnswer() {
     span.classList.add('fillNode', 'correct');
     span.dataset.originalAnswer = node.dataset.originalAnswer;
     span.textContent = node.dataset.originalAnswer;
+    // (D) 정답 노드도 JS에서 폭을 지정하고 싶다면, blankWidth 대신
+    //     노드를 생성할 당시 같은 로직으로 width를 계산해야 합니다.
+    //     여기서는 원래 코드처럼 data-originalAnswer 길이 기반으로 설정:
     span.style.width = `${node.dataset.originalAnswer.length}ch`;
     node.replaceWith(span);
   });
@@ -115,7 +140,11 @@ function disableScript() {
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
     blankSpan.textContent = '';
-    blankSpan.style.width = `${original.length}ch`;
+    // ─────────────────────────────────────────────────────────────────
+    // (E) “원래: blankSpan.style.width = `${original.length}ch`;”
+    //     → 지워서 CSS의 자동 폭(가상 요소 ::before)로 돌아가게 합니다.
+    // ─────────────────────────────────────────────────────────────────
+    // blankSpan.style.width = `${original.length}ch`; // ★ 삭제됨
     node.replaceWith(blankSpan);
   });
 }
