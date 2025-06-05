@@ -1,5 +1,5 @@
 // ==========================
-// blank-script.js (박스 없이 텍스트만 표시하도록 수정된 버전)
+// blank-script.js (Enter 후 포커스 이동 시 새 입력값 비우기 추가 버전)
 // ==========================
 
 // 전역 변수 선언
@@ -28,8 +28,9 @@ function enableScript(blanks) {
     const answer      = normalizeText(rawAnswer);
     const normalizedAnswer = normalizeText(answer);
 
-    // 보기 모드 녹색 박스에서 폭을 가져와서 저장
-    const blankWidth = blank.getBoundingClientRect().width;
+    // (A) 보기 모드 녹색 박스의 실제 픽셀 너비 계산
+    const rawWidth  = blank.getBoundingClientRect().width;
+    const blankWidth = Math.ceil(rawWidth);
 
     const input = document.createElement('input');
     input.classList.add('fillNode');
@@ -55,40 +56,53 @@ function enableScript(blanks) {
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         e.preventDefault();
+
         const userAnswer = normalizeText(input.value.trim());
         const span = document.createElement('span');
 
         if (userAnswer === input.dataset.answer) {
-          // ─────────────────────────────────────────────────────────
-          // ★ 수정: 'fillNode' 클래스를 제거하고, 'correct'만 남깁니다.
-          //     이렇게 하면 흰색 배경과 테두리가 사라지고
-          //     초록색 텍스트만 보이게 됩니다.
-          // ─────────────────────────────────────────────────────────
           span.classList.add('correct');
         } else {
-          // ─────────────────────────────────────────────────────────
-          // ★ 수정: 'fillNode' 클래스를 제거하고, 'incorrect'만 남깁니다.
-          //     이렇게 하면 흰색 배경과 테두리가 사라지고
-          //     빨간색 텍스트(틀린 정답)만 보이게 됩니다.
-          // ─────────────────────────────────────────────────────────
           span.classList.add('incorrect');
           span.dataset.wrong = input.value.trim();
         }
 
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-
-        // ─────────────────────────────────────────────────────────
-        // ★ 수정: 이제 span 폭도 제거해 둡니다. 
-        //     (텍스트만 나오게 하려면 width를 고정할 필요가 없습니다.)
-        // ─────────────────────────────────────────────────────────
-        // span.style.width = `${blankWidth}px`;  <-- 이 줄 삭제
+        span.style.width = `${blankWidth}px`;
 
         solvedProblems += 1;
         input.replaceWith(span);
 
-        const nextInput = findNextInput();
-        if (nextInput) nextInput.focus();
+        // ──────────────────────────────────────────────────────────────────
+        // (B) 다음 입력창으로 포커스 이동 후, 즉시 값(value) 비우기(버퍼된 키 제거)
+        // ──────────────────────────────────────────────────────────────────
+        const inputs = document.querySelectorAll('input.quizQuestion');
+        if (inputs.length > 0) {
+          // currentInput를 재계산하든, 그대로 사용하든 상관없습니다
+          currentInput = Math.min(currentInput, inputs.length - 1);
+          const nextInput = inputs[currentInput];
+          nextInput.focus();
+          nextInput.value = ''; // ★ 추가한 부분: iPad 키버퍼 초기화용
+        } else {
+          const correctProblems = document.getElementsByClassName("correct").length;
+          const prob = Math.floor((correctProblems * 100) / solvedProblems);
+          alert(
+            `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
+          );
+        }
+      }
+      else if (e.key === 'Tab') {
+        e.preventDefault();
+        const inputs = Array.from(
+          document.querySelectorAll('input.quizQuestion')
+        );
+        const idx = inputs.indexOf(input);
+        const next = inputs[idx + 1];
+        if (next) {
+          next.focus();
+          next.value = ''; // Tab으로 이동할 때도 버퍼된 키 초기화
+        }
       }
     });
 
@@ -111,7 +125,9 @@ function enableScript(blanks) {
     const prob = Math.floor(correctProblems * 100 / solvedProblems);
 
     if (inputs.length === 0) {
-      alert(`문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`);
+      alert(
+        `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
+      );
     }
     return inputs[currentInput];
   }
@@ -121,15 +137,9 @@ function findAnswer() {
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
     const span = document.createElement('span');
-    // ─────────────────────────────────────────────────────────
-    // ★ 수정: fillNode 클래스를 제거하고, correct 클래스만 추가
-    //     → 정답 모드일 때도 텍스트만 보여 줍니다.
-    // ─────────────────────────────────────────────────────────
     span.classList.add('correct');
     span.dataset.originalAnswer = node.dataset.originalAnswer;
     span.textContent = node.dataset.originalAnswer;
-    // 폭을 지정할 필요가 없으므로 아래 줄 삭제
-    // span.style.width = `${node.dataset.originalAnswer.length}ch`;
     node.replaceWith(span);
   });
 }
@@ -142,11 +152,6 @@ function disableScript() {
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
     blankSpan.textContent = '';
-    // ─────────────────────────────────────────────────────────
-    // ★ 수정: 새로 생성하는 빈칸(span)에 width 할당을 하지 않습니다.
-    //     → CSS의 자동 폭 계산(.blank::before)으로 되돌아갑니다.
-    // ─────────────────────────────────────────────────────────
-    // blankSpan.style.width = `${original.length}ch`;  <-- 삭제
     node.replaceWith(blankSpan);
   });
 }
