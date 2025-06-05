@@ -84,7 +84,7 @@
 /* 3) .correct / .incorrect (정답·오답 표시) */
 /* 정답 모드(.correct)는 “글자만 보이게” 테두리나 배경 없음 */
 .correct {
-  display: inline-block;
+  display: inline;
   font-size: var(--common-font-size);
   font-weight: normal;
   margin: 0;
@@ -98,7 +98,7 @@
 
 /* 오답(.incorrect)도 “글자만” 차지하되, 마우스 오버 시 tooltip */
 .incorrect {
-  display: inline-block;
+  display: inline;
   font-size: var(--common-font-size);
   font-weight: normal;
   margin: 0;
