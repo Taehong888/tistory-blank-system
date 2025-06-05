@@ -1,6 +1,5 @@
 // ==========================
-// blank-script.js
-// (Enter 후 포커스 이동 시 iPad 키버퍼 초기화까지 포함)
+// blank-script.js (Enter 후 포커스 이동 시 새 입력값 비우기 추가 버전)
 // ==========================
 
 // 전역 변수 선언
@@ -24,24 +23,21 @@ function enableScript(blanks) {
   let isPlaceholder = document.getElementsByClassName("blankTranslation").length !== 0;
 
   blanks.forEach(blank => {
-    // 화면에 보이는 “연두박스”(.blank)에서 실질 텍스트(placeholder)와 정답(answer) 가져오기
     const placeholder = blank.textContent;
     const rawAnswer   = blank.getAttribute('data-answer') || blank.textContent;
     const answer      = normalizeText(rawAnswer);
     const normalizedAnswer = normalizeText(answer);
 
-    // ───────────────────────────────────────────────────
-    // (A) 보기 모드 연두박스 실제 픽셀 너비 계산
-    // ───────────────────────────────────────────────────
+    // (A) 보기 모드 녹색 박스의 실제 픽셀 너비 계산
     const rawWidth  = blank.getBoundingClientRect().width;
     const blankWidth = Math.ceil(rawWidth);
 
     const input = document.createElement('input');
     input.classList.add('fillNode');
     input.type = 'text';
-    input.dataset.answer         = normalizedAnswer;
+    input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = rawAnswer;
-    input.size                   = answer.length;
+    input.size = answer.length;
 
     if (isPlaceholder) {
       input.placeholder = placeholder;
@@ -49,12 +45,12 @@ function enableScript(blanks) {
     }
 
     input.classList.add('quizQuestion');
-    // “화면에 보이던 연두박스 너비 + 0.3em 여백” 을 흰색 입력창 너비로 지정
-    input.style.width = `calc(${blankWidth}px + 0.3em)`;
+    input.style.width = calc(${blankWidth}px + 0.3em);
 
     input.addEventListener('click', function (e) {
-      currentInput = Array.from(document.querySelectorAll("input.quizQuestion"))
-                          .indexOf(e.target);
+      currentInput = Array.from(
+        document.querySelectorAll("input.quizQuestion")
+      ).indexOf(e.target);
     });
 
     input.addEventListener('keydown', function (e) {
@@ -68,66 +64,59 @@ function enableScript(blanks) {
           span.classList.add('correct');
         } else {
           span.classList.add('incorrect');
-          span.dataset.wrong = input.value.trim();  // hover tooltip용
+          span.dataset.wrong = input.value.trim();
         }
 
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        // replace 후 “박스 너비” 그대로 유지
-        span.style.width = `${blankWidth}px`;
+        span.style.width = ${blankWidth}px;
 
         solvedProblems += 1;
         input.replaceWith(span);
 
-        // ───────────────────────────────────────────────────
-        // (B) 다음 입력창으로 포커스 이동 후 즉시 value='' 초기화 (iPad 키버퍼 초기화)
-        // ───────────────────────────────────────────────────
+        // ──────────────────────────────────────────────────────────────────
+        // (B) 다음 입력창으로 포커스 이동 후, 즉시 값(value) 비우기(버퍼된 키 제거)
+        // ──────────────────────────────────────────────────────────────────
         const inputs = document.querySelectorAll('input.quizQuestion');
         if (inputs.length > 0) {
+          // currentInput를 재계산하든, 그대로 사용하든 상관없습니다
           currentInput = Math.min(currentInput, inputs.length - 1);
           const nextInput = inputs[currentInput];
           nextInput.focus();
-          nextInput.value = ''; // iPad 환경에서 “엔터 버퍼” 제거
+          nextInput.value = ''; // ★ 추가한 부분: iPad 키버퍼 초기화용
         } else {
-          // 모든 문제 풀이가 끝났으면 정답률 알림
           const correctProblems = document.getElementsByClassName("correct").length;
           const prob = Math.floor((correctProblems * 100) / solvedProblems);
           alert(
-            `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
+            문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%
           );
         }
       }
       else if (e.key === 'Tab') {
-        // Tab 키로 다음 입력창 이동 시에도 value 버퍼 초기화
         e.preventDefault();
-        const inputs = Array.from(document.querySelectorAll('input.quizQuestion'));
-        const idx    = inputs.indexOf(input);
-        const next   = inputs[idx + 1];
+        const inputs = Array.from(
+          document.querySelectorAll('input.quizQuestion')
+        );
+        const idx = inputs.indexOf(input);
+        const next = inputs[idx + 1];
         if (next) {
           next.focus();
-          next.value = '';
+          next.value = ''; // Tab으로 이동할 때도 버퍼된 키 초기화
         }
       }
     });
 
-    // 기존 빈칸(.blank)을 생성한 input으로 교체
     blank.replaceWith(input);
   });
 
   function normalizeText(text) {
     return text.replace(/[\/⋅.,]/g, '')
-               .replace(/이요/g, '이고')
-               .replace(/은 /g, '')
-               .replace(/는 /g, '')
-               .replace(/이/g, '')
-               .replace(/가/g, '')
-               .replace(/을/g, '')
-               .replace(/를/g, '')
-               .replace(/및/g, '')
-               .replace(/와/g, '')
-               .replace(/과/g, '')
-               .replace(/에게/g, '')
-               .replace(/\s+/g, '');
+               .replace(/이요/g, '이고').replace(/은 /g, '')
+               .replace(/는 /g, '').replace(/이/g, '')
+               .replace(/가/g, '').replace(/을/g, '')
+               .replace(/를/g, '').replace(/및/g, '')
+               .replace(/와/g, '').replace(/과/g, '')
+               .replace(/에게/g, '').replace(/\s+/g, '');
   }
 
   function findNextInput() {
@@ -137,7 +126,7 @@ function enableScript(blanks) {
 
     if (inputs.length === 0) {
       alert(
-        `문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`
+        문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%
       );
     }
     return inputs[currentInput];
@@ -175,12 +164,10 @@ function clearBlank() {
 
 function createLabelAndCheckbox() {
   const label = document.createElement('label');
-  label.innerHTML = `
+  label.innerHTML = 
     <span style='font-weight:800; color:#0c3b18;'> 빈칸 채우기 모드</span>
-    <p style='margin:0; font-size:0.875em; color:#07611f;'>
-      * 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다.
-    </p>
-  `;
+    <p style='font-size:0.875em; color:#07611f;'>* 마스킹한 내용이 빈칸 문제로 변환됩니다. 입력 후 Enter키를 누르면 정오를 확인할 수 있습니다. PC에서만 적용됩니다.</p>
+  ;
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -207,20 +194,14 @@ function createLabelAndCheckbox() {
 
   const resultDiv = document.createElement('div');
   resultDiv.style.backgroundColor = '#b8fcb8';
-  resultDiv.style.padding = '10px';      // 필요 시 '6px 20px' 같은 형태로 조정 가능
+  resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
-  resultDiv.style.marginBottom = '0px';  // 바로 아래 여백 제거
+  resultDiv.style.marginBottom = '10px';
   resultDiv.append(checkbox, label, controlArea);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
-
-  // 연두색 박스 바로 다음 요소(<p>나 <h2> 등)의 margin-top을 0으로 강제
-  const nextElem = resultDiv.nextElementSibling;
-  if (nextElem) {
-    nextElem.style.marginTop = '0px';
-  }
-
+  
   checkbox.addEventListener('change', function () {
     if (this.checked) {
       controlArea.style.display = 'block';
