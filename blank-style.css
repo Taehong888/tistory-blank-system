@@ -74,9 +74,27 @@
   width: auto;
 
   /* 통일된 글자 크기와 줄 높이 */
+  box-sizing: border-box;
+  padding: 0 0.3em;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  margin: 0 3px;
+  vertical-align: middle;
+
+  /* 입력창의 폰트 크기는 동일(1.0em) */
   font-size: var(--common-font-size);
-  line-height: var(--common-line-height);
-  height: var(--common-line-height);
+
+  /* 보기 모드에서 임의로 정하신 높이와 줄 높이를 그대로 복사 */
+  line-height: 1.6em !important;   /* 박스 내부 텍스트 줄 높이 */
+  height: 1.7em !important;        /* 박스 전체 높이 (컨텐츠 1.6em + 상하 padding 0.05em씩 등) */
+
+  /* 너비는 JS에서 ch 또는 getBoundingClientRect()로 지정하므로 auto로 둠 */
+  width: auto;
+}
+.fillNode:focus {
+  border-color: #557a3b;
+  background-color: #f9f9f9;
 }
 .fillNode:focus {
   border-color: #557a3b;
