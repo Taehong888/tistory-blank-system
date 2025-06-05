@@ -1,21 +1,20 @@
-   blank-style.css
-   기본 스타일: .blank, .fillNode, .correct, .incorrect, .blackButton
-   =========================================== */
+/* blank-style.css */
 
 /* 1) .blank (보기 모드) */
 .blank {
   display: inline-block;
-  background-color: #e0f2d8; /* 연두색 배경 */
-  border: 1px solid #aacb8e; /* 짙은 연두 테두리 */
+  background-color: #e0f2d8;
+  border: 1px solid #aacb8e;
   border-radius: 3px;
   padding: 0 0.3em;
   margin: 0 3px;
   vertical-align: middle;
   font-size: 0.9em;
-  line-height: 1.6;
+  line-height: 1.6em;
   height: 1.6em;
-  color: transparent; /* 숨긴 정답 */
+  color: transparent;
   position: relative;
+  box-sizing: border-box;
 }
 .blank::before {
   content: attr(data-answer);
@@ -35,14 +34,14 @@
   pointer-events: none;
   font-size: 0.9em;
   font-weight: normal;
-  line-height: 1.6;
+  line-height: 1.6em;
   z-index: 10;
 }
 .blank:hover::after {
   color: #333;
 }
 
-/* 2) .fillNode(input 빈칸) */
+/* 2) .fillNode (input 빈칸) */
 .fillNode {
   box-sizing: border-box;
   padding: 0 0.3em;
@@ -55,7 +54,7 @@
   margin: 0 3px;
   outline: none;
   transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-  line-height: 1.6;
+  line-height: 1.6em;
   height: 1.6em;
 }
 .fillNode:focus {
@@ -71,8 +70,7 @@
   margin: 0 3px;
   vertical-align: baseline;
   line-height: 1.8;
-  position: relative;
-  color: #5DCB5F; /* 초록 */
+  color: #5DCB5F;
 }
 .incorrect {
   display: inline-block;
@@ -81,8 +79,7 @@
   margin: 0 3px;
   vertical-align: baseline;
   line-height: 1.8;
-  position: relative;
-  color: #DD0031; /* 빨강 */
+  color: #DD0031;
 }
 .incorrect::after {
   content: attr(data-wrong);
@@ -117,21 +114,19 @@
 }
 .blackButton:hover {
   text-decoration: none;
-} 
+}
 
-/* ===========================================
-   6) 표(th, td) 공통 스타일
-   =========================================== */
+/* 6) 표(th, td) 공통 스타일 */
 th,
 td {
   border: 1px solid #666 !important;
-  padding: 8px 10px !important;           /* 셀 내부 여백 */
+  padding: 8px 10px !important;
   text-align: left !important;
   vertical-align: middle !important;
   font-size: 0.9em !important;
   font-weight: normal !important;
   font-family: sans-serif !important;
-  line-height: 1.8 !important;             /* 표 내부 줄 간격 1.8 */
+  line-height: 1.8 !important;
 }
 th {
   background-color: #f2f2f2 !important;
@@ -139,3 +134,4 @@ th {
 }
 td {
   /* 줄 높이 1.8 유지 */
+}
