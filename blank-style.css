@@ -59,8 +59,6 @@
 
   /* 상/하 여백 없애고 좌/우만 0.3em */
   padding: 0;
-  padding-left: 0em;
-  padding-right: 0em;
 
   background-color: #ffffff;
   border: 1px solid #cccccc;
