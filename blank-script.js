@@ -21,7 +21,8 @@ function enableScript(blanks) {
   blanks.forEach(blank => {
     const placeholder = blank.textContent;
 
-    const answer = normalizeText(blank.textContent);
+    // data-answer 속성에서 실제 정답을 가져오거나, 텍스트 자체를 정답으로 사용
+    const answer = normalizeText(blank.getAttribute('data-answer') || blank.textContent);
     const normalizedAnswer = normalizeText(answer);
     const input = document.createElement('input');
 
@@ -29,11 +30,11 @@ function enableScript(blanks) {
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
     input.dataset.originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
-    input.size = answer.length * 1.2; // Input 크기를 정답의 길이에 맞춤
+    input.size = Math.ceil(answer.length * 1.2);
 
     if (isPlaceholder) {
       input.placeholder = placeholder;
-      input.size = blank.textContent.length * 1.35;
+      input.size = Math.ceil(blank.textContent.length * 1.35);
     }
 
     input.classList.add('quizQuestion');
@@ -48,13 +49,11 @@ function enableScript(blanks) {
         const span = document.createElement('span');
 
         if (userAnswer === input.dataset.answer) {
-          span.classList.add('fillNode');
-          span.classList.add('correct');
+          span.classList.add('fillNode', 'correct');
           span.textContent = input.dataset.originalAnswer;
           span.dataset.originalAnswer = input.dataset.originalAnswer;
         } else {
-          span.classList.add('fillNode');
-          span.classList.add('incorrect');
+          span.classList.add('fillNode', 'incorrect');
           span.textContent = input.dataset.originalAnswer;
           span.dataset.originalAnswer = input.dataset.originalAnswer;
         }
@@ -100,26 +99,26 @@ function enableScript(blanks) {
 }
 
 function findAnswer() {
-  const inputs = document.querySelectorAll('.fillNode');
-  inputs.forEach(input => {
+  const nodes = document.querySelectorAll('.fillNode');
+  nodes.forEach(node => {
     const span = document.createElement('span');
     span.classList.remove('incorrect');
-    span.classList.add('correct');
-    span.classList.add('fillNode');
-    span.dataset.originalAnswer = input.dataset.originalAnswer;
-    span.textContent = input.dataset.originalAnswer;
-    input.replaceWith(span);
+    span.classList.add('correct', 'fillNode');
+    span.dataset.originalAnswer = node.dataset.originalAnswer;
+    span.textContent = node.dataset.originalAnswer;
+    node.replaceWith(span);
   });
 }
 
 function disableScript() {
+  // fillNode(입력란 또는 정답/오답 스팬)를 .blank로 복원
   const nodes = document.querySelectorAll('.fillNode');
   nodes.forEach(node => {
     const original = node.dataset.originalAnswer;
     const blankSpan = document.createElement('span');
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
-    blankSpan.textContent = ''; // CSS .blank 클래스가 hover 시 답을 보여주도록
+    blankSpan.textContent = ''; // CSS .blank 클래스가 hover 시 정답을 표시
     node.replaceWith(blankSpan);
   });
 }
@@ -149,25 +148,17 @@ function createLabelAndCheckbox() {
   resultDiv.style.marginBottom = '20px';
   resultDiv.prepend(checkbox);
 
-  boxChecked = false;
   const entryContent = document.getElementsByClassName("entry-content")[0];
   entryContent.prepend(resultDiv);
 
   checkbox.addEventListener('change', function () {
     if (this.checked) {
-      if (!boxChecked) {
-        boxChecked = true;
-        label.innerHTML +=
-          "<p style='font-size: 0.875em; line-height: 0.8em; color: #07611f;'>" +
-          "* <span class='blackButton' onclick='clearBlank();'>빈칸 초기화</span>:  빈칸을 모두 제거하고 다시 모두 빈칸으로 만듭니다." +
-          "</p>" +
-          "<p style='font-size: 0.875em; line-height: 0.8em; color: #07611f;'>" +
-          "* <span class='blackButton' onclick='findAnswer();'>정답 보기</span>:  빈칸의 정답을 모두 보여줍니다." +
-          "</p>";
-      }
+      // 언제나 빈칸 채우기 모드 켜기
+      disableScript(); // 먼저 기존 상태를 모두 blank로 복원
       blanks = document.querySelectorAll('.blank');
       enableScript(blanks);
     } else {
+      // 언제나 보기 모드로 돌아가기
       disableScript();
     }
   });
