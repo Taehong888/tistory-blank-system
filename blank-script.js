@@ -28,7 +28,7 @@ function enableScript(blanks) {
     input.classList.add('fillNode');
     input.type = 'text';
     input.dataset.answer = normalizedAnswer;
-    input.dataset.originalAnswer = blank.textContent;
+    input.dataset.originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
     input.size = answer.length * 1.2; // Input 크기를 정답의 길이에 맞춤
 
     if (isPlaceholder) {
@@ -39,7 +39,7 @@ function enableScript(blanks) {
     input.classList.add('quizQuestion');
 
     input.addEventListener('click', function (e) {
-      currentInput = Array.from(document.querySelectorAll(".quizQuestion")).indexOf(e.target);
+      currentInput = Array.from(document.querySelectorAll("input.quizQuestion")).indexOf(e.target);
     });
 
     input.addEventListener('keydown', function (e) {
@@ -63,7 +63,7 @@ function enableScript(blanks) {
         input.replaceWith(span);
 
         const nextInput = findNextInput();
-        nextInput.focus();
+        if (nextInput) nextInput.focus();
       }
     });
 
@@ -92,7 +92,7 @@ function enableScript(blanks) {
     var correctProblems = document.getElementsByClassName("correct").length;
     var prob = Math.floor(correctProblems * 100 / solvedProblems);
 
-    if (document.getElementsByClassName("quizQuestion").length == 0) {
+    if (inputs.length === 0) {
       alert(`문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`);
     }
     return inputs[currentInput];
@@ -113,16 +113,14 @@ function findAnswer() {
 }
 
 function disableScript() {
-  const inputs = document.querySelectorAll('.fillNode');
-
-  inputs.forEach(input => {
-    const span = document.createElement('span');
-    span.classList.remove('correct');
-    span.classList.remove('incorrect');
-    span.classList.add('blank');
-    span.classList.add('fillNode');
-    span.textContent = input.dataset.originalAnswer;
-    input.replaceWith(span);
+  const nodes = document.querySelectorAll('.fillNode');
+  nodes.forEach(node => {
+    const original = node.dataset.originalAnswer;
+    const blankSpan = document.createElement('span');
+    blankSpan.classList.add('blank');
+    blankSpan.setAttribute('data-answer', original);
+    blankSpan.textContent = ''; // CSS .blank 클래스가 hover 시 답을 보여주도록
+    node.replaceWith(blankSpan);
   });
 }
 
@@ -157,7 +155,7 @@ function createLabelAndCheckbox() {
 
   checkbox.addEventListener('change', function () {
     if (this.checked) {
-      if (boxChecked == false) {
+      if (!boxChecked) {
         boxChecked = true;
         label.innerHTML +=
           "<p style='font-size: 0.875em; line-height: 0.8em; color: #07611f;'>" +
