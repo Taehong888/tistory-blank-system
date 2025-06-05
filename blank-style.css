@@ -15,42 +15,46 @@
   border: 1px solid #aacb8e;
   border-radius: 1px;
   margin: 0;
-  padding: 0 0.3em; /* 옆 패딩만 설정 */
-
+  padding: 0 0.3em;
+  
   font-size: 1.0em !important;
-  line-height: var(--common-line-height) !important;
-  height: var(--common-line-height) !important; /* 줄높이와 높이 동일 설정 필수 */
-
-  vertical-align: middle !important; /* 중요! 텍스트와 박스를 수직 중앙 정렬 */
+  line-height: 1.6 !important;
+  height: 1.7em !important; /* 박스 높이 유지 */
 
   box-sizing: border-box;
   color: transparent;
   position: relative;
+
+  vertical-align: middle !important; /* 중요한 요소 */
 }
-/* ::before를 이용해 보이지 않는 상태에서 너비만 맞추기 */
+
+/* 보이지 않는 너비 기준 요소 (유지) */
 .blank::before {
   content: attr(data-answer);
   visibility: hidden;
-  display: inline-block;
   white-space: nowrap;
+  font-size: inherit;
+  line-height: inherit;
 }
-/* ::after는 hover 시에만 텍스트 색상을 바꿔 보여준다 */
+
+/* 호버 시 나타나는 실제 컨텐츠 (수정) */
 .blank::after {
   content: attr(data-answer);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: transparent; /* 정상 상태에서는 투명 */
+  color: transparent;
   white-space: nowrap;
   transition: color 0.2s ease-in-out;
   pointer-events: none;
-  font-size: var(--common-font-size);
-  line-height: var(--common-line-height);
-  z-index: 10;
+  
+  font-size: inherit;
+  line-height: inherit;
 }
+
 .blank:hover::after {
-  color: #333; /* hover 시에만 정답 텍스트 보이기 */
+  color: #333;
 }
 
 /* 2) .fillNode (input 빈칸) */
