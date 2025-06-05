@@ -1,173 +1,118 @@
 /* ===========================================
    blank-style.css
-   – 사용자 코드(보기모드·채우기모드 박스 크기, 글자 크기, 전체 문서 글자크기)에 맞춘 통합 버전
+   - 보기 모드의 .blank 높이를 채우기 모드와 동일하게 고정
    =========================================== */
 
-/* 1) 전체 문서 기준 폰트/라인 설정 */
+/* 1) 전체 폰트/기본 스타일 */
 body {
-  font-size: 0.9em;         /* 전체 텍스트 크기 기준 */
-  line-height: 1.8;         /* 전체 줄 간격 */
-  font-family: sans-serif;  /* 기본 폰트 */
+  font-size: 0.9em;         /* 전체 텍스트 크기 기준 0.9em */
+  line-height: 1.8;         /* 전체 줄 간격을 1.8로 넉넉히 설정 */
+  font-family: sans-serif;  /* 기본 폰트 설정 */
+  color: #333333;           /* 기본 글자색 설정 */
+  background-color: #f5f5f5; /* 가벼운 배경색 설정 */
+  margin: 0;
+  padding: 0;
 }
 
-/* 2) 빈칸(.blank, 보기 모드) 스타일 */
+/* 2) 빈칸(span.blank)의 기본 스타일 (보기 모드) */
 .blank {
-  display: inline-block !important;
-  box-sizing: border-box !important;   /* padding + border 포함하여 계산 */
-
-  /*— 폰트/텍스트 높이 —*/
-  font-size: 0.9em !important;          /* 본문과 동일 */
-  line-height: 1.6 !important;          /* 텍스트 줄 높이 */
-  height: 1.6em !important;             /* 콘텐츠 높이 (line-height) */
-
-  /*— 배경/테두리/모서리 —*/
-  background-color: #e0f2d8 !important;   /* 연두 배경 */
-  border: 1px solid #aacb8e !important;   /* 짙은 연두 테두리 */
-  border-radius: 3px !important;          /* 모서리 둥글게 */
-
-  /*— 패딩/마진/정렬 —*/
-  padding: 0 0.3em !important;        /* 상하 padding 0.15em, 좌우 0.3em */
-  margin: 0 3px !important;               /* 좌우 간격 */
-  vertical-align: middle !important;      /* 인라인 기준선 중앙 정렬 */
-
-  /*— 텍스트 숨김/툴팁용 —*/
-  color: transparent !important;          /* 기본 텍스트는 투명 처리 */
-  position: relative !important;          /* ::before/::after 위치 조정 */
-  width: auto !important;                 /* JS에서 offsetWidth를 읽어서 처리 */
-}
-.blank::before {
-  content: attr(data-answer) !important;
-  visibility: hidden !important;          /* 너비 확보용 히든 텍스트 */
-  display: inline-block !important;
-  white-space: nowrap !important;         /* 줄바꿈 방지 */
-}
-.blank::after {
-  content: attr(data-answer) !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  color: transparent !important;          /* 기본에는 숨김 */
-  white-space: nowrap !important;         /* 줄바꿈 방지 */  
-  transition: color 0.2s ease-in-out !important;
-  pointer-events: none !important;
-
-  font-size: 0.9em !important;             /* 툴팁 텍스트도 동일 크기 */
-  line-height: 1.6 !important;             /* 툴팁 줄 높이 동일 */
-  z-index: 10 !important;
-}
-.blank:hover::after {
-  color: #333 !important;                 /* hover 시 텍스트 보임 */
+  display: inline-block;
+  min-width: 1.5em;           /* 최소 너비 설정 */
+  padding: 0.2em 0.4em;       /* 위아래 0.2, 좌우 0.4 정도의 여백 */
+  margin: 0 0.2em;            /* 빈칸 사이 약간의 여백 */
+  background-color: #eaf6ea;  /* 연한 초록 배경 */
+  border: 2px solid #7bbf7b;  /* 약간 짙은 초록 테두리 */
+  border-radius: 4px;         /* 모서리 둥글게 */
+  text-align: center;         /* 텍스트 중앙 정렬 */
+  font-weight: bold;
+  cursor: default;
 }
 
-/* 3) 채우기 모드(.blank-input) 스타일 */
-.blank-input {
-  display: none !important;               /* 초기에는 숨김 */
-  box-sizing: border-box !important;      /* padding + border 포함하여 계산 */
-
-  /*— 폰트/텍스트 높이 —*/
-  font-size: 0.9em !important;            /* 본문과 동일 */
-  line-height: 1.6 !important;            /* 텍스트 줄 높이 */
-  height: 1.6em !important;               /* 콘텐츠 높이 (line-height) */
-
-  /*— 배경/테두리/모서리 —*/
-  background-color: #ffffff !important;   /* 흰색 배경 */
-  border: 1px solid #cccccc !important;   /* 연한 회색 테두리 */
-  border-radius: 3px !important;          /* 모서리 둥글게 */
-
-  /*— 패딩/마진/정렬 —*/
-  padding: 0 0.3em !important;            /* 상하 padding 0.15em, 좌우 0.3em */
-  margin: 0 3px !important;               /* 좌우 간격 */
-  vertical-align: middle !important;      /* 인라인 기준선 중앙 정렬 */
-
-  /*— 텍스트 색상/초점 —*/
-  color: #333 !important;                 /* 입력 텍스트는 검은색 */
-  outline: none !important;               /* 포커스 시 외곽선 제거 */
-  transition:
-    border-color 0.2s ease-in-out,
-    background-color 0.2s ease-in-out !important;
-
-  /* 너비: JS에서 offsetWidth를 읽어서 설정 */
-  width: auto !important;
-}
-.blank-input:focus {
-  border-color: #557a3b !important;       /* 포커스 시 짙은 초록 테두리 */
-  background-color: #f9f9f9 !important;   /* 포커스 시 연한 회색 배경 */
+/* 3) 입력란(input.fillNode)의 기본 스타일 (채우기 모드) */
+input.fillNode {
+  display: inline-block;
+  padding: 0.2em 0.4em;
+  margin: 0 0.2em;
+  border: 2px solid #7bbf7b;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: bold;
+  outline: none;
+  box-sizing: content-box;   /* size 속성이 텍스트 길이에 맞게 동작하게 */
 }
 
-/* 4) 채점 후 정답/오답(.answered.correct, .answered.wrong) 스타일 */
-.answered {
-  display: inline-block !important;
-  font-size: 0.9em !important;         /* 본문과 동일 글자 크기 */
-  font-weight: normal !important;
-  margin: 0 3px !important;            /* 좌우 간격 */
-  vertical-align: baseline !important; /* 테이블 셀 안 인라인 기준선 */
-
-  line-height: 1.8 !important;         /* 표 셀 안 텍스트 줄 높이 */
-  position: relative !important;       /* 툴팁 위치 조정 */
-}
-.answered.correct {
-  color: #5DCB5F !important;           /* 정답 녹색 텍스트 */
-}
-.answered.wrong {
-  color: #DD0031 !important;           /* 오답 빨강 텍스트 */
-}
-.answered.wrong::after {
-  content: attr(data-wrong) !important;
-  position: absolute !important;
-  top: 110% !important;                /* 부모 텍스트 바로 아래 */
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  background-color: rgba(0, 0, 0, 0.75) !important;
-  color: #fff !important;
-  padding: 2px 6px !important;
-  border-radius: 3px !important;
-  white-space: nowrap !important;      /* 줄바꿈 방지 */
-  visibility: hidden !important;
-  opacity: 0 !important;
-  transition: opacity 0.1s ease-in-out !important;
-  pointer-events: none !important;
-
-  font-size: 0.9em !important;         /* tooltip 텍스트 크기 */
-  line-height: 1.8 !important;         /* tooltip 줄 높이 */
-  z-index: 10 !important;
-}
-.answered.wrong:hover::after {
-  visibility: visible !important;
-  opacity: 1 !important;
+/* 4) 정답/오답 표시 스타일 */
+span.correct {
+  display: inline-block;
+  padding: 0.2em 0.4em;
+  margin: 0 0.2em;
+  background-color: #d4f8d4;  /* 아주 연한 초록 */
+  border: 2px solid #3ea83e;  /* 짙은 초록 */
+  border-radius: 4px;
+  font-weight: bold;
+  color: #0c3b18;
 }
 
-/* 5) 표(th, td) 공통 스타일 */
-th,
-td {
-  border: 1px solid #666 !important;
-  padding: 8px 10px !important;        /* 셀 내부 여백 */
-  text-align: left !important;
-  vertical-align: middle !important;
-
-  font-size: 0.9em !important;          /* 표 내부 글자 크기 */
-  font-weight: normal !important;
-  font-family: sans-serif !important;
-  line-height: 1.8 !important;          /* 표 내부 줄 간격 */
-}
-th {
-  background-color: #f2f2f2 !important;
-  vertical-align: center !important;
+span.incorrect {
+  display: inline-block;
+  padding: 0.2em 0.4em;
+  margin: 0 0.2em;
+  background-color: #f8d4d4;  /* 연한 빨강 */
+  border: 2px solid #e03e3e;  /* 짙은 빨강 */
+  border-radius: 4px;
+  font-weight: bold;
+  color: #800000;
 }
 
-/* 6) “빈칸 채우기 모드” 관련 토글 CSS */
-body:not(.fill-mode) #wrong-note {
-  display: none !important;
+/* 5) '빈칸 채우기 모드' 레이블과 안내문 스타일 */
+#blankToggleContainer {
+  background-color: #b8fcb8;   /* 연한 초록 */
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 30px;
+  font-family: sans-serif;
 }
-body.fill-mode .blank {
-  display: none !important;
+
+#blankToggleContainer label {
+  font-weight: 800;
+  color: #0c3b18;
+  display: block;
+  margin-bottom: 5px;
 }
-body.fill-mode .blank-input {
-  display: inline-block !important;    /* 채우기 모드일 때만 input 보이기 */
+
+#blankToggleContainer p {
+  font-size: 0.875em;
+  color: #07611f;
+  line-height: 1.2em;
+  margin: 4px 0;
 }
-body.fill-mode #wrong-note {
-  background-color: #F38D4D !important;  /* 채우기 모드 오답노트 버튼 색상 수정 */
+
+/* 6) 체크박스 디자인(필요 시 추가 커스터마이징 가능) */
+#toggleScript {
+  margin-right: 8px;
+  transform: translateY(2px);
 }
-body:not(.fill-mode) .blank-input {
-  display: none !important;             /* 보기 모드일 때 input 숨김 */
+
+/* 7) '빈칸 초기화' 및 '정답 보기' 버튼 스타일 (.blackButton) */
+.blackButton {
+  color: #ffffff;
+  background-color: #333333;
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  font-size: 0.85em;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 0.5em;
+  text-decoration: none;
+}
+
+.blackButton:hover {
+  background-color: #555555;
+}
+
+/* 8) PC가 아닐 때 경고문 스타일 (예: 모바일 안내) */
+#blankToggleContainer .mobileNotice {
+  font-size: 0.85em;
+  color: #bb0000;
+  margin-top: 6px;
 }
