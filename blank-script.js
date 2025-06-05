@@ -1,13 +1,13 @@
-// 1. 전역 변수 선언 추가
+// 전역 변수 선언
 let blanks = [];
 
-// 2. 페이지 로드 직후 .blank 요소 존재 시 레이블/체크박스 생성
+// 페이지 로드 직후 .blank 요소 존재 시 레이블/체크박스 생성
 const blankArray = document.querySelectorAll('.blank');
 if (blankArray.length >= 1) {
   createLabelAndCheckbox();
 }
 
-// 3. .blankTranslation 요소가 있으면 스크립트 활성화
+// .blankTranslation 요소가 있으면 스크립트 활성화
 if (document.getElementsByClassName("blankTranslation").length !== 0) {
   blanks = document.querySelectorAll('.blankTranslation');
   enableScript(blanks);
@@ -17,27 +17,29 @@ function enableScript(blanks) {
   let currentInput = 0;
   let solvedProblems = 0;
 
-  // blanks 매개변수가 빈 상태가 아니어야 함
   blanks.forEach((blank, index) => {
-    const placeholder = blank.textContent;
+    // 기존 텍스트(placeholder) 대신 빈 문자열로 처리
     const originalAnswer = blank.getAttribute('data-answer') || blank.textContent;
     const answer = normalizeText(originalAnswer);
-    const input = document.createElement('input');
 
+    // input 요소 생성
+    const input = document.createElement('input');
     input.classList.add('fillNode', 'quizQuestion');
     input.type = 'text';
+
+    // 동적 너비 지정 제거(모두 CSS에서 고정 너비로 처리)
+    // input.style.width = `${placeholder.length}ch`;
+
+    // 정답 정보 데이터 속성에 저장
     input.dataset.answer = answer;
     input.dataset.originalAnswer = originalAnswer;
-    input.size = originalAnswer.length;
-    input.placeholder = placeholder;
-    input.style.width = `${placeholder.length}ch`;
 
-    // 클릭할 때마다 currentInput 업데이트
+    // 클릭 시 currentInput 업데이트
     input.addEventListener('click', function (e) {
       currentInput = Array.from(document.querySelectorAll("input.quizQuestion")).indexOf(e.target);
     });
 
-    // Enter 키 처리
+    // Enter 키 입력 시 정오 판정
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         const userAnswer = normalizeText(input.value.trim());
@@ -47,24 +49,24 @@ function enableScript(blanks) {
           span.classList.add('fillNode', 'correct');
         } else {
           span.classList.add('fillNode', 'incorrect');
-          // 틀린 답일 경우 실제 입력값을 data-wrong으로 저장
+          // 틀린 경우 data-wrong 속성에 실제 입력값 저장
           span.dataset.wrong = input.value.trim();
         }
 
         span.textContent = input.dataset.originalAnswer;
         span.dataset.originalAnswer = input.dataset.originalAnswer;
-        span.style.width = `${input.dataset.originalAnswer.length}ch`;
+        // 동적 너비 지정 제거(모두 CSS에서 고정 너비로 처리)
+        // span.style.width = `${input.dataset.originalAnswer.length}ch`;
 
         solvedProblems += 1;
         input.replaceWith(span);
 
         const inputs = document.querySelectorAll('input.quizQuestion');
-        // Enter 누른 칸의 인덱스를 다시 계산하여 다음 칸으로 이동
         if (inputs.length > 0) {
+          // Enter 누른 칸의 인덱스를 재계산하여 다음 칸으로 포커스 이동
           currentInput = Math.min(currentInput, inputs.length - 1);
           inputs[currentInput].focus();
         } else {
-          // 모든 문제 풀이 완료 시 정답률 얼럿
           const correctProblems = document.getElementsByClassName("correct").length;
           const prob = Math.floor((correctProblems * 100) / solvedProblems);
           alert(`문제를 다 풀었어요!\n문제 수: ${solvedProblems}, 정답 수: ${correctProblems}, 정답률: ${prob}%`);
@@ -73,8 +75,11 @@ function enableScript(blanks) {
     });
 
     blank.replaceWith(input);
-    // 초기 로드 시 첫 번째 input에 포커스 주기
-    if (index === 0) input.focus();
+
+    // 첫 번째 input에 자동 포커스
+    if (index === 0) {
+      input.focus();
+    }
   });
 }
 
@@ -86,7 +91,8 @@ function findAnswer() {
     span.classList.add('fillNode', 'correct');
     span.dataset.originalAnswer = original;
     span.textContent = original;
-    span.style.width = `${original.length}ch`;
+    // 동적 너비 지정 제거
+    // span.style.width = `${original.length}ch`;
     node.replaceWith(span);
   });
 }
@@ -98,8 +104,10 @@ function disableScript() {
     const blankSpan = document.createElement('span');
     blankSpan.classList.add('blank');
     blankSpan.setAttribute('data-answer', original);
-    blankSpan.textContent = ''; // 보기를 위해 텍스트는 숨김
-    blankSpan.style.width = `${original.length}ch`;
+    // 텍스트 없이 빈박스만 남기기
+    blankSpan.textContent = '';
+    // 동적 너비 지정 제거
+    // blankSpan.style.width = `${original.length}ch`;
     node.replaceWith(blankSpan);
   });
 }
