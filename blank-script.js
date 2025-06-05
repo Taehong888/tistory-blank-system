@@ -199,7 +199,7 @@ function createLabelAndCheckbox() {
   resultDiv.style.backgroundColor = '#b8fcb8';
   resultDiv.style.padding = '10px';
   resultDiv.style.borderRadius = '5px';
-  resultDiv.style.marginBottom = '0px';  // 연두 박스 자체의 아래쪽 여백 0
+  resultDiv.style.marginBottom = '10px';  // 연두 박스 자체의 아래쪽 여백 0
   resultDiv.append(checkbox, label, controlArea);
 
   const entryContent = document.getElementsByClassName("entry-content")[0];
