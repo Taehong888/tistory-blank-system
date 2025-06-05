@@ -27,6 +27,8 @@
    top: -2.5px;
    justify-content: center;
    align-items: center;
+   min-width: 2em;
+
    
 }
 /* ::before를 이용해 보이지 않는 상태에서 너비만 맞추기 */
@@ -68,6 +70,8 @@
   justify-content: center;
   align-items: center;
   top: -2.5px;
+   min-width: 2em;
+
 
   /* input 자체가 size 속성으로 너비가 정해지므로, width:auto */
   width: auto;
@@ -76,8 +80,7 @@
   font-size: 1.0em !important;
   line-height: 1.6 !important;
   height: 1.8em !important;
-   display: inline-flex;
-  align-items: center;
+
 }
 .fillNode:focus {
   border-color: #557a3b;
